@@ -235,8 +235,8 @@ add_action('admin_head', 'cfsnip_admin_head', 10);
 function cfsnip_menu_items() {
 	if (current_user_can('manage_options')) {
 		add_options_page(
-			'Snippets Options'
-			, 'Snippets'
+			'CF Snippets Options'
+			, 'CF Snippets'
 			, 10
 			, basename(__FILE__)
 			, 'cfsnip_options_form'
