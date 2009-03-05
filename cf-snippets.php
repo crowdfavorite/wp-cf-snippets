@@ -337,7 +337,7 @@ function cfsnip_widgets( $args, $widget_args = 1 ) {
 	} 
 	
 	// Do stuff for this widget, drawing data from $options[$number]
-	$content = cfsnip_get_snippet_content($options[$number]['snippet-name']);
+	$content = do_shortcode(cfsnip_get_snippet_content($options[$number]['snippet-name']));
 	echo $content;
 
 	echo '</div>';
