@@ -484,7 +484,7 @@ function cfsnip_dialog() {
 	 	parent.window.tinyMCE.execCommand("mceEndUndoLevel");
 	}
 </script>
-<?
+<?php
 	$snippets = get_option('cfsnip_snippets');
 
 	foreach ($snippets as $key => $snippet) {
@@ -494,7 +494,7 @@ function cfsnip_dialog() {
 					<?php print(stripslashes($snippet['description'])); ?>
 				</a>
 			</li>
-		<?
+		<?php
 	}
 }
 
