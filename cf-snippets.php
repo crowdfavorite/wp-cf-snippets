@@ -329,18 +329,15 @@ function cfsnip_widgets( $args, $widget_args = 1 ) {
 		return;
 	
 	$title = $options[$number]['title'];
-	
-	echo '<div class="'.$options[$number]['snippet-name'].' widget widget_links">';
-	
-	if($title != '') {
-		echo $before_title . $title . $after_title;
-	} 
-	
-	// Do stuff for this widget, drawing data from $options[$number]
-	$content = do_shortcode(cfsnip_get_snippet_content($options[$number]['snippet-name']));
-	echo $content;
 
-	echo '</div>';
+	echo $before_widget;
+		if($title != '') {
+			echo $before_title . $title . $after_title;
+		} 
+		// Do stuff for this widget, drawing data from $options[$number]
+		$content = do_shortcode(cfsnip_get_snippet_content($options[$number]['snippet-name']));
+		echo $content;
+	echo $after_widget;
 }
 
 
