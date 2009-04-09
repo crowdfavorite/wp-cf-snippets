@@ -74,7 +74,14 @@ function cfsnip_request_handler() {
 				}
 			}
 			update_option('cfsnip_snippets', $snippets);
-			header('Location: '.get_bloginfo('wpurl').'/wp-admin/options-general.php?page=cf-snippets.php&updated=true');
+			$blogurl = '';
+			if (is_ssl()) {
+				$blogurl = str_replace('http://','https://',get_bloginfo('wpurl'));
+			}
+			else {
+				$blogurl = get_bloginfo('wpurl');
+			}
+			wp_redirect($blogurl.'/wp-admin/options-general.php?page=cf-snippets.php&updated=true');
 		}
 		else {
 			wp_die('You are not allowed to manage options.');
@@ -260,7 +267,7 @@ function cfsnip_options_form() {
 			
 			<p>To access files in your current theme template directory <em>from within a snippet</em>, type <code>{cfsnip_template_url}</code>. 
 			That will be replaced with, for example, <code>http://example.com/wordpress/wp-content/themes/mytheme/</code>.</p>
-			<form action="'.get_bloginfo('wpurl').'/wp-admin/options-general.php" method="post">
+			<form action="" method="post">
 				<ol style="display:none;">
 					<li id="cfsnip_snippet_item_prototype">
 						<span class="cfsnip_number">_n_</span>
