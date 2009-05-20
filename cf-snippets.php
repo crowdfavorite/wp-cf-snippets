@@ -3,7 +3,7 @@
 Plugin Name: CF Snippets
 Plugin URI: 
 Description: Lets admins define html snippets for use in template, content, or widgets. Snippets are not recursive (snippets defined inside other snippets will not be expanded).
-Version: 1.1
+Version: 1.2
 Author: Crowd Favorite
 Author URI: http://crowdfavorite.com
 */
@@ -304,7 +304,7 @@ function cfsnip_options_form() {
 		print('
 					<li id="cfsnip_snippet_item_'.$n.'" class="cfsnip_snippet_item'.$zebra_class.'">
 						<span class="cfsnip_number">'.($n + 1).'</span>
-						<input '.$snip_class.' id="cfsnip_name_'.$n.'" name="cfsnip_name_'.$n.'" type="text" value="'.$key.'" />
+						<input '.$snip_class.' id="cfsnip_name_'.$n.'" name="cfsnip_name_'.$n.'" type="text" value="'.$key.'" readonly="readonly" />
 						<input '.$snip_class.'  id="cfsnip_description_'.$n.'" name="cfsnip_description_'.$n.'" type="text" value="'.stripslashes($snippet['description']).'" />
 						<textarea  '.$snip_class.' rows="8" cols="50" id="cfsnip_content_'.$n.'" name="cfsnip_content_'.$n.'" >'.htmlspecialchars(stripslashes($snippet['content'])).'</textarea>
 						<span class="cfsnip_remove_snippet">[x] Remove</span>
