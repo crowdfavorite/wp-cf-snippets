@@ -29,9 +29,9 @@ if (!function_exists('wp_prototype_before_jquery')) {
 
 $cfsnip_snippets = array();
 $cfsnip_snippets_fetched = false;
-function cfsnip_get_snippets() {
+function cfsnip_get_snippets($force_refresh=false) {
 	global $cfsnip_snippets, $cfsnip_snippets_fetched;
-	if (!$cfsnip_snippets_fetched) {
+	if (!$cfsnip_snippets_fetched || $force_refresh) {
 		$cfsnip_snippets = get_option('cfsnip_snippets');
 		$cfsnip_snippets_fetched = true;
 	}
@@ -39,23 +39,39 @@ function cfsnip_get_snippets() {
 	return $cfsnip_snippets;
 }
 
-function cfsnip_snippet($snippet_name) {
-	echo cfsnip_get_snippet_content($snippet_name);
+function cfsnip_snippet($snippet_name,$default_value=false,$create_snippet_if_not_exists=true) {
+	echo cfsnip_get_snippet_content($snippet_name,$default_value,$create_snippet_if_not_exists);
 }
 
-function cfsnip_get_snippet($snippet_name) {
+function cfsnip_get_snippet($snippet_name,$default_value=false,$create_snippet_if_not_exists=true) {
 	$snippets = cfsnip_get_snippets();
+	if(!isset($snippets[$snippet_name]) && !empty($default_value)) {
+		echo 'using default value '.$snippet_name.'<br />';
+		$snippets[$snippet_name] = array(
+			'content' => $default_value,
+			'description' => ucwords(str_replace(array('-','_'),' ',$key))
+		);
+		if($create_snippet_if_not_exists) {
+			echo 'adding snippet '.$snippet_name.'<br />';
+			update_option('cfsnip_snippets', $snippets);
+			cfsnip_get_snippets(true);	
+		}
+	}
+	else {
+		echo 'using found snippet '.$snippet_name.'<br />';
+	}
 	return $snippets[$snippet_name];
 }
 
-function cfsnip_get_snippet_content($snippet_name) {
-	$snippet = cfsnip_get_snippet($snippet_name);
+function cfsnip_get_snippet_content($snippet_name,$default_value=false,$create_snippet_if_not_exists=true) {
+	$snippet = cfsnip_get_snippet($snippet_name,$default_value,$create_snippet_if_not_exists);
 	return str_replace('{cfsnip_template_url}', get_bloginfo('template_url'), stripslashes($snippet['content']));
 }
 
-function cfsnip_snippet_content($snippet_name) {
-	echo cfsnip_get_snippet_content($snippet_name);
+function cfsnip_snippet_content($snippet_name,$default_value=false,$create_snippet_if_not_exists=true) {
+	echo cfsnip_get_snippet_content($snippet_name,$default_value,$create_snippet_if_not_exists);
 }
+
 function cfsnip_snippet_exists($snippet_name) {
 	$snippets = cfsnip_get_snippets();
 	return isset($snippets[$snippet_name]);
@@ -290,7 +306,7 @@ function cfsnip_options_form() {
 						<span class="cfsnip_number">'.($n + 1).'</span>
 						<input '.$snip_class.' id="cfsnip_name_'.$n.'" name="cfsnip_name_'.$n.'" type="text" value="'.$key.'" />
 						<input '.$snip_class.'  id="cfsnip_description_'.$n.'" name="cfsnip_description_'.$n.'" type="text" value="'.stripslashes($snippet['description']).'" />
-						<textarea  '.$snip_class.' rows="8" cols="50" id="cfsnip_content_'.$n.'" name="cfsnip_content_'.$n.'" >'.stripslashes($snippet['content']).'</textarea>
+						<textarea  '.$snip_class.' rows="8" cols="50" id="cfsnip_content_'.$n.'" name="cfsnip_content_'.$n.'" >'.htmlspecialchars(stripslashes($snippet['content'])).'</textarea>
 						<span class="cfsnip_remove_snippet">[x] Remove</span>
 					</li>
 		');
