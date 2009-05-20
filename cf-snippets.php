@@ -121,7 +121,7 @@ jQuery(document).ready(function() {
 		var nCurrentSnippets = jQuery('ol.cfsnip_snippet_list li').size();
 		var zebraClass = (nCurrentSnippets % 2 ? ' odd' : '');
 		jQuery('ol.cfsnip_snippet_list').append('<li class="cfsnip_empty_input' + zebraClass + '" id="cfsnip_snippet_item_' + idNum + '" style="display:none;">' + itemHTML + '</li>');
-		jQuery('#cfsnip_snippet_item_' + idNum + ' span.cfsnip_number').html(nCurrentSnippets);
+		jQuery('#cfsnip_snippet_item_' + idNum + ' span.cfsnip_number').html(++nCurrentSnippets);
 		cfsnip_addItemBehaviors(
 			jQuery('#cfsnip_snippet_item_' + idNum).show('fast')
 		);
@@ -183,53 +183,64 @@ jQuery(document).ready(function() {
 			die();
 			
 			case 'css_admin':
-			header("Content-type: text/css");
-			print('
-.cfsnip_empty_input {
-	color:#999;
-}
-
-ol.cfsnip_snippet_list {
-	
-}
-
-ol.cfsnip_snippet_list li {
-	list-style:none;
-	padding:10px;
-}
-ol.cfsnip_snippet_list li.odd {
-	background: #f8f8f8;
-}
-ol.cfsnip_snippet_list li span.cfsnip_number {
-	color:#888;
-	font-size:20px;
-	font-weight:bold;	
-	position:relative;
-	top: -75px
-}
-ol.cfsnip_snippet_list li input[type=text]{
-	position:relative;
-	top: -75px
-}
-.cfsnip_remove_snippet {
-	color:#777;
-	position:relative;
-	top: -75px;
-}
-.cfsnip_remove_snippet:hover {
-	color:#f77;
-	cursor:pointer;
-}
-#cfsnip_add_snippet {
-	float:right;
-	cursor:pointer;
-}
-#cfsnip_add_snippet:hover {
-	color:#d54e21;
-}
-			');
-			die();
-			
+				header("Content-type: text/css");
+				echo '
+					ol.cfsnip_snippet_list li {
+						margin-left: 40px;
+						margin-bottom: 10px;
+						border-bottom: 1px solid gray;
+						width: 90%;
+						padding-right: 0;
+						padding-bottom: 10px;
+					}
+					ol.cfsnip_snippet_list li span.cfsnip_number {
+						float: left;
+						margin-left: -40px;
+						margin-top: 10px;
+						color:#888;
+						font-size:20px;
+						font-weight:bold;
+					}
+					ol.cfsnip_snippet_list li div {
+						margin: 5px 0;
+					}
+					ol.cfsnip_snippet_list li div label {
+						display: block;
+						float: left;
+						width: 12%;
+						margin-top: 8px;
+					}
+					ol.cfsnip_snippet_list li input,
+					ol.cfsnip_snippet_list li textarea {
+						width: 87%;
+					}
+					ol.cfsnip_snippet_list li input.cfsnip-name {
+						border: none;
+						margin-top: 3px;
+						width: auto;
+					}
+					ol.cfsnip_snippet_list li span.cfsnip-name-notice {
+						color: gray;
+						font-size: .9em;
+					}
+					ol.cfsnip_snippet_list li span.cfsnip_remove_snippet {
+						margin-left: 100px;
+					}
+					ol.cfsnip_snippet_list li span.cfsnip_remove_snippet:hover {
+						color:#f77;
+						cursor:pointer;
+					}
+					ol.cfsnip_snippet_list li .cfsnip_empty_input {
+						color:#999;
+					}
+					#cfsnip_add_snippet {
+						cursor:pointer;
+					}
+					#cfsnip_add_snippet:hover {
+						color:#d54e21;
+					}
+				';
+				exit;
 			case 'css_published':
 			header("Content-type: text/css");
 			print('
@@ -287,9 +298,18 @@ function cfsnip_options_form() {
 				<ol style="display:none;">
 					<li id="cfsnip_snippet_item_prototype">
 						<span class="cfsnip_number">_n_</span>
-						<input class="cfsnip_empty_input" id="cfsnip_name__n_" name="cfsnip_name__n_" type="text" value="Name" />
-						<input class="cfsnip_empty_input" id="cfsnip_description__n_" name="cfsnip_description__n_" type="text" value="Description" />
-						<textarea class="cfsnip_empty_input" rows="8" cols="50" id="cfsnip_content__n_" name="cfsnip_content__n_" >Content</textarea>
+						<div>
+							<label for="cfsnip_name_n">Name/slug</label>
+							<input class="cfsnip_empty_input" id="cfsnip_name__n_" name="cfsnip_name__n_" type="text" value="Name" />
+						</div>
+						<div>
+							<label for="cfsnip_description_n">Description</label>
+							<input class="cfsnip_empty_input" id="cfsnip_description__n_" name="cfsnip_description__n_" type="text" value="Description" />
+						</div>
+						<div>
+							<label for="cfsnip_content_n">Snippet</label>
+							<textarea class="cfsnip_empty_input" rows="8" cols="50" id="cfsnip_content__n_" name="cfsnip_content__n_" >Content</textarea>
+						</div>
 						<span class="cfsnip_remove_snippet">[x] Remove</span>
 					</li>
 				</ol>
@@ -304,9 +324,18 @@ function cfsnip_options_form() {
 		print('
 					<li id="cfsnip_snippet_item_'.$n.'" class="cfsnip_snippet_item'.$zebra_class.'">
 						<span class="cfsnip_number">'.($n + 1).'</span>
-						<input '.$snip_class.' id="cfsnip_name_'.$n.'" name="cfsnip_name_'.$n.'" type="text" value="'.$key.'" readonly="readonly" />
-						<input '.$snip_class.'  id="cfsnip_description_'.$n.'" name="cfsnip_description_'.$n.'" type="text" value="'.stripslashes($snippet['description']).'" />
-						<textarea  '.$snip_class.' rows="8" cols="50" id="cfsnip_content_'.$n.'" name="cfsnip_content_'.$n.'" >'.htmlspecialchars(stripslashes($snippet['content'])).'</textarea>
+						<div>
+							<label for="cfsnip_name_'.$id.'">Name/slug</label>
+							<input '.$snip_class.' id="cfsnip_name_'.$n.'" class="cfsnip-name" name="cfsnip_name_'.$n.'" type="text" value="'.$key.'" readonly="readonly" /> &nbsp; <span class="cfsnip-name-notice">(cannot be changed)</span>
+						</div>
+						<div>
+							<label for="cfsnip_description_'.$n.'">Description</label>
+							<input '.$snip_class.'  id="cfsnip_description_'.$n.'" name="cfsnip_description_'.$n.'" type="text" value="'.stripslashes($snippet['description']).'" />
+						</div>
+						<div>
+							<label for="cfsnip_content_'.$n.'">Snippet</label>
+							<textarea  '.$snip_class.' rows="8" cols="50" id="cfsnip_content_'.$n.'" name="cfsnip_content_'.$n.'" >'.htmlspecialchars(stripslashes($snippet['content'])).'</textarea>
+						</div>
 						<span class="cfsnip_remove_snippet">[x] Remove</span>
 					</li>
 		');
