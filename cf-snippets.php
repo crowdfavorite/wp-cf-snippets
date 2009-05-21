@@ -48,7 +48,7 @@ function cfsnip_get_snippet($snippet_name,$default_value=false,$create_snippet_i
 	if(!isset($snippets[$snippet_name]) && !empty($default_value)) {
 		$snippets[$snippet_name] = array(
 			'content' => $default_value,
-			'description' => ucwords(str_replace(array('-','_'),' ',$snippet_name)).' (auto-generated default value)'
+			'description' => ucwords(str_replace(array('-','_'),' ',$snippet_name))
 		);
 		if($create_snippet_if_not_exists) {
 			update_option('cfsnip_snippets', $snippets);
