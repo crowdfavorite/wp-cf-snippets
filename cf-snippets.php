@@ -109,6 +109,22 @@ function cfsnip_request_handler() {
 			header("Content-type: text/javascript");
 ?>
 jQuery(document).ready(function() {
+	
+	// generic show/hide toggle 
+	jQuery('.show-hide').click(function(){
+		_this = jQuery(this);
+		_tgt = jQuery(_this.attr('href'));
+		
+		if(_tgt.css('display') == 'block') {
+			_this.html('Show '+_this.attr('rel'));
+		}
+		else {
+			_this.html('Hide '+_this.attr('rel'));
+		}
+		_tgt.toggle('fast');
+		return false;
+	});
+	
 	if (jQuery('ol.cfsnip_snippet_list').size() == 0) {
 		return;
 	}
@@ -123,7 +139,7 @@ jQuery(document).ready(function() {
 		jQuery('ol.cfsnip_snippet_list').append('<li class="cfsnip_empty_input' + zebraClass + '" id="cfsnip_snippet_item_' + idNum + '" style="display:none;">' + itemHTML + '</li>');
 		jQuery('#cfsnip_snippet_item_' + idNum + ' span.cfsnip_number').html(++nCurrentSnippets);
 		cfsnip_addItemBehaviors(
-			jQuery('#cfsnip_snippet_item_' + idNum).show('fast')
+			jQuery('#cfsnip_snippet_item_' + idNum).slideDown('fast')
 		);
 		
 	}
@@ -154,7 +170,13 @@ jQuery(document).ready(function() {
 		jqItems.each(function(){
 			var item = jQuery(this);
 			jQuery('.cfsnip_remove_snippet', item).click(function() {
-				item.hide('fast', function() { 
+				if(!jQuery(this).hasClass('cancel')) {
+					// confirm removal of existing snippets
+					if(!confirm('Are you sure you want to delete this snippet?')) {
+						return false;
+					}
+				}
+				item.slideUp('fast',function(){
 					item.remove();
 					// note that we don't need to bother renumbering ids, etc.					
 					cfsnip_renumberItemDisplay();
@@ -181,7 +203,7 @@ jQuery(document).ready(function() {
 });
 <?php
 			die();
-			
+
 			case 'css_admin':
 				header("Content-type: text/css");
 				echo '
@@ -203,6 +225,7 @@ jQuery(document).ready(function() {
 					}
 					ol.cfsnip_snippet_list li div {
 						margin: 5px 0;
+						padding: 0;
 					}
 					ol.cfsnip_snippet_list li div label {
 						display: block;
@@ -212,21 +235,26 @@ jQuery(document).ready(function() {
 					}
 					ol.cfsnip_snippet_list li input,
 					ol.cfsnip_snippet_list li textarea {
-						width: 87%;
+						width: 80%;
 					}
 					ol.cfsnip_snippet_list li input.cfsnip-name {
 						border: none;
 						margin-top: 3px;
 						width: auto;
 					}
+					ol.cfsnip_snippet_list li div input.short {
+						width: 50%;
+					}
 					ol.cfsnip_snippet_list li span.cfsnip-name-notice {
 						color: gray;
 						font-size: .9em;
 					}
-					ol.cfsnip_snippet_list li span.cfsnip_remove_snippet {
-						margin-left: 100px;
+					ol.cfsnip_snippet_list li .cfsnip_remove_snippet {
+						margin: 6px 8% 0 0;
+						float: right;
+						width: auto;
 					}
-					ol.cfsnip_snippet_list li span.cfsnip_remove_snippet:hover {
+					ol.cfsnip_snippet_list li .cfsnip_remove_snippet:hover {
 						color:#f77;
 						cursor:pointer;
 					}
@@ -281,26 +309,25 @@ add_action('admin_menu', 'cfsnip_menu_items');
 
 function cfsnip_options_form() {
 	global $cfsnip_escape_seq;
-	print('
+	echo '
 		<div class="wrap">
-			<h2>Snippets | <a href="'.get_bloginfo('url').'/wp-admin/widgets.php">'.__('Edit Widgets').'</a></h2>
-			<p>Paste in HTML content for a snippet and give it a name. The name will be automatically "sanitized:" lowercased and all 
-			spaces converted to dashes.</p>
-			<p>To insert a snippet in your template, type <blockquote><code>&lt;?php cfsnip_snippet(\'my-snippet-name\'); ?></code></blockquote> Use 
-			the shortcode syntax:
-			<blockquote><code>[cfsnip name="my-snippet-name"]</code></blockquote> in post or page content to insert your snippet there.</p>
-			
-			<p>Or use snippet widgets wherever widgets can be used.</p>
-			
-			<p>To access files in your current theme template directory <em>from within a snippet</em>, type <code>{cfsnip_template_url}</code>. 
-			That will be replaced with, for example, <code>http://example.com/wordpress/wp-content/themes/mytheme/</code>.</p>
+			<h2>Snippets</h2>
+			<p><a href="#snippet-instructions" class="show-hide" rel="Instructions">Show Instructions</a> &nbsp;|&nbsp; <a href="'.get_bloginfo('url').'/wp-admin/widgets.php">'.__('Edit Widgets').'</a></p>
+			<div id="snippet-instructions" style="display: none;">
+				<p>Paste in HTML content for a snippet and give it a name. The name will be automatically "sanitized:" lowercased and all spaces converted to dashes.</p>
+				<p>To insert a snippet in your template, type <code>&lt;?php cfsnip_snippet(\'my-snippet-name\'); ?></code><br /> Use the shortcode syntax: <code>[cfsnip name="my-snippet-name"]</code> in post or page content to insert your snippet there.</p>
+				<p>Or use snippet widgets wherever widgets can be used.</p>
+				<p>To access files in your current theme template directory <em>from within a snippet</em>, type <code>{cfsnip_template_url}</code>. That will be replaced with, for example, <code>http://example.com/wordpress/wp-content/themes/mytheme/</code>.</p>
+			</div>
+			<hr />
 			<form action="" method="post">
 				<ol style="display:none;">
 					<li id="cfsnip_snippet_item_prototype">
 						<span class="cfsnip_number">_n_</span>
 						<div>
+							<input type="button" class="cfsnip_remove_snippet button cancel" value="[x] Cancel" />
 							<label for="cfsnip_name_n">Name/slug</label>
-							<input class="cfsnip_empty_input" id="cfsnip_name__n_" name="cfsnip_name__n_" type="text" value="Name" />
+							<input class="cfsnip_empty_input short" id="cfsnip_name__n_" name="cfsnip_name__n_" type="text" value="Name" />
 						</div>
 						<div>
 							<label for="cfsnip_description_n">Description</label>
@@ -310,21 +337,21 @@ function cfsnip_options_form() {
 							<label for="cfsnip_content_n">Snippet</label>
 							<textarea class="cfsnip_empty_input" rows="8" cols="50" id="cfsnip_content__n_" name="cfsnip_content__n_" >Content</textarea>
 						</div>
-						<span class="cfsnip_remove_snippet">[x] Remove</span>
 					</li>
 				</ol>
 				<ol class="cfsnip_snippet_list">
-	');
+	';
 	$snippets = cfsnip_get_snippets();
 	
 	$n = 0;
 	$snip_class = '';
 	foreach ($snippets as $key => $snippet) {
 		$zebra_class = ($n % 2 ? ' odd' : '');
-		print('
+		echo '
 					<li id="cfsnip_snippet_item_'.$n.'" class="cfsnip_snippet_item'.$zebra_class.'">
 						<span class="cfsnip_number">'.($n + 1).'</span>
 						<div>
+							<input type="button" class="cfsnip_remove_snippet button" value="[x] Remove" />
 							<label for="cfsnip_name_'.$id.'">Name/slug</label>
 							<input '.$snip_class.' id="cfsnip_name_'.$n.'" class="cfsnip-name" name="cfsnip_name_'.$n.'" type="text" value="'.$key.'" readonly="readonly" /> &nbsp; <span class="cfsnip-name-notice">(cannot be changed)</span>
 						</div>
@@ -336,22 +363,21 @@ function cfsnip_options_form() {
 							<label for="cfsnip_content_'.$n.'">Snippet</label>
 							<textarea  '.$snip_class.' rows="8" cols="50" id="cfsnip_content_'.$n.'" name="cfsnip_content_'.$n.'" >'.htmlspecialchars(stripslashes($snippet['content'])).'</textarea>
 						</div>
-						<span class="cfsnip_remove_snippet">[x] Remove</span>
 					</li>
-		');
+		';
 		$n++;
 	}
-	print('
+	echo '
 				</ol>
-				<span id="cfsnip_add_snippet">[+] Add Snippet</span>
 				<div class="clear"></div>
 				<p class="submit">
 					<input type="hidden" name="cfsnip_action" value="update_settings" />
-					<input type="submit" name="submit" value="Update CF Snippets" />
+					<input type="submit" name="submit" class="button-primary" value="Update CF Snippets" /> &nbsp; | &nbsp;
+					<input type="button" id="cfsnip_add_snippet" class="button" value="[+] Add Snippet" />
 				</p>
 			</form>			
 		</div>
-	');
+	';
 }
 
 function cfsnip_handle_shortcode($attrs, $content=null) {
