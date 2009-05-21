@@ -17,6 +17,28 @@ The Snippets admin page allows for the creation of multiple snippets. From the p
 	To access files in your current theme template directory from within a snippet, type `{cfsnip_template_url}`. That will be replaced with, for example, `http://example.com/wordpress/wp-content/themes/mytheme/`.
 	
 
+## Template Tags & Default Values
+
+Default values for snippets can now be defined through the template tags for pulling snippet content. If the snippet does not exist the snippet will be created so that it can be changed, if desired, via the WordPress admin. The 'create if not exists' behavior can be overidden. The affected functions are:
+
+- `cfsnip_snippet`
+- `cfsnip_snippet_content`
+- `cfsnip_get_snippet`
+- `cfsnip_get_snippet_content`
+
+Each function takes the same parameters
+
+- `$snippet_name`: string, name of the snippet being pulled
+- `$default_value`: a default value to use if the snippet does not exist. 
+	- Default is false
+- `$create_snippet_if_not_exists`: wether to create a snippet if a snippet does not exist and a default value is provided
+	- Default is true
+
+**Example:**
+	
+	<div><?php cfsnip_snippet('my-snippet','default value'); ?></div>
+	
+
 ## Widgets
 
 A multi-instance widget is added by the plugin. It provides the ability to add multiple widgets to the sidebar, provide an optional title and select a widget to display. Only one widget can be selected in a widget at a time.
