@@ -48,14 +48,12 @@ function cfsnip_get_snippet($snippet_name,$default_value=false,$create_snippet_i
 	if(!isset($snippets[$snippet_name]) && !empty($default_value)) {
 		$snippets[$snippet_name] = array(
 			'content' => $default_value,
-			'description' => ucwords(str_replace(array('-','_'),' ',$key))
+			'description' => ucwords(str_replace(array('-','_'),' ',$snippet_name)).' (auto-generated default value)'
 		);
 		if($create_snippet_if_not_exists) {
 			update_option('cfsnip_snippets', $snippets);
 			cfsnip_get_snippets(true);	
 		}
-	}
-	else {
 	}
 	return $snippets[$snippet_name];
 }
@@ -322,7 +320,7 @@ function cfsnip_options_form() {
 					<li id="cfsnip_snippet_item_prototype">
 						<span class="cfsnip_number">_n_</span>
 						<div>
-							<input type="button" class="cfsnip_remove_snippet button cancel" value="[x] Cancel" />
+							<input type="button" class="cfsnip_remove_snippet button cancel" value="Cancel" />
 							<label for="cfsnip_name_n">Name/slug</label>
 							<input class="cfsnip_empty_input short" id="cfsnip_name__n_" name="cfsnip_name__n_" type="text" value="Name" />
 						</div>
@@ -339,7 +337,7 @@ function cfsnip_options_form() {
 				<ol class="cfsnip_snippet_list">
 	';
 	$snippets = cfsnip_get_snippets();
-	
+
 	$n = 0;
 	$snip_class = '';
 	foreach ($snippets as $key => $snippet) {
@@ -348,7 +346,7 @@ function cfsnip_options_form() {
 					<li id="cfsnip_snippet_item_'.$n.'" class="cfsnip_snippet_item'.$zebra_class.'">
 						<span class="cfsnip_number">'.($n + 1).'</span>
 						<div>
-							<input type="button" class="cfsnip_remove_snippet button" value="[x] Remove" />
+							<input type="button" class="cfsnip_remove_snippet button" value="Delete" />
 							<label for="cfsnip_name_'.$id.'">Name/slug</label>
 							<input '.$snip_class.' id="cfsnip_name_'.$n.'" class="cfsnip-name" name="cfsnip_name_'.$n.'" type="text" value="'.$key.'" readonly="readonly" /> &nbsp; <span class="cfsnip-name-notice">(cannot be changed)</span>
 						</div>
@@ -370,7 +368,7 @@ function cfsnip_options_form() {
 				<p class="submit">
 					<input type="hidden" name="cfsnip_action" value="update_settings" />
 					<input type="submit" name="submit" class="button-primary" value="Update CF Snippets" /> &nbsp; | &nbsp;
-					<input type="button" id="cfsnip_add_snippet" class="button" value="[+] Add Snippet" />
+					<input type="button" id="cfsnip_add_snippet" class="button" value="Add Snippet" />
 				</p>
 			</form>			
 		</div>
