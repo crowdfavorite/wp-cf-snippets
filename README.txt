@@ -1,9 +1,9 @@
-# CF Snippets Plugin
+## CF Snippets Plugin
 
 The CF Snippets plugin allows users to define snippets for use post content and theme templates. Also defines a widget to allow snippets to be added to the sidebar.
 
 
-## Usage
+### Usage
 
 The Snippets admin page allows for the creation of multiple snippets. From the plugin page:
 
@@ -17,7 +17,7 @@ The Snippets admin page allows for the creation of multiple snippets. From the p
 	To access files in your current theme template directory from within a snippet, type `{cfsnip_template_url}`. That will be replaced with, for example, `http://example.com/wordpress/wp-content/themes/mytheme/`.
 	
 
-## Template Tags & Default Values
+### Template Tags & Default Values
 
 Default values for snippets can now be defined through the template tags for pulling snippet content. If the snippet does not exist the snippet will be created so that it can be changed, if desired, via the WordPress admin. The 'create if not exists' behavior can be overidden. The affected functions are:
 
@@ -39,13 +39,13 @@ Each function takes the same parameters
 	<div><?php cfsnip_snippet('my-snippet','default value'); ?></div>
 	
 
-## Shortcodes
+### Shortcodes
 
 Snippets can be addressed via shortcode as well. `[cfsnip name="my-snippet-name"]` will pull the snippet `my-snippet-name`. Default values are not applicable to shortcodes.
 
 There is a Snippet button in the post/page content edit bar. Click on the "cog" icon to bring up a list of snippets to insert at the cursor point in the contnet.
 
 
-## Widgets
+### Widgets
 
 A multi-instance widget is added by the plugin. It provides the ability to add multiple widgets to the sidebar, provide an optional title and select a widget to display. Only one widget can be selected in a widget at a time.

@@ -8,6 +8,34 @@ Author: Crowd Favorite
 Author URI: http://crowdfavorite.com
 */
 
+// README HANDLING
+	add_action('admin_init','cfsnip_add_readme');
+
+	/**
+	 * Enqueue the readme function
+	 */
+	function cfsnip_add_readme() {
+		if(function_exists('cfreadme_enqueue')) {
+			cfreadme_enqueue('cf-snippets','cfsnip_readme');
+		}
+	}
+	
+	/**
+	 * return the contents of the links readme file
+	 * replace the image urls with full paths to this plugin install
+	 *
+	 * @return string
+	 */
+	function cfsnip_readme() {
+		$file = realpath(dirname(__FILE__)).'/README.txt';
+		if(is_file($file) && is_readable($file)) {
+			$markdown = file_get_contents($file);
+			$markdown = preg_replace('|!\[(.*?)\]\((.*?)\)|','![$1]('.WP_PLUGIN_URL.'/cf-snippets/$2)',$markdown);
+			return $markdown;
+		}
+		return null;
+	}
+
 // the prefix to use before {my-snippet-name} in post content to indicate a snippet replacement
 $cfsnip_escape_seq = 'cfsnip';
 
