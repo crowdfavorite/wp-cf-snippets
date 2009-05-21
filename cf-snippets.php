@@ -46,19 +46,16 @@ function cfsnip_snippet($snippet_name,$default_value=false,$create_snippet_if_no
 function cfsnip_get_snippet($snippet_name,$default_value=false,$create_snippet_if_not_exists=true) {
 	$snippets = cfsnip_get_snippets();
 	if(!isset($snippets[$snippet_name]) && !empty($default_value)) {
-		echo 'using default value '.$snippet_name.'<br />';
 		$snippets[$snippet_name] = array(
 			'content' => $default_value,
 			'description' => ucwords(str_replace(array('-','_'),' ',$key))
 		);
 		if($create_snippet_if_not_exists) {
-			echo 'adding snippet '.$snippet_name.'<br />';
 			update_option('cfsnip_snippets', $snippets);
 			cfsnip_get_snippets(true);	
 		}
 	}
 	else {
-		echo 'using found snippet '.$snippet_name.'<br />';
 	}
 	return $snippets[$snippet_name];
 }
