@@ -39,6 +39,13 @@ Each function takes the same parameters
 	<div><?php cfsnip_snippet('my-snippet','default value'); ?></div>
 	
 
+## Shortcodes
+
+Snippets can be addressed via shortcode as well. `[cfsnip name="my-snippet-name"]` will pull the snippet `my-snippet-name`. Default values are not applicable to shortcodes.
+
+There is a Snippet button in the post/page content edit bar. Click on the "cog" icon to bring up a list of snippets to insert at the cursor point in the contnet.
+
+
 ## Widgets
 
 A multi-instance widget is added by the plugin. It provides the ability to add multiple widgets to the sidebar, provide an optional title and select a widget to display. Only one widget can be selected in a widget at a time.
