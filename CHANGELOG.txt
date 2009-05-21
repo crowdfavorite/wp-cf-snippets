@@ -4,3 +4,5 @@
 
 - added functionality to define default text for a snippet via the template tag and automatically create the snippet if it doesn't exist
 - fixed bug in admin page display where non-escaped HTML could cause a textarea to close and break the form
+- fixed bug in admin display where new list item number would not be correct
+- many UI improvements
