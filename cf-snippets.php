@@ -159,8 +159,7 @@ jQuery(document).ready(function() {
 		var itemHTML = jQuery('#cfsnip_snippet_item_prototype').html().replace(/_n_/g, idNum);
 		var nCurrentSnippets = jQuery('ol.cfsnip_snippet_list li').size();
 		var zebraClass = (nCurrentSnippets % 2 ? ' odd' : '');
-		jQuery('ol.cfsnip_snippet_list').append('<li class="cfsnip_empty_input' + zebraClass + '" id="cfsnip_snippet_item_' + idNum + '" style="display:none;">' + itemHTML + '</li>');
-		jQuery('#cfsnip_snippet_item_' + idNum + ' span.cfsnip_number').html(++nCurrentSnippets);
+		jQuery('ol.cfsnip_snippet_list').append('<li class="cfsnip_empty_input postbox' + zebraClass + '" id="cfsnip_snippet_item_' + idNum + '" style="display:none;">' + itemHTML + '</li>');
 		cfsnip_addItemBehaviors(
 			jQuery('#cfsnip_snippet_item_' + idNum).slideDown('fast')
 		);
@@ -211,9 +210,6 @@ jQuery(document).ready(function() {
 	
 	var cfsnip_renumberItemDisplay = function() {
 		var n = 1;
-		jQuery('ol.cfsnip_snippet_list li span.cfsnip_number').each(function() {
-			jQuery(this).html(n++);
-		});
 		jQuery('ol.cfsnip_snippet_list li').removeClass('odd').filter(':odd').addClass('odd');
 	}
 	
@@ -229,73 +225,11 @@ jQuery(document).ready(function() {
 
 			case 'css_admin':
 				header("Content-type: text/css");
-				echo '
-					ol.cfsnip_snippet_list li {
-						margin-left: 40px;
-						margin-bottom: 10px;
-						border-bottom: 1px solid gray;
-						width: 90%;
-						padding-right: 0;
-						padding-bottom: 10px;
-					}
-					ol.cfsnip_snippet_list li span.cfsnip_number {
-						float: left;
-						margin-left: -40px;
-						margin-top: 10px;
-						color:#888;
-						font-size:20px;
-						font-weight:bold;
-					}
-					ol.cfsnip_snippet_list li div {
-						margin: 5px 0;
-						padding: 0;
-					}
-					ol.cfsnip_snippet_list li div label {
-						display: block;
-						float: left;
-						width: 12%;
-						margin-top: 8px;
-					}
-					ol.cfsnip_snippet_list li input,
-					ol.cfsnip_snippet_list li textarea {
-						width: 80%;
-					}
-					ol.cfsnip_snippet_list li input.cfsnip-name {
-						border: none;
-						margin-top: 3px;
-						width: auto;
-					}
-					ol.cfsnip_snippet_list li div input.short {
-						width: 50%;
-					}
-					ol.cfsnip_snippet_list li span.cfsnip-name-notice {
-						color: gray;
-						font-size: .9em;
-					}
-					ol.cfsnip_snippet_list li .cfsnip_remove_snippet {
-						margin: 6px 8% 0 0;
-						float: right;
-						width: auto;
-					}
-					ol.cfsnip_snippet_list li .cfsnip_remove_snippet:hover {
-						color:#f77;
-						cursor:pointer;
-					}
-					ol.cfsnip_snippet_list li .cfsnip_empty_input {
-						color:#999;
-					}
-					#cfsnip_add_snippet {
-						cursor:pointer;
-					}
-					#cfsnip_add_snippet:hover {
-						color:#d54e21;
-					}
-				';
+				include_once('css/cf-snippets-admin.css'); // wholesale include of style file
 				exit;
 			case 'css_published':
 			header("Content-type: text/css");
-			print('
-			');
+				# include_once('css/cf-snippets.css');
 			die();
 			case 'dialog':
 				cfsnip_dialog();
@@ -305,17 +239,13 @@ jQuery(document).ready(function() {
 }
 add_action('init', 'cfsnip_request_handler');
 
-function cfsnip_css_published() {
-	print('<link rel="stylesheet" href="'.get_bloginfo('url').'/index.php?cfsnip_action=css_published" type="text/css" media="screen" />');
+if (is_admin()) { // Add admin-side scripts and styles
+	wp_enqueue_style('cfsnip-admin-css',get_bloginfo('url').'/index.php?cfsnip_action=css_admin',array(),'1.0','screen');
+	wp_enqueue_script('cfsnip-admin-js',get_bloginfo('url').'/index.php?cfsnip_action=admin_js',array('jquery'),'1.0');
 }
-//add_action('wp_head', 'cfsnip_css_published', 10);
-
-function cfsnip_admin_head() {
-	$plugin_path = get_bloginfo('wpurl').'/'.PLUGINDIR;
-	print('<link rel="stylesheet" href="'.get_bloginfo('url').'/index.php?cfsnip_action=css_admin" type="text/css" media="screen" />');
-	print('<script type="text/javascript" src="'.get_bloginfo('wpurl').'/index.php?cfsnip_action=admin_js"></script>');
-}
-add_action('admin_head', 'cfsnip_admin_head', 10);
+/* else { // Add client-side scripts and styles
+	wp_enqueue_style('cfsnip-admin-css',get_bloginfo('url').'/index.php?cfsnip_action=css_published',array(),'1.0','screen');
+} */
 
 function cfsnip_menu_items() {
 	if (current_user_can('manage_options')) {
@@ -335,34 +265,32 @@ function cfsnip_options_form() {
 	echo '
 		<div class="wrap">
 			<h2>Snippets</h2>
-			<p><a href="#snippet-instructions" class="show-hide" rel="Instructions">Show Instructions</a> &nbsp;|&nbsp; <a href="'.get_bloginfo('url').'/wp-admin/widgets.php">'.__('Edit Widgets').'</a></p>
+			<p><a href="#snippet-instructions" class="show-hide" rel="Instructions">Show Instructions</a> &nbsp;|&nbsp; <a href="'.get_bloginfo('url').'/wp-admin/widgets.php">'.__('Edit Widgets &raquo;').'</a></p>
 			<div id="snippet-instructions" style="display: none;">
 				<p>Paste in HTML content for a snippet and give it a name. The name will be automatically "sanitized:" lowercased and all spaces converted to dashes.</p>
 				<p>To insert a snippet in your template, type <code>&lt;?php cfsnip_snippet(\'my-snippet-name\'); ?></code><br /> Use the shortcode syntax: <code>[cfsnip name="my-snippet-name"]</code> in post or page content to insert your snippet there.</p>
 				<p>Or use snippet widgets wherever widgets can be used.</p>
 				<p>To access files in your current theme template directory <em>from within a snippet</em>, type <code>{cfsnip_template_url}</code>. That will be replaced with, for example, <code>http://example.com/wordpress/wp-content/themes/mytheme/</code>.</p>
 			</div>
-			<hr />
+
 			<form action="" method="post">
-				<ol style="display:none;">
-					<li id="cfsnip_snippet_item_prototype">
-						<span class="cfsnip_number">_n_</span>
-						<div>
-							<input type="button" class="cfsnip_remove_snippet button cancel" value="Cancel" />
-							<label for="cfsnip_name_n">Name/slug</label>
-							<input class="cfsnip_empty_input short" id="cfsnip_name__n_" name="cfsnip_name__n_" type="text" value="Name" />
-						</div>
-						<div>
-							<label for="cfsnip_description_n">Description</label>
-							<input class="cfsnip_empty_input" id="cfsnip_description__n_" name="cfsnip_description__n_" type="text" value="Description" />
-						</div>
-						<div>
-							<label for="cfsnip_content_n">Snippet</label>
-							<textarea class="cfsnip_empty_input" rows="8" cols="50" id="cfsnip_content__n_" name="cfsnip_content__n_" >Content</textarea>
-						</div>
+				<ol class="metabox-holder" style="display:none;">
+					<li id="cfsnip_snippet_item_prototype" class="postbox">
+						<h3 class="hndle"><span><input type="button" class="cfsnip_remove_snippet button cancel" value="Cancel" /> <input class="cfsnip_empty_input cfsnip-name" id="cfsnip_name__n_" name="cfsnip_name__n_" type="text" value="Name/Slug" /></span></h3>
+
+						<table class="form-table" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<th><label for="cfsnip_description_n">Description</label></th>
+								<td><input class="cfsnip_empty_input" id="cfsnip_description__n_" name="cfsnip_description__n_" type="text" value="Description" /></td>
+							</tr>
+							<tr>
+								<th><label for="cfsnip_content_n">Snippet</label></th>
+								<td><textarea class="cfsnip_empty_input" rows="8" cols="50" id="cfsnip_content__n_" name="cfsnip_content__n_" >Content</textarea></td>
+							</tr>
+						</table>
 					</li>
 				</ol>
-				<ol class="cfsnip_snippet_list">
+				<ol class="cfsnip_snippet_list metabox-holder">
 	';
 	$snippets = cfsnip_get_snippets();
 
@@ -371,21 +299,19 @@ function cfsnip_options_form() {
 	foreach ($snippets as $key => $snippet) {
 		$zebra_class = ($n % 2 ? ' odd' : '');
 		echo '
-					<li id="cfsnip_snippet_item_'.$n.'" class="cfsnip_snippet_item'.$zebra_class.'">
-						<span class="cfsnip_number">'.($n + 1).'</span>
-						<div>
-							<input type="button" class="cfsnip_remove_snippet button" value="Delete" />
-							<label for="cfsnip_name_'.$id.'">Name/slug</label>
-							<input '.$snip_class.' id="cfsnip_name_'.$n.'" class="cfsnip-name" name="cfsnip_name_'.$n.'" type="text" value="'.$key.'" readonly="readonly" /> &nbsp; <span class="cfsnip-name-notice">(cannot be changed)</span>
-						</div>
-						<div>
-							<label for="cfsnip_description_'.$n.'">Description</label>
-							<input '.$snip_class.'  id="cfsnip_description_'.$n.'" name="cfsnip_description_'.$n.'" type="text" value="'.stripslashes($snippet['description']).'" />
-						</div>
-						<div>
-							<label for="cfsnip_content_'.$n.'">Snippet</label>
-							<textarea  '.$snip_class.' rows="8" cols="50" id="cfsnip_content_'.$n.'" name="cfsnip_content_'.$n.'" >'.htmlspecialchars(stripslashes($snippet['content'])).'</textarea>
-						</div>
+					<li id="cfsnip_snippet_item_'.$n.'" class="cfsnip_snippet_item postbox'.$zebra_class.'">
+						<h3 class="hndle"><span><input type="button" class="cfsnip_remove_snippet button" value="Delete" />'.$key.'</span></h3>
+						<input '.$snip_class.' id="cfsnip_name_'.$n.'" class="cfsnip-name" name="cfsnip_name_'.$n.'" type="hidden" value="'.$key.'" />
+						<table class="form-table" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<th><label for="cfsnip_description_n">Description</label></th>
+								<td><input '.$snip_class.'  id="cfsnip_description_'.$n.'" name="cfsnip_description_'.$n.'" type="text" value="'.stripslashes($snippet['description']).'" /></td>
+							</tr>
+							<tr>
+								<th><label for="cfsnip_content_n">Snippet</label></th>
+								<td><textarea  '.$snip_class.' rows="8" cols="50" id="cfsnip_content_'.$n.'" name="cfsnip_content_'.$n.'" >'.htmlspecialchars(stripslashes($snippet['content'])).'</textarea></td>
+							</tr>
+						</table>
 					</li>
 		';
 		$n++;
@@ -395,8 +321,7 @@ function cfsnip_options_form() {
 				<div class="clear"></div>
 				<p class="submit">
 					<input type="hidden" name="cfsnip_action" value="update_settings" />
-					<input type="submit" name="submit" class="button-primary" value="Update CF Snippets" /> &nbsp; | &nbsp;
-					<input type="button" id="cfsnip_add_snippet" class="button" value="Add Snippet" />
+					<input type="button" id="cfsnip_add_snippet" class="button" value="Create New Snippet" /> &nbsp; | &nbsp; <input type="submit" name="submit" class="button-primary" value="Save All Changes" />
 				</p>
 			</form>			
 		</div>
