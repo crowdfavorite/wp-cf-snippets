@@ -194,7 +194,7 @@ jQuery(document).ready(function() {
 			jQuery('.cfsnip_remove_snippet', item).click(function() {
 				if(!jQuery(this).hasClass('cancel')) {
 					// confirm removal of existing snippets
-					if(!confirm('Are you sure you want to delete this snippet?')) {
+					if(!confirm('Are you sure you want to delete this snippet?\nThis can\'t be undone.')) {
 						return false;
 					}
 				}
