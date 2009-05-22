@@ -159,7 +159,7 @@ jQuery(document).ready(function() {
 		var itemHTML = jQuery('#cfsnip_snippet_item_prototype').html().replace(/_n_/g, idNum);
 		var nCurrentSnippets = jQuery('ol.cfsnip_snippet_list li').size();
 		var zebraClass = (nCurrentSnippets % 2 ? ' odd' : '');
-		jQuery('ol.cfsnip_snippet_list').append('<li class="cfsnip_empty_input postbox' + zebraClass + '" id="cfsnip_snippet_item_' + idNum + '" style="display:none;">' + itemHTML + '</li>');
+		jQuery('ol.cfsnip_snippet_list').append('<li class="cfsnip-new-snippet postbox' + zebraClass + '" id="cfsnip_snippet_item_' + idNum + '" style="display:none;">' + itemHTML + '</li>');
 		cfsnip_addItemBehaviors(
 			jQuery('#cfsnip_snippet_item_' + idNum).slideDown('fast')
 		);
@@ -194,13 +194,13 @@ jQuery(document).ready(function() {
 			jQuery('.cfsnip_remove_snippet', item).click(function() {
 				if(!jQuery(this).hasClass('cancel')) {
 					// confirm removal of existing snippets
-					if(!confirm('Are you sure you want to delete this snippet?\nThis can\'t be undone.')) {
+					if(!confirm('Are you sure you want to delete this snippet?\nYou will need to save before this takes effect.')) {
 						return false;
 					}
 				}
 				item.slideUp('fast',function(){
 					item.remove();
-					// note that we don't need to bother renumbering ids, etc.					
+					// note that we don't need to bother renumbering ids, etc.
 					cfsnip_renumberItemDisplay();
 				});
 				

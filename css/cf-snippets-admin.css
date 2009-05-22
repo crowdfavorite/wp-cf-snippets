@@ -9,9 +9,12 @@ ol.cfsnip_snippet_list li.postbox {
 	-khtml-border-radius:6px;
 	border-radius:6px;
 	margin-bottom: 10px;
-	position:relative;
 	width:auto;
-	zoom:1; /* For IE */
+}
+
+ol.cfsnip_snippet_list li.postbox .hndle {
+	position:relative;
+	zoom:1;
 }
 
 ol.cfsnip_snippet_list .form-table th {
@@ -28,27 +31,10 @@ ol.cfsnip_snippet_list li .cfsnip_empty_input { /* placeholder text */
 	color:#999;
 }
 
-/* =New Snippet form
-========================= */
-
-.hndle input.cfsnip-name {
-	width:200px;
-}
-.hndle span {
-	line-height:29px;
-}
-
 /* =Buttons
 ========================= */
 
-/*ol.cfsnip_snippet_list li .cfsnip_remove_snippet {
-	position:absolute;
-	right:0;
-	top:0;
-	margin:12px;
-	width:auto;
-}*/
-ol.cfsnip_snippet_list li .cfsnip_remove_snippet {
+ol.cfsnip_snippet_list .cfsnip_remove_snippet {
 	background:#ccc;
 	border:1px solid #aaa;
 	border-color:#aaa #bbb #c5c5c5;
@@ -56,10 +42,12 @@ ol.cfsnip_snippet_list li .cfsnip_remove_snippet {
 	-webkit-border-radius:6px;
 	-khtml-border-radius:6px;
 	border-radius:6px;
-	float:right;
 	line-height:1;
-	margin:5px 0;
+	margin:4px;
 	padding:2px 4px;
+	position:absolute;
+	right:0;
+	top:0;
 }
 
 #cfsnip_add_snippet {
@@ -67,6 +55,24 @@ ol.cfsnip_snippet_list li .cfsnip_remove_snippet {
 }
 #cfsnip_add_snippet:hover {
 	color:#d54e21;
+}
+
+/* =New Snippet form
+========================= */
+
+ol.cfsnip_snippet_list li.cfsnip-new-snippet {
+	background:#ffffe9;
+}
+
+.cfsnip-new-snippet .hndle input.cfsnip-name {
+	width:200px;
+}
+.cfsnip-new-snippet .hndle span {
+	line-height:29px;
+}
+
+ol.cfsnip_snippet_list .cfsnip-new-snippet .cfsnip_remove_snippet {
+	margin:12px 4px;
 }
 
 /* =Help
