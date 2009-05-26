@@ -88,7 +88,7 @@ function cfsnip_get_snippet($snippet_name,$default_value=false,$create_snippet_i
 
 function cfsnip_get_snippet_content($snippet_name,$default_value=false,$create_snippet_if_not_exists=true) {
 	$snippet = cfsnip_get_snippet($snippet_name,$default_value,$create_snippet_if_not_exists);
-	return str_replace('{cfsnip_template_url}', get_bloginfo('template_url'), stripslashes($snippet['content']));
+	return do_shortcode(str_replace('{cfsnip_template_url}', get_bloginfo('template_url'), stripslashes($snippet['content'])));
 }
 
 function cfsnip_snippet_content($snippet_name,$default_value=false,$create_snippet_if_not_exists=true) {
