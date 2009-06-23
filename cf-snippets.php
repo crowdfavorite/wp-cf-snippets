@@ -79,7 +79,12 @@ function cfsnip_get_snippet($snippet_name,$default_value=false,$create_snippet_i
 			'description' => ucwords(str_replace(array('-','_'),' ',$snippet_name))
 		);
 		if($create_snippet_if_not_exists) {
-			update_option('cfsnip_snippets', $snippets);
+			if (!get_option('cfsnip_snippets')) {
+				add_option('cfsnip_snippets', $snippets, false, 'no');
+			}
+			else {
+				update_option('cfsnip_snippets',$snippets);
+			}
 			cfsnip_get_snippets(true);	
 		}
 	}
@@ -112,7 +117,12 @@ function cfsnip_request_handler() {
 					);
 				}
 			}
-			update_option('cfsnip_snippets', $snippets);
+			if (!get_option('cfsnip_snippets')) {
+				add_option('cfsnip_snippets', $snippets, false, 'no');
+			}
+			else {
+				update_option('cfsnip_snippets',$snippets);
+			}
 			$blogurl = '';
 			if (is_ssl()) {
 				$blogurl = str_replace('http://','https://',get_bloginfo('wpurl'));
