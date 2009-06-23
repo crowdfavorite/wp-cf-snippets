@@ -239,7 +239,7 @@ jQuery(document).ready(function() {
 }
 add_action('init', 'cfsnip_request_handler');
 
-if (is_admin()) { // Add admin-side scripts and styles
+if (isset($_GET['page']) && $_GET['page'] == basename(__FILE__)) {
 	wp_enqueue_style('cfsnip-admin-css',get_bloginfo('url').'/index.php?cfsnip_action=css_admin',array(),'1.0','screen');
 	wp_enqueue_script('cfsnip-admin-js',get_bloginfo('url').'/index.php?cfsnip_action=admin_js',array('jquery'),'1.0');
 }
