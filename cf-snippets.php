@@ -55,15 +55,8 @@ if (!function_exists('wp_prototype_before_jquery')) {
     add_filter( 'print_scripts_array', 'wp_prototype_before_jquery' );
 }
 
-$cfsnip_snippets = array();
-$cfsnip_snippets_fetched = false;
-function cfsnip_get_snippets($force_refresh=false) {
-	global $cfsnip_snippets, $cfsnip_snippets_fetched;
-	if (!$cfsnip_snippets_fetched || $force_refresh) {
-		$cfsnip_snippets = get_option('cfsnip_snippets');
-		$cfsnip_snippets_fetched = true;
-	}
-	if (!$cfsnip_snippets) $cfsnip_snippets = array();
+function cfsnip_get_snippets() {
+	$cfsnip_snippets = get_option('cfsnip_snippets');
 	return $cfsnip_snippets;
 }
 
