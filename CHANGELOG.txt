@@ -1,5 +1,9 @@
 # CF Snippets Changelog
 
+## 1.2.2
+
+- Removed pseudo caching of the snippets.  Issue found when trying to do a switch to blog to get another blogs snippets and there was no easy way to force refresh
+
 ## 1.2
 
 - added functionality to define default text for a snippet via the template tag and automatically create the snippet if it doesn't exist
