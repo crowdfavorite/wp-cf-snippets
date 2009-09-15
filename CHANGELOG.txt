@@ -1,5 +1,10 @@
 # CF Snippets Changelog
 
+## 1.2.3
+
+- Bug fixes
+- Fixed the shortcode handler so it got the snippet content from a central function that handles other items easier
+
 ## 1.2.2
 
 - Removed pseudo caching of the snippets.  Issue found when trying to do a switch to blog to get another blogs snippets and there was no easy way to force refresh
