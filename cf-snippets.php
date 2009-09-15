@@ -299,25 +299,27 @@ function cfsnip_options_form() {
 
 	$n = 0;
 	$snip_class = '';
-	foreach ($snippets as $key => $snippet) {
-		$zebra_class = ($n % 2 ? ' odd' : '');
-		echo '
-					<li id="cfsnip_snippet_item_'.$n.'" class="cfsnip_snippet_item postbox'.$zebra_class.'">
-						<h3 class="hndle"><span><input type="button" class="cfsnip_remove_snippet button" value="Delete" />'.$key.'</span></h3>
-						<input '.$snip_class.' id="cfsnip_name_'.$n.'" class="cfsnip-name" name="cfsnip_name_'.$n.'" type="hidden" value="'.$key.'" />
-						<table class="form-table" border="0" cellspacing="0" cellpadding="0">
-							<tr>
-								<th><label for="cfsnip_description_n">Description</label></th>
-								<td><input '.$snip_class.'  id="cfsnip_description_'.$n.'" name="cfsnip_description_'.$n.'" type="text" value="'.stripslashes($snippet['description']).'" /></td>
-							</tr>
-							<tr>
-								<th><label for="cfsnip_content_n">Snippet</label></th>
-								<td><textarea  '.$snip_class.' rows="8" cols="50" id="cfsnip_content_'.$n.'" name="cfsnip_content_'.$n.'" >'.htmlspecialchars(stripslashes($snippet['content'])).'</textarea></td>
-							</tr>
-						</table>
-					</li>
-		';
-		$n++;
+	if (is_array($snippets) && !empty($snippets)) {
+		foreach ($snippets as $key => $snippet) {
+			$zebra_class = ($n % 2 ? ' odd' : '');
+			echo '
+						<li id="cfsnip_snippet_item_'.$n.'" class="cfsnip_snippet_item postbox'.$zebra_class.'">
+							<h3 class="hndle"><span><input type="button" class="cfsnip_remove_snippet button" value="Delete" />'.$key.'</span></h3>
+							<input '.$snip_class.' id="cfsnip_name_'.$n.'" class="cfsnip-name" name="cfsnip_name_'.$n.'" type="hidden" value="'.$key.'" />
+							<table class="form-table" border="0" cellspacing="0" cellpadding="0">
+								<tr>
+									<th><label for="cfsnip_description_n">Description</label></th>
+									<td><input '.$snip_class.'  id="cfsnip_description_'.$n.'" name="cfsnip_description_'.$n.'" type="text" value="'.stripslashes($snippet['description']).'" /></td>
+								</tr>
+								<tr>
+									<th><label for="cfsnip_content_n">Snippet</label></th>
+									<td><textarea  '.$snip_class.' rows="8" cols="50" id="cfsnip_content_'.$n.'" name="cfsnip_content_'.$n.'" >'.htmlspecialchars(stripslashes($snippet['content'])).'</textarea></td>
+								</tr>
+							</table>
+						</li>
+			';
+			$n++;
+		}
 	}
 	echo '
 				</ol>
@@ -333,8 +335,7 @@ function cfsnip_options_form() {
 
 function cfsnip_handle_shortcode($attrs, $content=null) {
 	if (is_array($attrs) && isset($attrs['name'])) {
-		$snippets = cfsnip_get_snippets();		
-		return do_shortcode(stripslashes($snippets[$attrs['name']]['content']));
+		return do_shortcode(cfsnip_get_snippet_content($attrs['name'],false,false));
 	}
 	return '';
 }
