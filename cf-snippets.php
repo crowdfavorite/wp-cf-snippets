@@ -499,6 +499,81 @@ function cfsnip_widgets_register() {
 // This is important
 add_action( 'widgets_init', 'cfsnip_widgets_register' );
 
+
+/**
+ * new WordPress Widget format
+ * Wordpress 2.8 and above
+ * @see http://codex.wordpress.org/Widgets_API#Developing_Widgets
+ */
+class cfsnip_Widget extends WP_Widget {
+	function cfsnip_Widget() {
+		$widget_ops = array( 'classname' => 'cfsnip-widget', 'description' => 'Widget for displaying selected CF Snippets (new version)' );
+		$this->WP_Widget( 'cfsnip-widget', 'CF Snippets', $widget_ops );
+	}
+
+	function widget( $args, $instance ) {
+		extract( $args, EXTR_SKIP );
+		$title = esc_attr( $instance['title'] );
+		$content = cfsnip_get_snippet_content($instance['list_key']);
+		
+		if (empty($content)) { return; }
+		echo $before_widget;
+		if (!empty($title)) {
+			echo $before_title . $title . $after_title;
+		}
+		echo $content;
+		echo $after_widget;
+	}
+
+	function update($new_instance, $old_instance) {
+		$instance = $old_instance;
+		$instance['title'] = strip_tags($new_instance['title']);
+		$instance['list_key'] = strip_tags($new_instance['list_key']);
+		return $instance;
+	}
+
+	function form($instance) {
+		$instance = wp_parse_args((array) $instance, array('title' => '', 'list_key' => ''));
+
+		$title = esc_attr( $instance['title'] );
+		$snippets = cfsnip_get_snippets();
+		$snippet_select = '';
+		if (is_array($snippets) && !empty($snippets)) {
+			foreach ($snippets as $key => $snippet) {
+				$snippet_select .= '<option value="'.$key.'"'.selected($instance['list_key'], $key, false).'>'.$snippet['description'].'</option>';
+			}
+		}
+		if (!empty($snippet_select)) {
+			?>
+			<p>
+				<label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:', 'cfsnip'); ?></label>
+				<input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo $title; ?>" />
+			</p>
+			<p>
+				<label for="<?php echo $this->get_field_id('list_key'); ?>"><?php _e('Snippet: ', 'cfsnip'); ?></label>
+				<select id="<?php echo $this->get_field_id('list_key'); ?>" name="<?php echo $this->get_field_name('list_key'); ?>" class="widefat">
+					<option value="0">--Select Snippet--</option>
+					<?php echo $snippet_select; ?>
+				</select>
+			</p>
+			<p>
+				<a href="<?php bloginfo('wpurl') ?>/wp-admin/options-general.php?page=cf-snippets.php"><?php _e('Edit Snippets','cfsnip') ?></a>
+			</p>
+			<?php
+		}
+		else {
+			?>
+			<p>
+				<?php _e('No Snippets have been setup.  Please <a href="'.get_bloginfo('wpurl').'/wp-admin/options-general.php?page=cf-snippets.php">setup a snippet</a> before proceeding.', 'cfsnip'); ?>
+			</p>
+			<?php
+		}
+	}}
+
+add_action( 'widgets_init', create_function( '', "register_widget('cfsnip_Widget');" ) );
+
+
+
 function cfsnip_dialog() {
 ?>
 <script type='text/javascript' src='<?php print(get_bloginfo('url')); ?>/wp-includes/js/quicktags.js'></script>
