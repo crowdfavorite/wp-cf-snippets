@@ -147,8 +147,8 @@ function cfsp_options() {
 	?>
 	<div class="wrap">
 		<?php echo screen_icon().'<h2>CF Snippets</h2>'; ?>
-		<p><a href="#instructions" class="show-hide"><?php _e('Show Instructions', 'cfsp'); ?></a> &nbsp;|&nbsp; <a href="'.get_bloginfo('wpurl').'/wp-admin/widgets.php"><?php _e('Edit Widgets &raquo;', 'cfsp'); ?></a></p>
-		<div id="instructions" style="">
+		<p><a href="#" rel="cfsp-instructions" class="cfsp-instructions"><?php _e('Show Instructions', 'cfsp'); ?></a> &nbsp;|&nbsp; <a href="<?php bloginfo('wpurl'); ?>/wp-admin/widgets.php"><?php _e('Edit Widgets &raquo;', 'cfsp'); ?></a></p>
+		<div id="cfsp-instructions" style="display:none;">
 			<p><?php _e('Paste in HTML content for a snippet and give it a name. The name will be automatically "sanitized:" lowercased and all spaces converted to dashes.', 'cfsp'); ?></p>
 			<p><?php _e('To insert a snippet in your template, type <code>&lt;?php cfsp_content(\'my-snippet-name\'); ?></code><br /> Use the shortcode syntax: <code>[cfsp name="my-snippet-name"]</code> in post or page content to insert your snippet there.', 'cfsp'); ?></p>
 			<p><?php _e('Or use snippet widgets wherever widgets can be used.', 'cfsp'); ?></p>

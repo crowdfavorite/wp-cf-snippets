@@ -23,7 +23,12 @@
 		$('.cfsp-tags-showhide a').click(function() {
 			$("#"+$(this).attr('rel')).slideToggle();
 			return false;
-		});	
+		});
+		
+		$('.cfsp-instructions').click(function() {
+			$("#"+$(this).attr('rel')).slideToggle();
+			return false;
+		});
 
 		cfsp_delete_snippet = function(id) {
 			$.post("index.php", {
