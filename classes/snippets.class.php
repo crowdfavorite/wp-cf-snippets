@@ -11,11 +11,20 @@ class CF_Snippet {
 		}
 	}
 	
+	## Display Functions
+	
+	/**
+	 * This function gets a specific key and will create one with data passed in if the key does not exist
+	 *
+	 * @param string $key - Key to get
+	 * @param string $default - Data to use for the content if the key does not exist
+	 * @return void - Content for the key passed in
+	 */
 	public function get($key, $default = '') {
 		$snippets = get_option('cfsnip_snippets');
 		
 		if (!empty($snippets[$key]['content'])) {
-			return do_shortcode(apply_filters('cfsp-get-content', stripslashes($snippets[$key]['content'])));
+			return do_shortcode(apply_filters('cfsp-get-content', stripslashes($snippets[$key]['content'], $key)));
 		}
 		else if (!empty($default)) {
 			$description = ucwords(str_replace(array('-','_'), ' ', $key));
@@ -24,21 +33,54 @@ class CF_Snippet {
 		}
 	}
 	
-	public function save($key, $content, $description) {
+	/**
+	 * This function gets all of the keys available and passes them back as an array
+	 *
+	 * @return array - Array of keys
+	 */
+	public function get_keys() {
 		$snippets = get_option('cfsnip_snippets');
-		$key = sanitize_title($key);
-		$snippets[$key]['content'] = $content;
-		$snippets[$key]['description'] = $description;
-		update_option('cfsnip_snippets', $snippets);
+		$keys = array();
+		if (is_array($snippets) && !empty($snippets)) {
+			foreach ($snippets as $key => $content) {
+				$keys[] = $key;
+			}
+		}
+		return $keys;
 	}
-
-	public function remove($key) {
+	
+	/**
+	 * This function gets all of the data and returns it
+	 *
+	 * @return array - Array of content
+	 */
+	public function get_all() {
+		return get_option('cfsnip_snippets');
+	}
+	
+	/**
+	 * This function checks to see if a specific key exists, and returns true if it does and false if it doesn't
+	 *
+	 * @param string $key - Key to search for
+	 * @return bool - Result of wether the key exists or not
+	 */
+	public function exists($key) {
 		$snippets = get_option('cfsnip_snippets');
-		$key = sanitize_title($key);
-		unset($snippets[$key]);
-		update_option('cfsnip_snippets', $snippets);
+		if (is_array($snippets) && !empty($snippets) && array_key_exists($key, $snippets)) {
+			return true;
+		}
+		return false;
 	}
+	
 
+	## Admin Display Functions
+	
+	/**
+	 * This function builds a display to edit the content with the specified key
+	 *
+	 * @param string $key - Key to edit
+	 * @return void
+	 */
 	public function edit($key) {
 		if (!$this->exists($key)) { return ''; }
 
@@ -70,6 +112,11 @@ class CF_Snippet {
 		return $html;
 	}
 	
+	/**
+	 * This function builds a display to add a new item
+	 *
+	 * @return void
+	 */
 	public function add_display() {
 		$html = '
 		<div class="cfsp">
@@ -98,24 +145,12 @@ class CF_Snippet {
 		return $html;
 	}
 	
-	public function add($data) {
-		if (!is_array($data) || empty($data) || empty($data['key'])) { return false; }
-		
-		$key = $this->check_key(stripslashes($data['key']));
-		$description = stripslashes($data['description']);
-		$content = stripslashes($data['content']);
-		
-		$snippets = get_option('cfsnip_snippets');
-		$snippets[$key]['content'] = $content;
-		$snippets[$key]['description'] = $description;
-		update_option('cfsnip_snippets', $snippets);
-	}
-	
-	public function check_key($key, $i = 0) {
-		if (!$this->exists($key)) { return $key; }
-		return $this->check_key($key.'-'.$i, $i++);
-	}
-	
+	/**
+	 * This function display basic information about the key passed in.  Including the Key and description, along with edit, preview and delete buttons
+	 *
+	 * @param string $key - Key to display
+	 * @return void
+	 */
 	public function admin_display($key) {
 		if (!$this->exists($key)) { return ''; }
 
@@ -140,28 +175,84 @@ class CF_Snippet {
 		return $html;
 	}
 	
-	public function get_keys() {
+	
+	## Database Interaction Functions
+	
+	/**
+	 * This function takes a key, content and description and adds them to the database.  The key is checked to make
+	 * sure that another key doesn't exists with the same value, and updates it if it does
+	 *
+	 * @param string $key - Key to save
+	 * @param string $content - Content to save
+	 * @param string $description - Description to save
+	 * @return void
+	 */
+	public function add($key, $content, $description) {
+		if (!is_array($data) || empty($data) || empty($data['key'])) { return false; }
+		
+		$key = $this->check_key(stripslashes($data['key']));
+		$description = stripslashes($data['description']);
+		$content = stripslashes($data['content']);
+		
 		$snippets = get_option('cfsnip_snippets');
-		$keys = array();
-		if (is_array($snippets) && !empty($snippets)) {
-			foreach ($snippets as $key => $content) {
-				$keys[] = $key;
-			}
-		}
-		return $keys;
+		$snippets[$key]['content'] = $content;
+		$snippets[$key]['description'] = $description;
+		update_option('cfsnip_snippets', $snippets);
 	}
 	
-	public function exists($key) {
+	/**
+	 * This function takes a key, content and description and saves them to the database
+	 *
+	 * @param string $key - Key to update
+	 * @param string $content - Content to update
+	 * @param string $description - Description to update
+	 * @return void
+	 */
+	public function save($key, $content, $description) {
 		$snippets = get_option('cfsnip_snippets');
-		if (is_array($snippets) && !empty($snippets) && array_key_exists($key, $snippets)) {
-			return true;
-		}
-		return false;
+		$key = sanitize_title($key);
+		$snippets[$key]['content'] = $content;
+		$snippets[$key]['description'] = $description;
+		update_option('cfsnip_snippets', $snippets);
 	}
 	
+	/**
+	 * This function takes a key, and removes that key from the database
+	 *
+	 * @param string $key - Key to remove
+	 * @return void
+	 */
+	public function remove($key) {
+		$snippets = get_option('cfsnip_snippets');
+		$key = sanitize_title($key);
+		unset($snippets[$key]);
+		update_option('cfsnip_snippets', $snippets);
+	}
+	
+
+	## Auxiliary Functions
+	
+	/**
+	 * This function checks to see if a key exists, and increments the value if it does and returns
+	 *
+	 * @param string $key - Key to check
+	 * @param string $i - Increment value currently at
+	 * @return string - Updated key value of a non-conflicting key
+	 */
+	public function check_key($key, $i = 0) {
+		if (!$this->exists($key)) { return $key; }
+		return $this->check_key($key.'-'.$i, $i++);
+	}
+	
+	/**
+	 * This function adds the DB option with an empty array and an autoload value of no so it doesn't get auto loaded every time
+	 *
+	 * @return void
+	 */
 	public function install() {
 		add_option('cfsnip_snippets', array(), '', 'no');
 	}
+
 }
 
 ?>
