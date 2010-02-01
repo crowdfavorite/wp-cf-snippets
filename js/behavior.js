@@ -18,7 +18,12 @@
 
 		$('.cfsp-delete-button').live('click', function() {
 			cfsp_ajax_delete_button($(this).attr('id').replace('-delete-button', ''));
-		});				
+		});
+		
+		$('.cfsp-tags-showhide a').click(function() {
+			$("#"+$(this).attr('rel')).slideToggle();
+			return false;
+		});	
 
 		cfsp_delete_snippet = function(id) {
 			$.post("index.php", {
@@ -26,7 +31,6 @@
 				cfsp_key:id,
 				cfsp_delete_confirm:"yes"
 			}, function(r) {
-				cfsp_popup(r, 500);
 			});
 			$("#cfsp-"+id).remove();
 			return false;

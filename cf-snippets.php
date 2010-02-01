@@ -2,7 +2,7 @@
 /*
 Plugin Name: CF Snippets
 Plugin URI: http://crowdfavorite.com
-Description: ::TODO::
+Description: Lets admins define html snippets for use in template, content, or widgets.
 Version: 2.0
 Author: Crowd Favorite
 Author URI: http://crowdfavorite.com
@@ -12,7 +12,8 @@ Author URI: http://crowdfavorite.com
 
 // Constants
 define('CFSP_VERSION', '2.0');
-define('CFSP_DIR',trailingslashit(realpath(dirname(__FILE__))));
+define('CFSP_DIR', trailingslashit(realpath(dirname(__FILE__))));
+define('CFSP_DIR_URL', trailingslashit(get_bloginfo('wpurl')).trailingslashit(PLUGINDIR).trailingslashit(basename(dirname(__FILE__))));
 
 // Includes
 include('classes/snippets.class.php');
@@ -43,6 +44,10 @@ function cfsp_request_handler() {
 				}
 				die();
 				break;
+			case 'cfsp-dialog':
+				cfsnip_dialog();
+				die();
+				break;
 		}
 	}
 	if (!empty($_POST['cf_action'])) {
@@ -52,7 +57,7 @@ function cfsp_request_handler() {
 				die();
 				break;
 			case 'cfsp_new_add':
-				if (!empty($_POST['cfsp_key'])) {
+				if (!empty($_POST['cfsp_key']) || !empty($_POST['cfsp_description'])) {
 					cfsp_add_new($_POST['cfsp_key'], $_POST['cfsp_description'], $_POST['cfsp_content']);
 				}
 				die();
@@ -142,6 +147,14 @@ function cfsp_options() {
 	?>
 	<div class="wrap">
 		<?php echo screen_icon().'<h2>CF Snippets</h2>'; ?>
+		<p><a href="#instructions" class="show-hide"><?php _e('Show Instructions', 'cfsp'); ?></a> &nbsp;|&nbsp; <a href="'.get_bloginfo('wpurl').'/wp-admin/widgets.php"><?php _e('Edit Widgets &raquo;', 'cfsp'); ?></a></p>
+		<div id="instructions" style="">
+			<p><?php _e('Paste in HTML content for a snippet and give it a name. The name will be automatically "sanitized:" lowercased and all spaces converted to dashes.', 'cfsp'); ?></p>
+			<p><?php _e('To insert a snippet in your template, type <code>&lt;?php cfsp_content(\'my-snippet-name\'); ?></code><br /> Use the shortcode syntax: <code>[cfsp name="my-snippet-name"]</code> in post or page content to insert your snippet there.', 'cfsp'); ?></p>
+			<p><?php _e('Or use snippet widgets wherever widgets can be used.', 'cfsp'); ?></p>
+			<p><?php _e('To access files in your current theme template directory <em>from within a snippet</em>, type <code>{cfsp_template_url}</code>. That will be replaced with, for example, <code>http://example.com/wordpress/wp-content/themes/mytheme/</code>.', 'cfsp'); ?></p>
+		</div>
+		
 		<?php
 		$keys = $cf_snippet->get_keys();
 		if (is_array($keys) && !empty($keys)) {
@@ -294,21 +307,6 @@ function cfsp_ajax_delete($key, $confirm = false) {
 		// If the delete has been confirmed, remove the key and return
 		if ($confirm) { 
 			$cf_snippet->remove($key); 
-			?>
-			<div id="cfsp-popup" class="cfsp-popup">
-				<div class="cfsp-popup-head">
-					<span class="cfsp-popup-close">
-						<a href="#close">Close</a>
-					</span>
-					<h2>Snippet "<?php echo $key; ?>" Deleted</h2>
-				</div>
-				<div class="cfsp-popup-content" style="overflow:auto; max-height:500px;">
-					<p>
-						<input type="button" class="button cfsp-popup-cancel" value="Close" />
-					</p>
-				</div>
-			</div>
-			<?php
 		}
 		else {
 			?>
@@ -352,9 +350,14 @@ function cfsp_ajax_delete($key, $confirm = false) {
 	die();
 }
 
-function cfsp_add_new($key, $description = '', $content = '') {
-	if (empty($key)) { return false; }
-	
+function cfsp_add_new($key = '', $description = '', $content = '') {
+	if (empty($key)) {
+		$key = $description;
+		if (strlen($key) > 20) {
+			$key = substr($key, 0, 20);
+		}
+		$key = sanitize_title($key);
+	}
 	global $cf_snippet;
 	if (class_exists('CF_Snippet') && !is_a('CF_Snippet', $cf_snippet)) {
 		$cf_snippet = new CF_Snippet();
@@ -362,16 +365,10 @@ function cfsp_add_new($key, $description = '', $content = '') {
 
 	// Make sure the key is a valid key
 	$key = sanitize_title($key);
-
-	$data = array(
-		'key' => $key,
-		'description' => $description,
-		'content' => $content
-	);
-	$cf_snippet->add($data);
 	
+	$new_key = $cf_snippet->add($key, $content, $description);
 	// Now that we have inserted, get the row to insert into the table
-	echo $cf_snippet->admin_display($key);
+	echo $cf_snippet->admin_display($new_key);
 }
 
 function cfsp_save($key, $description = '', $content = '') {
@@ -401,6 +398,258 @@ function cfsp_iframe_preview($key) {
 
 ## Display Functionality
 
+function cfsp_content($key, $default = false, $create = true) {
+	echo cfsp_get_content($key, $default, $create);
+}
+
+function cfsp_get_content($key, $default = false, $create = true) {
+	if (empty($key)) { return ''; }
+	global $cf_snippet;
+	if (class_exists('CF_Snippet') && !is_a('CF_Snippet', $cf_snippet)) {
+		$cf_snippet = new CF_Snippet();
+	}
+	return $cf_snippet->get($key, $default, $create);
+}
+
+function cfsp_shortcode($attrs, $content=null) {
+	if (is_array($attrs)) {
+		$key = '';
+		if (!empty($attrs['name'])) {
+			$key = $attrs['name'];
+		}
+		else if (!empty($attrs['key'])) {
+			$key = $attrs['key'];
+		}
+		
+		if (empty($key)) { return ''; }
+		global $cf_snippet;
+		if (class_exists('CF_Snippet') && !is_a('CF_Snippet', $cf_snippet)) {
+			$cf_snippet = new CF_Snippet();
+		}
+		return $cf_snippet->get($key, false, false);
+	}
+	return '';
+}
+add_shortcode('cfsp', 'cfsp_shortcode');
+
+## Deprecated Display Functionality
+
+function cfsnip_get_snippets() {
+	global $cf_snippet;
+	if (class_exists('CF_Snippet') && !is_a('CF_Snippet', $cf_snippet)) {
+		$cf_snippet = new CF_Snippet();
+	}
+	return $cf_snippet->get_all();
+}
+
+function cfsnip_snippet($key, $default = false, $create = true) {
+	echo cfsnip_get_snippet($key, $default, $create);
+}
+
+function cfsnip_snippet_content($key, $default = false, $create = true) {
+	echo cfsnip_get_snippet_content($key, $default, $create);
+}
+
+function cfsnip_get_snippet($key, $default = false, $create = true) {
+	if (empty($key)) { return ''; }
+	global $cf_snippet;
+	if (class_exists('CF_Snippet') && !is_a('CF_Snippet', $cf_snippet)) {
+		$cf_snippet = new CF_Snippet();
+	}
+	return $cf_snippet->get($key, $default, $create);
+}
+
+function cfsnip_get_snippet_content($key, $default = false, $create = true) {
+	if (empty($key)) { return ''; }
+	global $cf_snippet;
+	if (class_exists('CF_Snippet') && !is_a('CF_Snippet', $cf_snippet)) {
+		$cf_snippet = new CF_Snippet();
+	}
+	return $cf_snippet->get($key, $default, $create);
+}
+
+function cfsnip_filter_content($content, $key) {
+	return str_replace(array('{cfsnip_template_url}', '{cfsp_template_url}'), get_bloginfo('template_url'), $content);
+}
+add_filter('cfsp-get-content', 'cfsnip_filter_content', 10, 2);
+
+function cfsnip_snippet_exists($key) {
+	if (empty($key)) { return ''; }
+	global $cf_snippet;
+	if (class_exists('CF_Snippet') && !is_a('CF_Snippet', $cf_snippet)) {
+		$cf_snippet = new CF_Snippet();
+	}
+	return $cf_snippet->exists($key);
+}
+
+function cfsnip_handle_shortcode($attrs, $content=null) {
+	if (is_array($attrs) && !empty($attrs['name'])) {
+		global $cf_snippet;
+		if (class_exists('CF_Snippet') && !is_a('CF_Snippet', $cf_snippet)) {
+			$cf_snippet = new CF_Snippet();
+		}
+		return $cf_snippet->get($attrs['name'], false, false);
+	}
+	return '';
+}
+add_shortcode('cfsnip', 'cfsnip_handle_shortcode');
+
+## Widget Functionality
+
+/**
+ * new WordPress Widget format
+ * Wordpress 2.8 and above
+ * @see http://codex.wordpress.org/Widgets_API#Developing_Widgets
+ */
+class cfsnip_Widget extends WP_Widget {
+	function cfsnip_Widget() {
+		$widget_ops = array('classname' => 'cfsnip-widget', 'description' => 'Widget for displaying selected CF Snippets (2.0 version)');
+		$this->WP_Widget('cfsnip-widget', 'CF Snippets', $widget_ops);
+	}
+
+	function widget( $args, $instance ) {
+		extract( $args, EXTR_SKIP );
+		global $cf_snippet;
+		if (class_exists('CF_Snippet') && !is_a('CF_Snippet', $cf_snippet)) {
+			$cf_snippet = new CF_Snippet();
+		}
+		// Get the snippet content
+		$content = $cf_snippet->get($instance['list_key']);
+		// If we don't have anything to display, no need to proceed
+		if (empty($content)) { return; }
+		$title = esc_attr($instance['title']);
+		
+		echo $before_widget;
+		if (!empty($title)) {
+			echo $before_title . $title . $after_title;
+		}
+		echo $content;
+		echo $after_widget;
+	}
+
+	function update( $new_instance, $old_instance ) {
+		$instance = $old_instance;
+		$instance['title'] = strip_tags($new_instance['title']);
+		$instance['list_key'] = strip_tags($new_instance['list_key']);
+		return $instance;
+	}
+
+	function form( $instance ) {
+		$instance = wp_parse_args((array) $instance, array('title' => '', 'list_key' => ''));
+		
+		$title = esc_attr($instance['title']);
+		global $cf_snippet;
+		if (class_exists('CF_Snippet') && !is_a('CF_Snippet', $cf_snippet)) {
+			$cf_snippet = new CF_Snippet();
+		}
+		$select = $cf_snippet->select_display($instance['list_key']);
+		
+		if (!empty($select)) {
+			?>
+			<p>
+				<label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:', 'cfsp'); ?></label>
+				<input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo $title; ?>" />
+			</p>
+			<p>
+				<label for="<?php echo $this->get_field_id('list_key'); ?>"><?php _e('Snippet: ', 'cfsp'); ?></label>
+				<select id="<?php echo $this->get_field_id('list_key'); ?>" name="<?php echo $this->get_field_name('list_key'); ?>" class="widefat">
+					<option value="0"><?php _e('--Select Snippet--', 'cfsp'); ?></option>
+					<?php echo $select; ?>
+				</select>
+			</p>
+			<p>
+				<a href="<?php bloginfo('wpurl') ?>/wp-admin/options-general.php?page=cf-snippets"><?php _e('Edit Snippets','cfsp') ?></a>
+			</p>
+			
+			<?php
+		}
+		else {
+			?>
+			<p>
+				<?php _e('No Snippets have been setup.  Please <a href="'.get_bloginfo('wpurl').'/wp-admin/options-general.php?page=cf-snippets">setup a snippet</a> before proceeding.', 'cfsp'); ?>
+			</p>
+			<?php
+		}
+	}
+}
+add_action('widgets_init', create_function('', "register_widget('cfsnip_Widget');"));
+
+## TinyMCE Functionality
+
+function cfsnip_dialog() {
+	global $cf_snippet;
+	if (class_exists('CF_Snippet') && !is_a('CF_Snippet', $cf_snippet)) {
+		$cf_snippet = new CF_Snippet();
+	}
+	$list = $cf_snippet->list_display(true);
+	
+?>
+<html>
+	<head>
+		<title><?php _e('Select Snippet', 'cfsp'); ?></title>
+		<script type="text/javascript" src="<?php bloginfo('url'); ?>/wp-includes/js/jquery/jquery.js"></script>
+		<script type="text/javascript" src="<?php bloginfo('url'); ?>/wp-includes/js/tinymce/tiny_mce_popup.js"></script>
+		<script type='text/javascript' src='<?php bloginfo('url'); ?>/wp-includes/js/quicktags.js'></script>
+		<script type="text/javascript">
+			;(function($) {
+				$(function() {
+					$(".cfsp-list-link").live('click', function() {
+						var key = $(this).attr('rel');
+						cfsp_insert(key);
+					});
+				});
+			})(jQuery);
+		
+			function cfsp_insert(key) {
+				tinyMCEPopup.execCommand("mceBeginUndoLevel");
+				tinyMCEPopup.execCommand('mceInsertContent', false, '[cfsp key="'+key+'"]');
+				tinyMCEPopup.execCommand("mceEndUndoLevel");
+				tinyMCEPopup.close();
+				return false;
+			}
+		</script>
+		<style type="text/css">
+			.cfsp-list {
+				padding-left:10px;
+			}
+		</style>
+	</head>
+	<body id="cfsnippet">
+		<?php
+		if (!empty($list)) {
+			echo '<p>'.__('Click on the Snippet below to add the shortcode to the content of the post.', 'cfsp').'</p>';
+			echo '<p>'.$list.'</p>';
+		}
+		else {
+			echo '<p>'.__('No Snippets have been setup.  Please <a href="'.get_bloginfo('wpurl').'/wp-admin/options-general.php?page=cf-snippets">setup a snippet</a> before proceeding.', 'cfsp').'</p>';
+		}
+		?>
+	</body>
+</html>
+<?php
+}
+
+function cfsnip_addtinymce() {
+	// Don't bother doing this stuff if the current user lacks permissions
+	if (!current_user_can('edit_posts') && !current_user_can('edit_pages')) { return; }
+
+	// Add only in Rich Editor mode
+	if (get_user_option('rich_editing') == 'true') {
+		add_filter("mce_external_plugins", "add_cfsnip_tinymce_plugin");
+		add_filter('mce_buttons', 'register_cfsnip_button');
+	}
+}
+add_action('init', 'cfsnip_addtinymce');
+ 
+function register_cfsnip_button($buttons) {
+	array_push($buttons, '|', "cfsnip_Btn");
+	return $buttons;
+}
+
+function add_cfsnip_tinymce_plugin($plugin_array) {
+	$plugin_array['cfsnippets'] = CFSP_DIR_URL.'js/editor_plugin.js';
+	return $plugin_array;
+}
 
 ## Auxillary Functionality
 
