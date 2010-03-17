@@ -3,7 +3,7 @@
 Plugin Name: CF Snippets
 Plugin URI: 
 Description: Lets admins define html snippets for use in template, content, or widgets. Snippets are not recursive (snippets defined inside other snippets will not be expanded).
-Version: 1.2.3
+Version: 1.2.4
 Author: Crowd Favorite
 Author URI: http://crowdfavorite.com
 */
