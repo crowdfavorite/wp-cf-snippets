@@ -1,5 +1,9 @@
 # CF Snippets Changelog
 
+## 1.2.4
+
+- Adding WP_Widget Implementation
+
 ## 1.2.3
 
 - Bug fixes
