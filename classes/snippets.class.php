@@ -37,7 +37,7 @@ class CF_Snippet {
 		$snippets = $this->get_all();
 		
 		if (!empty($snippets[$key])) {
-			return do_shortcode(apply_filters('cfsp-get-info', stripslashes($snippets[$key]), $key));
+			return do_shortcode(apply_filters('cfsp-get-info', $snippets[$key], $key));
 		}
 		else if (!empty($default) && $create) {
 			$description = ucwords(str_replace(array('-','_'), ' ', $key));
