@@ -2,7 +2,7 @@
 /*
 Plugin Name: CF Snippets
 Plugin URI: http://crowdfavorite.com
-Description: Lets admins define html snippets for use in template, content, or widgets.
+Description: Provides admin level users define html snippets for use in template, content, or widgets.
 Version: 2.0
 Author: Crowd Favorite
 Author URI: http://crowdfavorite.com
@@ -202,11 +202,14 @@ function cfsp_ajax_new() {
 	<div id="cfsp-popup" class="cfsp-popup">
 		<div class="cfsp-popup-head">
 			<span class="cfsp-popup-close">
-				<a href="#close">Close</a>
+				<a href="#close"><?php _e('Close', 'cfsp'); ?></a>
 			</span>
-			<h2>Create New Snippet:</h2>
+			<h2><?php _e('Create New Snippet:', 'cfsp'); ?></h2>
 		</div>
 		<div class="cfsp-popup-content" style="overflow:auto; max-height:500px;">
+			<div class="cfsp-popup-error" style="display:none">
+				<p><strong><?php _e('Error: ', 'cfsp'); ?></strong><?php _e('A new snippet requires either a key or description, please fill one of these fields', 'cfsp'); ?></p>
+			</div>
 			<?php echo $cf_snippet->add_display(); ?>
 		</div>
 	</div>
@@ -225,9 +228,9 @@ function cfsp_ajax_edit($key) {
 		<div id="cfsp-popup" class="cfsp-popup">
 			<div class="cfsp-popup-head">
 				<span class="cfsp-popup-close">
-					<a href="#close">Close</a>
+					<a href="#close"><?php _e('Close', 'cfsp'); ?></a>
 				</span>
-				<h2>Snippet: "<?php echo $key; ?>"</h2>
+				<h2><?php _e('Snippet: ', 'cfsp'); ?>"<?php echo $key; ?>"</h2>
 			</div>
 			<div class="cfsp-popup-content" style="overflow:auto; max-height:500px;">
 				<?php echo $cf_snippet->edit($key); ?>
@@ -240,12 +243,12 @@ function cfsp_ajax_edit($key) {
 		<div id="cfsp-popup" class="cfsp-popup">
 			<div class="cfsp-popup-head">
 				<span class="cfsp-popup-close">
-					<a href="#close">Close</a>
+					<a href="#close"><?php _e('Close', 'cfsp'); ?></a>
 				</span>
-				<h2>Error</h2>
+				<h2><?php _e('Error', 'cfsp'); ?></h2>
 			</div>
 			<div class="cfsp-popup-content" style="overflow:auto; max-height:500px;">
-				<p>Whoops! No Key Found, try again.</p>
+				<p><?php _e('Whoops! No Key Found, try again.', 'cfsp'); ?></p>
 			</div>
 		</div>
 		<?php
@@ -264,13 +267,13 @@ function cfsp_ajax_preview($key) {
 		<div id="cfsp-popup" class="cfsp-popup">
 			<div class="cfsp-popup-head">
 				<span class="cfsp-popup-close">
-					<a href="#close">Close</a>
+					<a href="#close"><?php _e('Close', 'cfsp'); ?></a>
 				</span>
-				<h2>Snippet: "<?php echo $key; ?>"</h2>
+				<h2><?php _e('Snippet: ', 'cfsp'); ?>"<?php echo $key; ?>"</h2>
 			</div>
 			<div class="cfsp-popup-content" style="overflow:auto; max-height:500px;">
 				<iframe src ="index.php?cf_action=cfsp_iframe_preview&cfsp_key=<?php echo $key; ?>" width="100%" height="300">
-				  <p>Your browser does not support iframes.</p>
+				  <p><?php _e('Your browser does not support iframes.', 'cfsp'); ?></p>
 				</iframe>
 				<p>
 					<input type="button" class="button cfsp-popup-cancel" value="Close" />
@@ -284,12 +287,12 @@ function cfsp_ajax_preview($key) {
 		<div id="cfsp-popup" class="cfsp-popup">
 			<div class="cfsp-popup-head">
 				<span class="cfsp-popup-close">
-					<a href="#close">Close</a>
+					<a href="#close"><?php _e('Close', 'cfsp'); ?></a>
 				</span>
-				<h2>Error</h2>
+				<h2><?php _e('Error', 'cfsp'); ?></h2>
 			</div>
 			<div class="cfsp-popup-content" style="overflow:auto; max-height:500px;">
-				<p>Whoops! No Key Found, try again.</p>
+				<p><?php _e('Whoops! No Key Found, try again.', 'cfsp'); ?></p>
 			</div>
 		</div>
 		<?php
@@ -313,13 +316,13 @@ function cfsp_ajax_delete($key, $confirm = false) {
 			<div id="cfsp-popup" class="cfsp-popup">
 				<div class="cfsp-popup-head">
 					<span class="cfsp-popup-close">
-						<a href="#close">Close</a>
+						<a href="#close"><?php _e('Close', 'cfsp'); ?></a>
 					</span>
-					<h2>Are you sure you want to delete the "<?php echo $key; ?>" snippet?</h2>
+					<h2><?php _e('Are you sure you want to delete the "', 'cfsp'); echo $key; _e('" snippet?', 'cfsp'); ?></h2>
 				</div>
 				<div class="cfsp-popup-content" style="overflow:auto; max-height:500px;">
 					<iframe src ="index.php?cf_action=cfsp_iframe_preview&cfsp_key=<?php echo $key; ?>" width="100%" height="300">
-					  <p>Your browser does not support iframes.</p>
+					  <p><?php _e('Your browser does not support iframes.', 'cfsp'); ?></p>
 					</iframe>
 					<p>
 						<input type="hidden" id="cfsp-key" value="<?php echo esc_attr($key); ?>" />
@@ -337,12 +340,12 @@ function cfsp_ajax_delete($key, $confirm = false) {
 		<div id="cfsp-popup" class="cfsp-popup">
 			<div class="cfsp-popup-head">
 				<span class="cfsp-popup-close">
-					<a href="#close">Close</a>
+					<a href="#close"><?php _e('Close', 'cfsp'); ?></a>
 				</span>
-				<h2>Error</h2>
+				<h2><?php _e('Error', 'cfsp'); ?></h2>
 			</div>
 			<div class="cfsp-popup-content" style="overflow:auto; max-height:500px;">
-				<p>Whoops! No Key Found, try again.</p>
+				<p><?php _e('Whoops! No Key Found, try again.', 'cfsp'); ?></p>
 			</div>
 		</div>
 		<?php

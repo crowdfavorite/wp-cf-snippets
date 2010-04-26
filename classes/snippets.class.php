@@ -163,7 +163,7 @@ class CF_Snippet {
 				'.$key.'
 			</td>
 			<td class="cfsp-description">
-				'.$description.' 
+				<span class="cfsp-description-content">'.$description.'</span>
 				<div id="'.$key.'-showhide" class="cfsp-tags-showhide">
 					'.__('Show: ', 'cfsp').' <a href="#" rel="'.$key.'-template">'.__('Template Tag', 'cfsp').'</a>&nbsp;|&nbsp;<a href="#" rel="'.$key.'-shortcode">'.__('Shortcode', 'cfsp').'</a>
 				</div>
@@ -269,8 +269,8 @@ class CF_Snippet {
 	public function save($key, $content, $description) {
 		$snippets = $this->get_all();
 		$key = sanitize_title($key);
-		$snippets[$key]['content'] = $content;
-		$snippets[$key]['description'] = $description;
+		$snippets[$key]['content'] = stripslashes($content);
+		$snippets[$key]['description'] = stripslashes($description);
 		return $this->update_option($snippets);
 	}
 	

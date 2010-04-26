@@ -60,7 +60,7 @@
 				cfsp_description:description,
 				cfsp_content:content
 			}, function(r) {
-				$("#cfsp-"+key+" td.cfsp-description").html(description);
+				$("#cfsp-"+key+" span.cfsp-description-content").html(description);
 			});
 			return false;
 		};

@@ -48,6 +48,16 @@
 			var description = $("#cfsp-description").val();
 			var content = $("#cfsp-content").val();
 
+			if (key || description) {
+				$.closeDOMWindow();
+				cfsp_new_snippet(key, description, content);
+				return false;
+			}
+			else {
+				$(".cfsp-popup-error").show();
+				return false;
+			}
+
 			$.closeDOMWindow();
 			cfsp_new_snippet(key, description, content);
 			return false;
