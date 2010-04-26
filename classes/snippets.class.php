@@ -33,6 +33,19 @@ class CF_Snippet {
 		}
 	}
 	
+	public function get_info($key, $default = '', $create = true) {
+		$snippets = $this->get_all();
+		
+		if (!empty($snippets[$key])) {
+			return do_shortcode(apply_filters('cfsp-get-info', stripslashes($snippets[$key]), $key));
+		}
+		else if (!empty($default) && $create) {
+			$description = ucwords(str_replace(array('-','_'), ' ', $key));
+			$this->save($key, $default, $description);
+			return $this->get($key);
+		}
+	}
+	
 	/**
 	 * This function gets all of the keys available and passes them back as an array
 	 *

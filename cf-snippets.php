@@ -459,7 +459,7 @@ function cfsnip_get_snippet($key, $default = false, $create = true) {
 	if (class_exists('CF_Snippet') && !is_a('CF_Snippet', $cf_snippet)) {
 		$cf_snippet = new CF_Snippet();
 	}
-	return $cf_snippet->get($key, $default, $create);
+	return $cf_snippet->get_info($key, $default, $create);
 }
 
 function cfsnip_get_snippet_content($key, $default = false, $create = true) {
