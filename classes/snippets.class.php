@@ -20,28 +20,44 @@ class CF_Snippet {
 	 * @param string $default - Data to use for the content if the key does not exist
 	 * @return void - Content for the key passed in
 	 */
-	public function get($key, $default = '', $create = true) {
+	public function get($key, $default = '', $create = true, $args = array()) {
+		$defaults = array(
+			'description' => '',
+		);
+		extract( wp_parse_args( $args, $defaults ), EXTR_SKIP );
+		
 		$snippets = $this->get_all();
+		$key = sanitize_title($key);
 		
 		if (!empty($snippets[$key]['content'])) {
 			return do_shortcode(apply_filters('cfsp-get-content', stripslashes($snippets[$key]['content']), $key));
 		}
 		else if (!empty($default) && $create) {
-			$description = ucwords(str_replace(array('-','_'), ' ', $key));
-			$this->save($key, $default, $description);
+			if (empty($description)) {
+				$description = ucwords(str_replace(array('-','_'), ' ', $key));
+			}
+			$this->save($key, $default, htmlentities($description));
 			return $this->get($key);
 		}
 	}
 	
-	public function get_info($key, $default = '', $create = true) {
+	public function get_info($key, $default = '', $create = true, $args = array()) {
+		$defaults = array(
+			'description' => '',
+		);
+		extract( wp_parse_args( $args, $defaults ), EXTR_SKIP );
+
 		$snippets = $this->get_all();
+		$key = sanitize_title($key);
 		
 		if (!empty($snippets[$key])) {
 			return do_shortcode(apply_filters('cfsp-get-info', $snippets[$key], $key));
 		}
 		else if (!empty($default) && $create) {
-			$description = ucwords(str_replace(array('-','_'), ' ', $key));
-			$this->save($key, $default, $description);
+			if (empty($description)) {
+				$description = ucwords(str_replace(array('-','_'), ' ', $key));
+			}
+			$this->save($key, $default, htmlentities($description));
 			return $this->get($key);
 		}
 	}
