@@ -417,7 +417,7 @@ function cfsp_content($key, $default = false, $create = true, $args = array()) {
 function cfsp_get_content($key, $default = false, $create = true, $args = array()) {
 	if (empty($key)) { return ''; }
 	global $cf_snippet;
-	if (class_exists('CF_Snippet') && !is_a('CF_Snippet', $cf_snippet)) {
+	if (class_exists('CF_Snippet') && !is_a($cf_snippet, 'CF_Snippet')) {
 		$cf_snippet = new CF_Snippet();
 	}
 	return $cf_snippet->get($key, $default, $create, $args);
