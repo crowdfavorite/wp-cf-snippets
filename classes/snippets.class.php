@@ -36,7 +36,7 @@ class CF_Snippet {
 			if (empty($description)) {
 				$description = ucwords(str_replace(array('-','_'), ' ', $key));
 			}
-			$this->save($key, $default, htmlentities($description));
+			$this->save($key, $default, stripslashes($description));
 			return $this->get($key);
 		}
 	}
@@ -57,7 +57,7 @@ class CF_Snippet {
 			if (empty($description)) {
 				$description = ucwords(str_replace(array('-','_'), ' ', $key));
 			}
-			$this->save($key, $default, htmlentities($description));
+			$this->save($key, $default, stripslashes($description));
 			return $this->get($key);
 		}
 	}
@@ -123,11 +123,11 @@ class CF_Snippet {
 				<table class="form-table" border="0">
 					<tr>
 						<th style="width:50px;">'.__('Description').'</th>
-						<td><input type="text" name="cfsp-description" id="cfsp-description" value="'.stripslashes($description).'" class="widefat" /></td>
+						<td><input type="text" name="cfsp-description" id="cfsp-description" value="'.esc_attr($description).'" class="widefat" /></td>
 					</tr>
 					<tr>
 						<th style="width:50px;">'.__('Content').'</th>
-						<td><textarea name="cfsp-content" id="cfsp-content" class="widefat cfsp-popup-edit-content" cols="50" rows="8">'.stripslashes($content).'</textarea></td>
+						<td><textarea name="cfsp-content" id="cfsp-content" class="widefat cfsp-popup-edit-content" cols="50" rows="8">'.esc_attr($content).'</textarea></td>
 					</tr>
 				</table>
 			</div>
@@ -200,7 +200,7 @@ class CF_Snippet {
 					<code>[cfsp key="'.$key.'"]</code>
 				</div>
 				<div id="'.$key.'-template" class="cfsp-template-tag">
-					<code>'.htmlentities('<?php if (function_exists(\'cfsp_content\')) { cfsp_content(\''.$key.'\'); } ?>').'</code>
+					<code><?php if (function_exists(\'cfsp_content\')) { cfsp_content(\''.esc_attr($key).'\'); } ?></code>
 				</div>
 			</td>
 			<td class="cfsp-buttons" style="vertical-align:middle; text-align:center;">

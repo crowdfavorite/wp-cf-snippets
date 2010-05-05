@@ -12,8 +12,8 @@ Author URI: http://crowdfavorite.com
 
 // Constants
 define('CFSP_VERSION', '2.0');
-define('CFSP_DIR', trailingslashit(realpath(dirname(__FILE__))));
-define('CFSP_DIR_URL', trailingslashit(get_bloginfo('wpurl')).trailingslashit(PLUGINDIR).trailingslashit(basename(dirname(__FILE__))));
+define('CFSP_DIR', plugin_dir_path(__FILE__));
+define('CFSP_DIR_URL', trailingslashit(plugins_url(basename(dirname(__FILE__)))));
 
 // Includes
 include('classes/snippets.class.php');
@@ -108,7 +108,6 @@ function cfsp_admin_css() {
 	header('Content-type: text/css');
 	do_action('cfsp-admin-css');
 	echo file_get_contents(CFSP_DIR.'css/content.css');
-	
 	die();
 }
 
@@ -124,8 +123,8 @@ function cfsp_admin_js() {
 
 if (!empty($_GET['page']) && $_GET['page'] == 'cf-snippets') {
 	wp_enqueue_script('jquery');
-	wp_enqueue_script('cfsp-admin-js', trailingslashit(get_bloginfo('url')).'?cf_action=cfsp_admin_js', array('jquery'), CFSP_VERSION);
-	wp_enqueue_style('cfsp-admin-css',	trailingslashit(get_bloginfo('url')).'?cf_action=cfsp_admin_css', array(), CFSP_VERSION, 'screen');
+	wp_enqueue_script('cfsp-admin-js', admin_url('?cf_action=cfsp_admin_js'), array('jquery'), CFSP_VERSION);
+	wp_enqueue_style('cfsp-admin-css', admin_url('?cf_action=cfsp_admin_css'), array(), CFSP_VERSION, 'screen');
 }
 
 function cfsp_admin_menu() {
@@ -147,7 +146,7 @@ function cfsp_options() {
 	?>
 	<div class="wrap">
 		<?php echo screen_icon().'<h2>CF Snippets</h2>'; ?>
-		<p><a href="#" rel="cfsp-instructions" class="cfsp-instructions"><?php _e('Show Instructions', 'cfsp'); ?></a> &nbsp;|&nbsp; <a href="<?php bloginfo('wpurl'); ?>/wp-admin/widgets.php"><?php _e('Edit Widgets &raquo;', 'cfsp'); ?></a></p>
+		<p><a href="#" rel="cfsp-instructions" class="cfsp-instructions"><?php _e('Show Instructions', 'cfsp'); ?></a> &nbsp;|&nbsp; <a href="<?php admin_url('widgets.php'); ?>"><?php _e('Edit Widgets &raquo;', 'cfsp'); ?></a></p>
 		<div id="cfsp-instructions" style="display:none;">
 			<p><?php _e('Paste in HTML content for a snippet and give it a name. The name will be automatically "sanitized:" lowercased and all spaces converted to dashes.', 'cfsp'); ?></p>
 			<p><?php _e('To insert a snippet in your template, type <code>&lt;?php cfsp_content(\'my-snippet-name\'); ?></code><br /> Use the shortcode syntax: <code>[cfsp name="my-snippet-name"]</code> in post or page content to insert your snippet there.', 'cfsp'); ?></p>
@@ -481,7 +480,7 @@ function cfsnip_get_snippet_content($key, $default = false, $create = true) {
 }
 
 function cfsnip_filter_content($content, $key) {
-	return str_replace(array('{cfsnip_template_url}', '{cfsp_template_url}'), get_bloginfo('template_url'), $content);
+	return str_replace(array('{cfsnip_template_url}', '{cfsp_template_url}'), get_stylesheet_directory_uri(), $content);
 }
 add_filter('cfsp-get-content', 'cfsnip_filter_content', 10, 2);
 
@@ -570,7 +569,7 @@ class cfsnip_Widget extends WP_Widget {
 				</select>
 			</p>
 			<p>
-				<a href="<?php bloginfo('wpurl') ?>/wp-admin/options-general.php?page=cf-snippets"><?php _e('Edit Snippets','cfsp') ?></a>
+				<a href="<?php echo admin_url('options-general.php?page=cf-snippets'); ?>"><?php _e('Edit Snippets','cfsp') ?></a>
 			</p>
 			
 			<?php
@@ -578,7 +577,7 @@ class cfsnip_Widget extends WP_Widget {
 		else {
 			?>
 			<p>
-				<?php _e('No Snippets have been setup.  Please <a href="'.get_bloginfo('wpurl').'/wp-admin/options-general.php?page=cf-snippets">setup a snippet</a> before proceeding.', 'cfsp'); ?>
+				<?php _e('No Snippets have been setup.  Please <a href="'.admin_url('options-general.php?page=cf-snippets').'">setup a snippet</a> before proceeding.', 'cfsp'); ?>
 			</p>
 			<?php
 		}
@@ -599,9 +598,9 @@ function cfsnip_dialog() {
 <html>
 	<head>
 		<title><?php _e('Select Snippet', 'cfsp'); ?></title>
-		<script type="text/javascript" src="<?php bloginfo('url'); ?>/wp-includes/js/jquery/jquery.js"></script>
-		<script type="text/javascript" src="<?php bloginfo('url'); ?>/wp-includes/js/tinymce/tiny_mce_popup.js"></script>
-		<script type='text/javascript' src='<?php bloginfo('url'); ?>/wp-includes/js/quicktags.js'></script>
+		<script type="text/javascript" src="<?php echo includes_url('js/jquery/jquery.js'); ?>"></script>
+		<script type="text/javascript" src="<?php echo includes_url('js/tinymce/tiny_mce_popup.js'); ?>"></script>
+		<script type='text/javascript' src='<?php echo includes_url('js/quicktags.js'); ?>'></script>
 		<script type="text/javascript">
 			;(function($) {
 				$(function() {
@@ -633,7 +632,7 @@ function cfsnip_dialog() {
 			echo '<p>'.$list.'</p>';
 		}
 		else {
-			echo '<p>'.__('No Snippets have been setup.  Please <a href="'.get_bloginfo('wpurl').'/wp-admin/options-general.php?page=cf-snippets">setup a snippet</a> before proceeding.', 'cfsp').'</p>';
+			echo '<p>'.__('No Snippets have been setup.  Please <a href="'.admin_url('options-general.php?page=cf-snippets').'">setup a snippet</a> before proceeding.', 'cfsp').'</p>';
 		}
 		?>
 	</body>
