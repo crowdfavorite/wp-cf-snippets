@@ -20,7 +20,7 @@
 			cfsp_ajax_delete_button($(this).attr('id').replace('-delete-button', ''));
 		});
 		
-		$('.cfsp-tags-showhide a').click(function() {
+		$('.cfsp-tags-showhide a').live('click', function() {
 			$("#"+$(this).attr('rel')).slideToggle();
 			return false;
 		});
