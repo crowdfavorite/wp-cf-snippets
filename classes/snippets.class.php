@@ -182,12 +182,15 @@ class CF_Snippet {
 	 */
 	public function admin_display($key) {
 		if (!$this->exists($key)) { return ''; }
-
+		
 		$snippets = $this->get_all();
 		$description = $snippets[$key]['description'];
+
+		// Escape the key once instead of multiple times
+		$key = esc_attr($key);
 		
 		$html = '
-		<tr id="cfsp-'.esc_attr($key).'">
+		<tr id="cfsp-'.$key.'">
 			<td class="cfsp-key" style="vertical-align:middle;">
 				'.$key.'
 			</td>
@@ -200,13 +203,13 @@ class CF_Snippet {
 					<code>[cfsp key="'.$key.'"]</code>
 				</div>
 				<div id="'.$key.'-template" class="cfsp-template-tag">
-					<code><?php if (function_exists(\'cfsp_content\')) { cfsp_content(\''.esc_attr($key).'\'); } ?></code>
+					<code><?php if (function_exists(\'cfsp_content\')) { cfsp_content(\''.$key.'\'); } ?></code>
 				</div>
 			</td>
 			<td class="cfsp-buttons" style="vertical-align:middle; text-align:center;">
-				<input type="button" value="Edit" class="button cfsp-edit-button" id="'.esc_attr($key).'-edit-button" />
-				<input type="button" value="Preview" class="button cfsp-preview-button" id="'.esc_attr($key).'-preview-button" />
-				<input type="button" value="Delete" class="button cfsp-delete-button" id="'.esc_attr($key).'-delete-button" />
+				<input type="button" value="Edit" class="button cfsp-edit-button" id="'.$key.'-edit-button" />
+				<input type="button" value="Preview" class="button cfsp-preview-button" id="'.$key.'-preview-button" />
+				<input type="button" value="Delete" class="button cfsp-delete-button" id="'.$key.'-delete-button" />
 			</td>
 		</tr>
 		';
@@ -244,10 +247,10 @@ class CF_Snippet {
 			foreach ($snippets as $key => $snippet) {
 				$description = '';
 				if ($links) {
-					$description = '<a href="#" class="cfsp-list-link" rel="'.$key.'">'.$snippet['description'].'</a>';
+					$description = '<a href="#" class="cfsp-list-link" rel="'.esc_attr($key).'">'.htmlentities($snippet['description']).'</a>';
 				}
 				else {
-					$description = $snippet['description'];
+					$description = htmlentities($snippet['description']);
 				}
 				$list .= '<li>'.$description.'</li>';
 			}
