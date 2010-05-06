@@ -69,3 +69,19 @@
 .cfsp-template-tag code {
 	font-size:9px;
 }
+
+.cfsp-message {
+	background-color:#FFFFE0;
+	border: 1px solid #E6DB55;
+	-moz-border-radius:3px;
+	-webkit-border-radius:3px;
+	-khtml-border-radius:3px;
+	border-radius:3px;
+	margin:5px 0 15px;
+	padding:0 0.6em;
+}
+.cfsp-message p {
+	line-height:1;
+	margin:0.5em 0;
+	padding:2px;
+}

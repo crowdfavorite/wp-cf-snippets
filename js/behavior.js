@@ -27,6 +27,8 @@
 		
 		$('.cfsp-instructions').click(function() {
 			$("#"+$(this).attr('rel')).slideToggle();
+			$(".cfsp-instructions-show").toggle();
+			$(".cfsp-instructions-hide").toggle();
 			return false;
 		});
 
@@ -49,6 +51,8 @@
 				cfsp_content:content
 			}, function(r) {
 				$("#cfsp-display tbody").append(r);
+				$(".cfsp-message").hide();
+				$("#cfsp-display").show();
 			});
 			return false;
 		};
