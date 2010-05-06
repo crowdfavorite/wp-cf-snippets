@@ -195,7 +195,7 @@ class CF_Snippet {
 				'.$key.'
 			</td>
 			<td class="cfsp-description">
-				<span class="cfsp-description-content">'.$description.'</span>
+				<span class="cfsp-description-content">'.htmlentities($description).'</span>
 				<div id="'.$key.'-showhide" class="cfsp-tags-showhide">
 					'.__('Show: ', 'cfsp').' <a href="#" rel="'.$key.'-template">'.__('Template Tag', 'cfsp').'</a>&nbsp;|&nbsp;<a href="#" rel="'.$key.'-shortcode">'.__('Shortcode', 'cfsp').'</a>
 				</div>
@@ -228,7 +228,7 @@ class CF_Snippet {
 		$select = '';
 		if (is_array($snippets) && !empty($snippets)) {
 			foreach ($snippets as $key => $snippet) {
-				$select .= '<option value="'.$key.'"'.selected($selected, $key, false).'>'.$snippet['description'].'</option>';
+				$select .= '<option value="'.$key.'"'.selected($selected, $key, false).'>'.htmlentities($snippet['description']).'</option>';
 			}
 		}
 		return $select;
