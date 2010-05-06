@@ -203,7 +203,7 @@ class CF_Snippet {
 					<code>[cfsp key="'.$key.'"]</code>
 				</div>
 				<div id="'.$key.'-template" class="cfsp-template-tag">
-					<code><?php if (function_exists(\'cfsp_content\')) { cfsp_content(\''.$key.'\'); } ?></code>
+					<code>&lt;?php if (function_exists(&#x27;cfsp_content&#x27;)) { cfsp_content(&#x27;'.$key.'&#x27;); } ?&gt;</code>
 				</div>
 			</td>
 			<td class="cfsp-buttons" style="vertical-align:middle; text-align:center;">
