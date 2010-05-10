@@ -1,19 +1,25 @@
 (function() {
 	tinymce.create('tinymce.plugins.cfsnippets', {
 		init : function(ed, url) {
-			pluginUrl = url.replace('js', '');
+			var pluginUrl = url.replace('js', '');
+			
+			// Register button
 			ed.addButton('cfsnip_Btn', {
-				title : 'Click to insert snippet',
+				title : 'Click to Insert Snippet',
 				image : pluginUrl + '/images/cog_add.png',
-				onclick : function() {
-					tinyMCE.activeEditor.windowManager.open({
-						file : 'options-general.php?page=cf-snippets.php&cfsnip_action=dialog',
-						width : 250 + ed.getLang('cfsnippet.delta_width', 0),
-						height : 150 + ed.getLang('cfsnippet.delta_height', 0),
-						title: 'Select snippet below',
-						inline : 1
-					});
-				}
+				cmd : 'CFSP_Insert'
+			});
+			
+			// Register command
+			ed.addCommand('CFSP_Insert', function() {
+				ed.windowManager.open({
+					file : 'index.php?cf_action=cfsp-dialog',
+					width : 250 + ed.getLang('cfsnippet.delta_width', 0),
+					height : 150 + ed.getLang('cfsnippet.delta_height', 0),
+					inline : 1
+				}, {
+					plugin_url: url
+				});
 			});
 		},
 		createControl : function(n, cm) {
@@ -25,7 +31,7 @@
 				author : 'CrowdFavorite',
 				authorurl : 'http://crowdfavorite.com',
 				infourl : 'http://crowdfavorite.com',
-				version : "1.1"
+				version : "2.0"
 			};
 		}
 	});

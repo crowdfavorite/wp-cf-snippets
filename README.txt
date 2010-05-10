@@ -1,7 +1,6 @@
-## CF Snippets Plugin
+## CF Snippets
 
-The CF Snippets plugin allows users to define snippets for use post content and theme templates. Also defines a widget to allow snippets to be added to the sidebar.
-
+The CF Snippets plugin gives Admin users the ability to create chunks of content (including HTML content) to be inserted into posts, widgets and front end display with an easy to use Admin interface.  This functionality gives the Admin users easy ability to edit the chunks of code without editing PHP/HTML files.  The plugin provides PHP functions for display of Snippets, as well as WordPress shortcodes.  On the post edit screen, the plugin provides a TinyMCE button for easy insertion of Snippets shortcodes.
 
 ### Usage
 
@@ -9,43 +8,68 @@ The Snippets admin page allows for the creation of multiple snippets. From the p
 
 	Paste in HTML content for a snippet and give it a name. The name will be automatically "sanitized:" lowercased and all spaces converted to dashes.
 
-	To insert a snippet in your template, type `<?php cfsnip_snippet('my-snippet-name'); ?>`
-	Use the shortcode syntax: `[cfsnip name="my-snippet-name"]` in post or page content to insert your snippet there.
+	To insert a snippet in your template, type <?php cfsp_content('my-snippet-name'); ?>
+	Use the shortcode syntax: [cfsp name="my-snippet-name"] in post or page content to insert your snippet there.
 
 	Or use snippet widgets wherever widgets can be used.
 
-	To access files in your current theme template directory from within a snippet, type `{cfsnip_template_url}`. That will be replaced with, for example, `http://example.com/wordpress/wp-content/themes/mytheme/`.
+	To access files in your current theme template directory from within a snippet, type {cfsp_template_url}. That will be replaced with, for example, `http://example.com/wordpress/wp-content/themes/mytheme/`.
+
+### Template Tags
+
+The Snippets plugin provides PHP "template tags" for easy display of Snippet data.  The functions will display content based on snippet key.  The functions also provide the ability to automatically create a snippet if one does not exist.
+
+The following function will echo the content for `snippet-1`:
+
+	<?php cfsp_content('snippet-1'); ?>
+
+Or to just get the snippet content without echoing:
+
+	<?php $snippet = cfsp_get_content('snippet-1'); ?>
 	
+The function will also create the snippet with some default content, then display the content.  When the snippet is created it will have a default description of "Snippet 1":
 
-### Template Tags & Default Values
-
-Default values for snippets can now be defined through the template tags for pulling snippet content. If the snippet does not exist the snippet will be created so that it can be changed, if desired, via the WordPress admin. The 'create if not exists' behavior can be overidden. The affected functions are:
-
-- `cfsnip_snippet`
-- `cfsnip_snippet_content`
-- `cfsnip_get_snippet`
-- `cfsnip_get_snippet_content`
-
-Each function takes the same parameters
-
-- `$snippet_name`: string, name of the snippet being pulled
-- `$default_value`: a default value to use if the snippet does not exist. 
-	- Default is false
-- `$create_snippet_if_not_exists`: wether to create a snippet if a snippet does not exist and a default value is provided
-	- Default is true
-
-**Example:**
+	<?php cfsp_content('snippet-1', 'this is the snippet content for snippet-1', true); ?>
 	
-	<div><?php cfsnip_snippet('my-snippet','default value'); ?></div>
+Or to just get the snippet content without echoing:
+
+	<?php $snippet = cfsp_get_content('snippet-1', 'this is the snippet content for snippet-1', true); ?>
+
+The function can also allows the user to create a custom description when creating the default snippet:
+
+	<?php cfsp_content('snippet-1', 'this is the snippet content for snippet-1', true, array('description' => 'Description for Snippet 1')); ?>
 	
+Or to just get the snippet content without echoing:
+
+	<?php $snippet = cfsp_get_content('snippet-1', 'this is the snippet content for snippet-1', true, array('description' => 'Description for Snippet 1')); ?>
 
 ### Shortcodes
 
-Snippets can be addressed via shortcode as well. `[cfsnip name="my-snippet-name"]` will pull the snippet `my-snippet-name`. Default values are not applicable to shortcodes.
+The Snippets plugin also provides WordPress shortcodes for easy display of the Snippet data.  The shortcode will display data based on snippet key.  The shortcode does not provide the ability to create the snippet if it does not exist.  So if a snippet is to be displayed it will need to be created before it can be displayed.
 
-There is a Snippet button in the post/page content edit bar. Click on the "cog" icon to bring up a list of snippets to insert at the cursor point in the contnet.
+To display a snippet in WordPress post data, simply add:
+	
+	[cfsp name="snippet-1"]
+	
+The plugin also provides a TinyMCE button to the WYSIWYG on the post edit screen.  The "cog" icon can be clicked and then a snippet selected to have the shortcode displayed.  
 
+To add the snippet shortcode:
+
+- Place the cursor in the WYSIWYG where the snippet should be displayed
+- Click the "cog" icon
+- Click on the Snippet Description that is desired to be displayed
 
 ### Widgets
 
-A multi-instance widget is added by the plugin. It provides the ability to add multiple widgets to the sidebar, provide an optional title and select a widget to display. Only one widget can be selected in a widget at a time.
+The Snippets plugin also provides WordPress Widgets for easy display of Snippet data.  The Widget will display content based on a snippet selected from a drop down menu on the Widget admin page.  The Widget also provides a Title section for compliance with custom themes.
+
+To add the Snippet Widget:
+
+- Navigate to the Widgets admin page under the Appearance section of the WordPress Admin Navigation
+- Click on the CF Snippets widget and drag it into the desired place in the desired sidebar
+- Add a title (if desired)
+- Select the Snippet to be displayed
+- Click the Save button to save changes
+
+For more information on how to use WordPress widgets, see this Documentation: http://en.support.wordpress.com/widgets/
+

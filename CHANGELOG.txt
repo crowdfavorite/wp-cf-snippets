@@ -1,5 +1,12 @@
 # CF Snippets Changelog
 
+## 2.0
+
+- Complete plugin rewrite
+- Extracted Snippet functionality into Snippets class for easier integration
+- New snippets functions and shortcodes with further functionality for easier integration
+- Cleanup of the Admin for easier editing/insertion
+
 ## 1.2.4
 
 - Adding WP_Widget Implementation
