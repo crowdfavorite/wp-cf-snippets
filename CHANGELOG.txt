@@ -1,5 +1,9 @@
 # CF Snippets Changelog
 
+## 2.0.1
+
+- Adding in the Deprecated file so old style widgets still work until the new widget is in place
+
 ## 2.0
 
 - Complete plugin rewrite

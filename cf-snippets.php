@@ -3,7 +3,7 @@
 Plugin Name: CF Snippets
 Plugin URI: http://crowdfavorite.com
 Description: Provides admin level users define html snippets for use in template, content, or widgets.
-Version: 2.0
+Version: 2.0.1
 Author: Crowd Favorite
 Author URI: http://crowdfavorite.com
 */
@@ -18,6 +18,9 @@ define('CFSP_DIR_URL', trailingslashit(plugins_url(basename(dirname(__FILE__))))
 // Includes
 include('classes/snippets.class.php');
 include('classes/message.class.php');
+
+// Include the Deprecated File to update the old Items
+include ('deprecated.php');
 
 if (!defined('PLUGINDIR')) {
 	define('PLUGINDIR','wp-content/plugins');
