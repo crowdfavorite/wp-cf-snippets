@@ -3,7 +3,7 @@
 Plugin Name: CF Snippets
 Plugin URI: http://crowdfavorite.com
 Description: Provides admin level users define html snippets for use in template, content, or widgets.
-Version: 2.0
+Version: 2.0.3
 Author: Crowd Favorite
 Author URI: http://crowdfavorite.com
 */
@@ -18,6 +18,9 @@ define('CFSP_DIR_URL', trailingslashit(plugins_url(basename(dirname(__FILE__))))
 // Includes
 include('classes/snippets.class.php');
 include('classes/message.class.php');
+
+// Include the Deprecated File to update the old Items
+include ('deprecated.php');
 
 if (!defined('PLUGINDIR')) {
 	define('PLUGINDIR','wp-content/plugins');
@@ -97,7 +100,7 @@ function cfsp_request_handler() {
 	// Setup the class object
 	if ((!empty($_GET['page']) && $_GET['page'] == 'cf-snippets')) {
 		global $cf_snippet;
-		if (class_exists('CF_Snippet') && !is_a('CF_Snippet', $cf_snippet)) {
+		if (class_exists('CF_Snippet') && !is_a($cf_snippet, 'CF_Snippet')) {
 			$cf_snippet = new CF_Snippet();
 		}
 	}
@@ -140,7 +143,7 @@ add_action('admin_menu', 'cfsp_admin_menu');
 
 function cfsp_options() {
 	global $cf_snippet;
-	if (class_exists('CF_Snippet') && !is_a('CF_Snippet', $cf_snippet)) {
+	if (class_exists('CF_Snippet') && !is_a($cf_snippet, 'CF_Snippet')) {
 		$cf_snippet = new CF_Snippet();
 	}
 	
@@ -202,7 +205,7 @@ function cfsp_options() {
 
 function cfsp_ajax_new() {
 	global $cf_snippet;
-	if (class_exists('CF_Snippet') && !is_a('CF_Snippet', $cf_snippet)) {
+	if (class_exists('CF_Snippet') && !is_a($cf_snippet, 'CF_Snippet')) {
 		$cf_snippet = new CF_Snippet();
 	}
 	
@@ -227,7 +230,7 @@ function cfsp_ajax_new() {
 
 function cfsp_ajax_edit($key) {
 	global $cf_snippet;
-	if (class_exists('CF_Snippet') && !is_a('CF_Snippet', $cf_snippet)) {
+	if (class_exists('CF_Snippet') && !is_a($cf_snippet, 'CF_Snippet')) {
 		$cf_snippet = new CF_Snippet();
 	}
 	
@@ -266,7 +269,7 @@ function cfsp_ajax_edit($key) {
 
 function cfsp_ajax_preview($key) {
 	global $cf_snippet;
-	if (class_exists('CF_Snippet') && !is_a('CF_Snippet', $cf_snippet)) {
+	if (class_exists('CF_Snippet') && !is_a($cf_snippet, 'CF_Snippet')) {
 		$cf_snippet = new CF_Snippet();
 	}
 	
