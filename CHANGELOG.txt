@@ -1,5 +1,9 @@
 # CF Snippets Changelog
 
+## 2.0.3
+
+- Fixing a bug with is_a when checking the global snippet object
+
 ## 2.0.2
 
 - Stripping slashes on display of snippet content to handle old snippet data
