@@ -3,7 +3,7 @@
 Plugin Name: CF Snippets
 Plugin URI: http://crowdfavorite.com
 Description: Provides admin level users define html snippets for use in template, content, or widgets.
-Version: 2.0.3
+Version: 2.0.4
 Author: Crowd Favorite
 Author URI: http://crowdfavorite.com
 */
@@ -313,7 +313,7 @@ function cfsp_ajax_preview($key) {
 
 function cfsp_ajax_delete($key, $confirm = false) {
 	global $cf_snippet;
-	if (class_exists('CF_Snippet') && !is_a('CF_Snippet', $cf_snippet)) {
+	if (class_exists('CF_Snippet') && !is_a($cf_snippet, 'CF_Snippet')) {
 		$cf_snippet = new CF_Snippet();
 	}
 	
@@ -373,7 +373,7 @@ function cfsp_add_new($key = '', $description = '', $content = '') {
 		$key = sanitize_title($key);
 	}
 	global $cf_snippet;
-	if (class_exists('CF_Snippet') && !is_a('CF_Snippet', $cf_snippet)) {
+	if (class_exists('CF_Snippet') && !is_a($cf_snippet, 'CF_Snippet')) {
 		$cf_snippet = new CF_Snippet();
 	}
 
@@ -389,7 +389,7 @@ function cfsp_save($key, $description = '', $content = '') {
 	if (empty($key)) { return false; }
 	
 	global $cf_snippet;
-	if (class_exists('CF_Snippet') && !is_a('CF_Snippet', $cf_snippet)) {
+	if (class_exists('CF_Snippet') && !is_a($cf_snippet, 'CF_Snippet')) {
 		$cf_snippet = new CF_Snippet();
 	}
 
@@ -401,7 +401,7 @@ function cfsp_save($key, $description = '', $content = '') {
 
 function cfsp_iframe_preview($key) {
 	global $cf_snippet;
-	if (class_exists('CF_Snippet') && !is_a('CF_Snippet', $cf_snippet)) {
+	if (class_exists('CF_Snippet') && !is_a($cf_snippet, 'CF_Snippet')) {
 		$cf_snippet = new CF_Snippet();
 	}
 	
@@ -415,7 +415,7 @@ function cfsp_iframe_preview($key) {
 function cfsp_get_snippet_info($key, $default = false, $create = true, $args = array()) {
 	if (empty($key)) { return ''; }
 	global $cf_snippet;
-	if (class_exists('CF_Snippet') && !is_a('CF_Snippet', $cf_snippet)) {
+	if (class_exists('CF_Snippet') && !is_a($cf_snippet, 'CF_Snippet')) {
 		$cf_snippet = new CF_Snippet();
 	}
 	return $cf_snippet->get_info($key, $default, $create, $args);
@@ -446,7 +446,7 @@ function cfsp_shortcode($attrs, $content=null) {
 		
 		if (empty($key)) { return ''; }
 		global $cf_snippet;
-		if (class_exists('CF_Snippet') && !is_a('CF_Snippet', $cf_snippet)) {
+		if (class_exists('CF_Snippet') && !is_a($cf_snippet, 'CF_Snippet')) {
 			$cf_snippet = new CF_Snippet();
 		}
 		return $cf_snippet->get($key, false, false);
@@ -459,7 +459,7 @@ add_shortcode('cfsp', 'cfsp_shortcode');
 
 function cfsnip_get_snippets() {
 	global $cf_snippet;
-	if (class_exists('CF_Snippet') && !is_a('CF_Snippet', $cf_snippet)) {
+	if (class_exists('CF_Snippet') && !is_a($cf_snippet, 'CF_Snippet')) {
 		$cf_snippet = new CF_Snippet();
 	}
 	return $cf_snippet->get_all();
@@ -476,7 +476,7 @@ function cfsnip_snippet_content($key, $default = false, $create = true) {
 function cfsnip_get_snippet($key, $default = false, $create = true) {
 	if (empty($key)) { return ''; }
 	global $cf_snippet;
-	if (class_exists('CF_Snippet') && !is_a('CF_Snippet', $cf_snippet)) {
+	if (class_exists('CF_Snippet') && !is_a($cf_snippet, 'CF_Snippet')) {
 		$cf_snippet = new CF_Snippet();
 	}
 	return $cf_snippet->get_info($key, $default, $create);
@@ -485,7 +485,7 @@ function cfsnip_get_snippet($key, $default = false, $create = true) {
 function cfsnip_get_snippet_content($key, $default = false, $create = true) {
 	if (empty($key)) { return ''; }
 	global $cf_snippet;
-	if (class_exists('CF_Snippet') && !is_a('CF_Snippet', $cf_snippet)) {
+	if (class_exists('CF_Snippet') && !is_a($cf_snippet, 'CF_Snippet')) {
 		$cf_snippet = new CF_Snippet();
 	}
 	return $cf_snippet->get($key, $default, $create);
@@ -499,7 +499,7 @@ add_filter('cfsp-get-content', 'cfsnip_filter_content', 10, 2);
 function cfsnip_snippet_exists($key) {
 	if (empty($key)) { return ''; }
 	global $cf_snippet;
-	if (class_exists('CF_Snippet') && !is_a('CF_Snippet', $cf_snippet)) {
+	if (class_exists('CF_Snippet') && !is_a($cf_snippet, 'CF_Snippet')) {
 		$cf_snippet = new CF_Snippet();
 	}
 	return $cf_snippet->exists($key);
@@ -508,7 +508,7 @@ function cfsnip_snippet_exists($key) {
 function cfsnip_handle_shortcode($attrs, $content=null) {
 	if (is_array($attrs) && !empty($attrs['name'])) {
 		global $cf_snippet;
-		if (class_exists('CF_Snippet') && !is_a('CF_Snippet', $cf_snippet)) {
+		if (class_exists('CF_Snippet') && !is_a($cf_snippet, 'CF_Snippet')) {
 			$cf_snippet = new CF_Snippet();
 		}
 		return $cf_snippet->get($attrs['name'], false, false);
@@ -533,7 +533,7 @@ class cfsnip_Widget extends WP_Widget {
 	function widget( $args, $instance ) {
 		extract( $args, EXTR_SKIP );
 		global $cf_snippet;
-		if (class_exists('CF_Snippet') && !is_a('CF_Snippet', $cf_snippet)) {
+		if (class_exists('CF_Snippet') && !is_a($cf_snippet, 'CF_Snippet')) {
 			$cf_snippet = new CF_Snippet();
 		}
 		// Get the snippet content
@@ -562,7 +562,7 @@ class cfsnip_Widget extends WP_Widget {
 		
 		$title = esc_attr($instance['title']);
 		global $cf_snippet;
-		if (class_exists('CF_Snippet') && !is_a('CF_Snippet', $cf_snippet)) {
+		if (class_exists('CF_Snippet') && !is_a($cf_snippet, 'CF_Snippet')) {
 			$cf_snippet = new CF_Snippet();
 		}
 		$select = $cf_snippet->select_display($instance['list_key']);
@@ -601,7 +601,7 @@ add_action('widgets_init', create_function('', "register_widget('cfsnip_Widget')
 
 function cfsnip_dialog() {
 	global $cf_snippet;
-	if (class_exists('CF_Snippet') && !is_a('CF_Snippet', $cf_snippet)) {
+	if (class_exists('CF_Snippet') && !is_a($cf_snippet, 'CF_Snippet')) {
 		$cf_snippet = new CF_Snippet();
 	}
 	$list = $cf_snippet->list_display(true);
