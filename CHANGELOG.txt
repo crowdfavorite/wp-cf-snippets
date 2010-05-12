@@ -1,5 +1,9 @@
 # CF Snippets Changelog
 
+## 2.0.4
+
+- Fixing more bugs with is_a
+
 ## 2.0.3
 
 - Fixing a bug with is_a when checking the global snippet object
