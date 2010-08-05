@@ -31,6 +31,20 @@
 			$(".cfsp-instructions-hide").toggle();
 			return false;
 		});
+		
+		$('.cfsp-post-next').live('click', function() {
+			var page = parseInt($('#cfsp-post-page-displayed').val());
+			page += 1;
+			cfsp_ajax_display_post_items(page);
+			return false;
+		});
+
+		$('.cfsp-post-prev').live('click', function() {
+			var page = parseInt($('#cfsp-post-page-displayed').val());
+			page -= 1;
+			cfsp_ajax_display_post_items(page);
+			return false;
+		});
 
 		cfsp_delete_snippet = function(id) {
 			$.post("index.php", {
@@ -97,6 +111,15 @@
 				cfsp_popup(r, 984);
 			});
 			return false;
+		};
+
+		cfsp_ajax_display_post_items = function(page) {
+			$.post("index.php", {
+				cf_action:"cfsp_post_items_paged",
+				cfsp_page:page,
+			}, function(r) {
+				$("#cfsp-post-display").html(r);
+			});
 		};
 	});
 })(jQuery);

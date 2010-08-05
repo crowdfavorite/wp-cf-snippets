@@ -14,8 +14,8 @@
 			ed.addCommand('CFSP_Insert', function() {
 				ed.windowManager.open({
 					file : 'index.php?cf_action=cfsp-dialog',
-					width : 250 + ed.getLang('cfsnippet.delta_width', 0),
-					height : 150 + ed.getLang('cfsnippet.delta_height', 0),
+					width : 450 + ed.getLang('cfsnippet.delta_width', 0),
+					height : 350 + ed.getLang('cfsnippet.delta_height', 0),
 					inline : 1
 				}, {
 					plugin_url: url

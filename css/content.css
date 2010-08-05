@@ -55,8 +55,7 @@
 	padding:2px;
 }
 
-.cfsp-shortcode,
-.cfsp-template-tag {
+.cfsp-shortcode-template {
 	display:none;
 	background-color:#E4F2FD;
 	border:1px solid #C6D9E9;
@@ -65,8 +64,7 @@
 	font-size:9px;
 }
 
-.cfsp-shortcode code,
-.cfsp-template-tag code {
+.cfsp-shortcode-template code {
 	font-size:9px;
 }
 
