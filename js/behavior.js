@@ -116,7 +116,7 @@
 		cfsp_ajax_display_post_items = function(page) {
 			$.post("index.php", {
 				cf_action:"cfsp_post_items_paged",
-				cfsp_page:page,
+				cfsp_page:page
 			}, function(r) {
 				$("#cfsp-post-display").html(r);
 			});
