@@ -659,7 +659,7 @@ function cfsp_save_post($post_id, $post) {
 			$name = $item['name'];
 			$postID = $item['postid'];
 			$content = $item['content'];
-			$key = 'cfsp-post-'.$postID.'-'.$id;
+			$key = 'cfsp-'.$postID.'-'.$id;
 			
 			// Make sure the key is a valid key
 			$key = sanitize_title($key);
