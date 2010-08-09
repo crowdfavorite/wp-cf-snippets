@@ -215,7 +215,7 @@ function cfsp_options() {
 		$post_table_display = ' style="display:none;"';
 	}
 	
-	$total_post_page_count = floor($total_post_count/CFSP_SHOW_POST_COUNT);
+	$total_post_page_count = ceil($total_post_count/CFSP_SHOW_POST_COUNT);
 	
 	?>
 	<div class="wrap">
@@ -228,11 +228,13 @@ function cfsp_options() {
 			<p><?php _e('Or use snippet widgets wherever widgets can be used.', 'cfsp'); ?></p>
 			<p><?php _e('To access files in your current theme template directory <em>from within a snippet</em>, type <code>{cfsp_template_url}</code>. That will be replaced with, for example, ', 'cfsp'); ?><code><?php echo get_template_directory_uri(); ?></code>.</p>
 		</div>
-		<div class="cfsp-message"<?php echo $message_display; ?>>
+		<?php if ($count == 0 && $post_count == 0) { ?>
+		<div class="cfsp-message">
 			<p>
 				<?php _e('No Snippets have been created.  Click the "Add New Snippet" button to proceed', 'cfsp'); ?>
 			</p>
 		</div>
+		<?php } ?>
 		<table id="cfsp-display" class="widefat"<?php echo $table_display; ?>>
 			<thead>
 				<tr>
@@ -255,6 +257,7 @@ function cfsp_options() {
 		<p>
 			<input type="button" class="button-primary cfsp-new-button" value="Add New Snippet" />
 		</p>
+		<?php if ($post_count > 0) { ?>
 		<h3><?php _e('Post Created Snippets', 'cfsp'); ?></h3>
 		<table id="cfsp-post-display" class="widefat"<?php echo $post_table_display; ?>>
 			<thead>
@@ -273,6 +276,7 @@ function cfsp_options() {
 					<th><?php _e('Description', 'cfsp'); ?></th>
 					<th width="20%" style="text-align:center;"><?php _e('Actions', 'cfsp'); ?></th>
 				</tr>
+				<?php if ($total_post_page_count > 1) { ?>
 				<tr>
 					<td style="text-align:left;">
 					</td>
@@ -284,8 +288,10 @@ function cfsp_options() {
 						<input type="hidden" id="cfsp-post-page-displayed" value="1" />
 					</td>
 				</tr>
+				<?php } ?>
 			</tfoot>
 		</table>
+		<?php } ?>
 	</div>
 	<?php
 }
@@ -296,9 +302,9 @@ function cfsp_ajax_post_items_paged($page) {
 	
 		$ids = split(',',$ids_displayed);
 		$keys = cfsp_get_post_snippet_keys();
-		$offset = (CFSP_SHOW_POST_COUNT*$page)+1;
+		$offset = (CFSP_SHOW_POST_COUNT*($page-1));
 		$post_table_content = '';
-		$total_pages = floor(count($keys)/CFSP_SHOW_POST_COUNT);
+		$total_pages = ceil(count($keys)/CFSP_SHOW_POST_COUNT);
 
 		if (is_array($keys) && !empty($keys)) {
 			for ($i = $offset; $i < $offset+CFSP_SHOW_POST_COUNT; $i++) {
@@ -600,6 +606,7 @@ function cfsp_post_edit() {
 		<?php
 		if (is_array($keys) && !empty($keys)) {
 			foreach ($keys as $key) {
+				if (!$cf_snippet->exists($key)) { continue; }
 				$item = str_replace('cfsp-post-'.$post_id.'-', '', $key);
 				?>
 				<div id="cfsp-item-<?php echo esc_attr($item); ?>" class="cfsp-item">
