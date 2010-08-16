@@ -607,7 +607,7 @@ function cfsp_post_edit() {
 		if (is_array($keys) && !empty($keys)) {
 			foreach ($keys as $key) {
 				if (!$cf_snippet->exists($key)) { continue; }
-				$item = str_replace('cfsp-post-'.$post_id.'-', '', $key);
+				$item = str_replace('cfsp-'.$post_id.'-', '', $key);
 				?>
 				<div id="cfsp-item-<?php echo esc_attr($item); ?>" class="cfsp-item">
 					<div id="cfsp-title-<?php echo esc_attr($item); ?>" class="cfsp-title">
@@ -656,17 +656,12 @@ function cfsp_save_post($post_id, $post) {
 	if (!empty($_POST) && is_array($_POST) && !empty($_POST['cfsp']) && is_array($_POST['cfsp'])) {
 		unset($_POST['cfsp']['###SECTION###']);
 		
-		// Unreliable post_id, use the global
-		unset($post_id);
-		global $post_id;
-
 		$postkeys = array();
 
 		foreach ($_POST['cfsp'] as $id => $item) {
 			$name = $item['name'];
-			$postID = $item['postid'];
 			$content = $item['content'];
-			$key = 'cfsp-'.$postID.'-'.$id;
+			$key = 'cfsp-'.$post_id.'-'.$id;
 			
 			// Make sure the key is a valid key
 			$key = sanitize_title($key);
@@ -940,7 +935,7 @@ function cfsnip_dialog() {
 			echo '<p>'.$list.'</p>';
 		}
 		else {
-			echo '<p>'.__('No Snippets have been setup.  Please <a href="'.admin_url('options-general.php?page=cf-snippets').'">setup a snippet</a> before proceeding.', 'cfsp').'</p>';
+			echo '<p>'.__('No Snippets have been setup.  Please setup a snippet before proceeding.', 'cfsp').'</p>';
 		}
 		?>
 	</body>
