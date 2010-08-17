@@ -3,7 +3,7 @@
 Plugin Name: CF Snippets
 Plugin URI: http://crowdfavorite.com
 Description: Provides admin level users the ability to define html snippets for use in templates, content, or widgets.
-Version: 2.1
+Version: 2.1.1
 Author: Crowd Favorite
 Author URI: http://crowdfavorite.com
 */
@@ -992,9 +992,12 @@ if (function_exists('cfreadme_enqueue')) {
  * Checks if json_encode is not available and defines json_encode & json_decode
  * Uses the Pear Class Services_JSON - http://pear.php.net/package/Services_JSON
  */ 
-if (!function_exists('json_encode') && !class_exists('Services_JSON')) {
-	require_once('classes/external/JSON.php');
-}	
+function cfsp_include_json() {
+	global $wp_version;
+	if (!function_exists('json_encode') && !class_exists('Services_JSON') && version_compare($wp_version, '3.0', '<')) {
+		require_once('classes/external/JSON.php');
+	}
+}
 
 /**
  * cfsp_json_encode
@@ -1007,6 +1010,7 @@ function cfsp_json_encode($data) {
 		return json_encode($data);
 	}
 	else {
+		cfsp_include_json();
 		global $cfsp_json_object;
 		if (!($cfsp_json_object instanceof Services_JSON)) {
 			$cfsp_json_object = new Services_JSON();
@@ -1027,6 +1031,7 @@ function cfsp_json_decode($json,$array) {
 		return json_decode($json,$array);
 	}
 	else {
+		cfsp_include_json();
 		global $cfsp_json_object;
 		if (!($cfsp_json_object instanceof Services_JSON)) {
 			$cfsp_json_object = new Services_JSON();
