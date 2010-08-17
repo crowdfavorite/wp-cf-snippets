@@ -1,5 +1,11 @@
 # CF Snippets Changelog
 
+## 2.1
+
+- Adding the ability to add Snippets on Post edit screens
+- Also adding the display of the Post created snippets to the Snippets settings screen
+- Also various bug fixes
+
 ## 2.0.4
 
 - Fixing more bugs with is_a
