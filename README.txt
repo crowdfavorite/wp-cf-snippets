@@ -59,6 +59,10 @@ To add the snippet shortcode:
 - Click the "cog" icon
 - Click on the Snippet Description that is desired to be displayed
 
+### Post Created Snippets
+
+The Snippets plugin provides the ability to create snippets on the Post/Page edit screens.  Snippets created on the post edit screen have a button for easily adding the snippet content to the content of the post via Shortcode.  Snippets created on a post or page edit screen will always be displayed there until the snippet is removed using the "Remove Snippet from this Post" button.  Snippets created in posts are also displayed on the Snippets settings screen, and can be added to any post/page desired using the Snippets shortcode.  These snippets can also be used with the Snippets template tag wherever desired.  To add a Post/Page created snippet to the content of a post, simply place the cursor in the position to insert the shortcode and click the "Add to Content" button for the Snippet desired.
+
 ### Widgets
 
 The Snippets plugin also provides WordPress Widgets for easy display of Snippet data.  The Widget will display content based on a snippet selected from a drop down menu on the Widget admin page.  The Widget also provides a Title section for compliance with custom themes.
