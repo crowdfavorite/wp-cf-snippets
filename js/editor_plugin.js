@@ -6,7 +6,7 @@
 			// Register button
 			ed.addButton('cfsnip_Btn', {
 				title : 'Click to Insert Snippet',
-				image : pluginUrl + '/images/cog_add.png',
+				image : pluginUrl + '/images/snippet.gif',
 				cmd : 'CFSP_Insert'
 			});
 			
