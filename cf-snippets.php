@@ -988,6 +988,23 @@ if (function_exists('cfreadme_enqueue')) {
 ## Auxillary Functionality
 
 /**
+ * Add some information to the "Right Now" section of the WP Admin Dashboard.  This will make it easier to
+ * get into the Snippets edit screen.
+ */
+function cfsp_rightnow_end() {
+	$cf_snippet = new CF_Snippet();
+	$count = count($cf_snippet->get_keys());
+	$link = admin_url('options-general.php?page=cf-snippets');
+	?>
+	<tr>
+		<td class="first b b-tags"><a href="<?php echo $link; ?>"><?php echo $count; ?></a></td>
+		<td class="t tags"><a href="<?php echo $link; ?>"><?php _e('CF Snippet', 'cfsp'); echo ($count == 1) ? '' : 's'; ?></a></td>
+	</tr>
+	<?php
+}
+add_action('right_now_content_table_end', 'cfsp_rightnow_end');
+
+/**
  * JSON ENCODE and DECODE for PHP < 5.2.0
  * Checks if json_encode is not available and defines json_encode & json_decode
  * Uses the Pear Class Services_JSON - http://pear.php.net/package/Services_JSON
@@ -1041,5 +1058,14 @@ function cfsp_json_decode($json,$array) {
 	}
 }
 
+## Integration with the CF Links Plugin
+
+function cfsp_cflk_integration() {
+	if (function_exists('cflk_register_link')) {
+		include('classes/cflk.snippets.class.php');
+		cflk_register_link('snippet', 'cfsp_link');
+	}
+}
+add_action('plugins_loaded', 'cfsp_cflk_integration', 99999);
 
 ?>

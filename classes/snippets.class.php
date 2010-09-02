@@ -71,7 +71,6 @@ class CF_Snippet {
 	public function get_meta($key) {
 		$meta = array();
 		$snippet = $this->get_info($key);
-		unset($snippet['content'], $snippet['description']);
 		
 		if (is_array($snippet) && !empty($snippet)) {
 			foreach ($snippet as $key => $data) {
