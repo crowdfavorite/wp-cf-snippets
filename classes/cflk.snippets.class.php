@@ -3,6 +3,8 @@
 class cfsp_link extends cflk_link_base {
 	function __construct() {
 		parent::__construct('snippet', __('Snippets', 'cfsp'));
+		$this->show_new_window_field = false;
+		$this->show_title_field = false;
 	}
 	
 	/**
