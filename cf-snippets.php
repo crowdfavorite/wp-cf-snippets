@@ -1063,7 +1063,7 @@ function cfsp_json_decode($json,$array) {
 function cfsp_cflk_integration() {
 	if (function_exists('cflk_register_link')) {
 		include('classes/cflk.snippets.class.php');
-		cflk_register_link('snippet', 'cfsp_link');
+		cflk_register_link('cfsp_link');
 	}
 }
 add_action('plugins_loaded', 'cfsp_cflk_integration', 99999);
