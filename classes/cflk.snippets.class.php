@@ -1,8 +1,10 @@
 <?php
 
 class cfsp_link extends cflk_link_base {
+	private $type_display = '';
 	function __construct() {
-		parent::__construct('snippet', __('Snippets', 'cfsp'));
+		$this->type_display = __('Snippets', 'cf-links');
+		parent::__construct('snippet', $this->type_display);
 		if (is_admin()) {
 			$this->show_new_window_field = false;
 			$this->show_title_field = false;
@@ -17,10 +19,20 @@ class cfsp_link extends cflk_link_base {
 	 */
 	function display($data) {
 		if (!class_exists('CF_Snippet')) { return parent::display($data); }
-		if (!empty($data['cflk-snippet-id'])) {
-			$cf_snippet = new CF_Snippet();
-			$data['link'] = '';
-			$data['title'] = $cf_snippet->get($data['cflk-snippet-id'], false, false);
+		if (!empty($data['cflk-snippet-id']) || !empty($data['link'])) {
+			$id = '';
+			if (!empty($data['cflk-snippet-id'])) {
+				$id = $data['cflk-snippet-id'];
+			}
+			else if (!empty($data['link'])) {
+				$id = $data['link'];
+			}
+			
+			if (!empty($id)) {
+				$cf_snippet = new CF_Snippet();
+				$data['link'] = '';
+				$data['title'] = $cf_snippet->get($id, false, false);
+			}
 		}
 		else {
 			$data['link'] = '';
@@ -36,20 +48,31 @@ class cfsp_link extends cflk_link_base {
 	 * @return string html
 	 */
 	function admin_display($data) {
-		if (!class_exists('CF_Snippet')) { return; }
-		if (!empty($data['cflk-snippet-id'])) {
-			$cf_snippet = new CF_Snippet();
-			$meta = $cf_snippet->get_meta($data['cflk-snippet-id']);
-			$title = $meta['description'];
+		$title = $description = $details = '';
+		$cf_snippet = new CF_Snippet();
+		
+		if (!empty($data['cflk-wordpress-id'])) {
+			$details = $cf_snippet->get_meta($data['cflk-snippet-id']);
+		}
+		if (!empty($data['link'])) {
+			$details = $cf_snippet->get_meta($data['link']);
+		}
+		
+		if (is_array($details) && !empty($details['description'])) {
+			$description = $details['description'];
+		}
+		
+		if (!empty($data['title'])) {
+			$title = $data['title'];
 		}
 		else {
-			$title = __('Unknown Snippet', 'cfsp');
+			$title = $description;
 		}
-		return '
-			<div>
-				'.__('Snippet:', 'cfsp').' <span class="link">'.esc_html($title).'</span>
-			</div>
-			';
+		
+		return array(
+			'title' => $title,
+			'description' => $description
+		);
 	}
 	
 	function admin_form($data) {
@@ -57,14 +80,15 @@ class cfsp_link extends cflk_link_base {
 			'echo' => false,
 			'id' => 'cflk-dropdown-snippets',
 			'name' => 'cflk-snippet-id',
-			'selected' => (!empty($data['cflk-snippet-id']) ? intval($data['cflk-snippet-id']) : 0) 
+			'selected' => (!empty($data['cflk-snippet-id']) ? intval($data['cflk-snippet-id']) : 0),
+			'class' => 'elm-select'
 		);
-		$snippets = $this->dropdown($args);
 		return '
-			<div>
-				'.__('Snippets: ', 'cfsp').$snippets.'
+			<div class="elm-block">
+				<label>'.__('Snippets', 'cfsp').'</label>
+				'.$this->dropdown($args).'
 			</div>
-			';
+		';
 	}
 	
 	function update($data) {
@@ -82,7 +106,7 @@ class cfsp_link extends cflk_link_base {
 		$post_snips = '';
 		$main_snips = '';
 		
-		$html = '<select name="'.$name.'" id="'.$id.'">';
+		$html = '<select name="'.$name.'" id="'.$id.'" class="'.$class.'">';
 		if (!class_exists('CF_Snippet')) { return; }
 		$cf_snippet = new CF_Snippet();
 		$keys = $cf_snippet->get_keys();
