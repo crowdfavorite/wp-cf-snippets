@@ -51,7 +51,7 @@ class CF_Snippet {
 		$key = sanitize_title($key);
 		
 		if (!empty($snippets[$key])) {
-			return do_shortcode(apply_filters('cfsp-get-info', $snippets[$key], $key));
+			return apply_filters('cfsp-get-info', $snippets[$key], $key);
 		}
 		else if (!empty($default) && $create) {
 			if (empty($description)) {
