@@ -11,14 +11,20 @@ Author URI: http://crowdfavorite.com
 // ini_set('display_errors', '1'); ini_set('error_reporting', E_ALL);
 
 // Constants
-define('CFSP_VERSION', '2.1');
+define('CFSP_VERSION', '2.1.2');
 define('CFSP_DIR', plugin_dir_path(__FILE__));
-define('CFSP_DIR_URL', trailingslashit(plugins_url(basename(dirname(__FILE__)))));
+//plugin_dir_url seems to be broken for including in theme files, but plugin_dir_path works
+if (file_exists(trailingslashit(get_template_directory()).'plugins/'.basename(dirname(__FILE__)))) {
+	define('CFSP_DIR_URL', trailingslashit(trailingslashit(get_bloginfo('template_url')).'plugins/'.basename(dirname(__FILE__))));
+}
+else {
+	define('CFSP_DIR_URL', trailingslashit(plugins_url(basename(dirname(__FILE__)))));	
+}
 define('CFSP_SHOW_POST_COUNT', 10);
 
 // Includes
 include('classes/snippets.class.php');
-include('classes/message.class.php');
+//include('classes/message.class.php');
 
 // Include the Deprecated File to update the old Items
 include ('deprecated.php');
@@ -166,7 +172,7 @@ function cfsp_admin_menu() {
 	add_options_page(
 		__('CF Snippets', 'cfsp'),
 		__('CF Snippets', 'cfsp'),
-		10,
+		'manage_options',
 		'cf-snippets',
 		'cfsp_options'
 	);

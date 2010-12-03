@@ -30,7 +30,7 @@ class CF_Snippet {
 		$key = sanitize_title($key);
 		
 		if (!empty($snippets[$key]['content'])) {
-			return do_shortcode(apply_filters('cfsp-get-content', stripslashes($snippets[$key]['content']), $key));
+			return htmlspecialchars_decode(do_shortcode(apply_filters('cfsp-get-content', stripslashes($snippets[$key]['content']), $key)));
 		}
 		else if (!empty($default) && $create) {
 			if (empty($description)) {
@@ -51,7 +51,7 @@ class CF_Snippet {
 		$key = sanitize_title($key);
 		
 		if (!empty($snippets[$key])) {
-			return do_shortcode(apply_filters('cfsp-get-info', $snippets[$key], $key));
+			return htmlspecialchars_decode(do_shortcode(apply_filters('cfsp-get-info', $snippets[$key], $key)));
 		}
 		else if (!empty($default) && $create) {
 			if (empty($description)) {
@@ -104,7 +104,7 @@ class CF_Snippet {
 	 * @return array - Array of content
 	 */
 	public function get_all() {
-		return get_option('cfsnip_snippets');
+		return htmlspecialchars_decode(get_option('cfsnip_snippets'));
 	}
 	
 	/**
@@ -322,8 +322,8 @@ class CF_Snippet {
 		if (empty($key)) { return false; }
 		
 		$snippets = $this->get_all();
-		$snippets[$key]['content'] = stripslashes($content);
-		$snippets[$key]['description'] = stripslashes($description);
+		$snippets[$key]['content'] = esc_html(stripslashes($content));
+		$snippets[$key]['description'] = esc_html(stripslashes($description));
 		
 		// We know for sure we are going to use the post_id arg, so lets use it then remove it
 		$snippets[$key]['post_id'] = stripslashes($post_id);
@@ -335,7 +335,6 @@ class CF_Snippet {
 				$snippets[$key][stripslashes($arg_key)] = stripslashes($arg_value);
 			}
 		}
-		
 		
 		if ($this->update_option($snippets)) {
 			return $key;
@@ -362,8 +361,8 @@ class CF_Snippet {
 		
 		$snippets = $this->get_all();
 		$key = sanitize_title($key);
-		$snippets[$key]['content'] = stripslashes($content);
-		$snippets[$key]['description'] = stripslashes($description);
+		$snippets[$key]['content'] = esc_html(stripslashes($content));
+		$snippets[$key]['description'] = esc_html(stripslashes($description));
 		
 		// We know for sure we are going to use the post_id arg, so lets use it then remove it
 		$snippets[$key]['post_id'] = stripslashes($post_id);
