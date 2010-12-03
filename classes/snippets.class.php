@@ -30,7 +30,9 @@ class CF_Snippet {
 		$key = sanitize_title($key);
 		
 		if (!empty($snippets[$key]['content'])) {
-			return htmlspecialchars_decode(do_shortcode(apply_filters('cfsp-get-content', stripslashes($snippets[$key]['content']), $key)));
+			$snippet[$key]['content'] = htmlspecialchars_decode($snippet[$key]['content']);
+			$snippet[$key]['description'] = htmlspecialchars_decode($snippet[$key]['description']);
+			return do_shortcode(apply_filters('cfsp-get-content', stripslashes($snippets[$key]['content']), $key));
 		}
 		else if (!empty($default) && $create) {
 			if (empty($description)) {
