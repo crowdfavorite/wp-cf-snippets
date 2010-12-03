@@ -51,7 +51,9 @@ class CF_Snippet {
 		$key = sanitize_title($key);
 		
 		if (!empty($snippets[$key])) {
-			return htmlspecialchars_decode(do_shortcode(apply_filters('cfsp-get-info', $snippets[$key], $key)));
+			$snippet[$key]['content'] = htmlspecialchars_decode($snippet[$key]['content']);
+			$snippet[$key]['description'] = htmlspecialchars_decode($snippet[$key]['description']);
+			return do_shortcode(apply_filters('cfsp-get-info', $snippets[$key], $key));
 		}
 		else if (!empty($default) && $create) {
 			if (empty($description)) {
@@ -104,7 +106,12 @@ class CF_Snippet {
 	 * @return array - Array of content
 	 */
 	public function get_all() {
-		return htmlspecialchars_decode(get_option('cfsnip_snippets'));
+		$snippets = get_option('cfsnip_snippets');
+		foreach ($snippets as $snippet) {
+			$snippet['content'] = htmlspecialchars_decode($snippet['content']);
+			$snippet['description'] = htmlspecialchars_decode($snippet['description']);
+		}
+		return $snippets;
 	}
 	
 	/**
