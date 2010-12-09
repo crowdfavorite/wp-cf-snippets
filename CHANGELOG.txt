@@ -1,0 +1,54 @@
+# CF Snippets Changelog
+
+## 2.1.1
+
+- Fixing some JSON issues for non WP 3.0 and PHP 5.1 servers
+
+## 2.1
+
+- Adding the ability to add Snippets on Post edit screens
+- Also adding the display of the Post created snippets to the Snippets settings screen
+- Also various bug fixes
+
+## 2.0.4
+
+- Fixing more bugs with is_a
+
+## 2.0.3
+
+- Fixing a bug with is_a when checking the global snippet object
+
+## 2.0.2
+
+- Stripping slashes on display of snippet content to handle old snippet data
+
+## 2.0.1
+
+- Adding in the Deprecated file so old style widgets still work until the new widget is in place
+
+## 2.0
+
+- Complete plugin rewrite
+- Extracted Snippet functionality into Snippets class for easier integration
+- New snippets functions and shortcodes with further functionality for easier integration
+- Cleanup of the Admin for easier editing/insertion
+
+## 1.2.4
+
+- Adding WP_Widget Implementation
+
+## 1.2.3
+
+- Bug fixes
+- Fixed the shortcode handler so it got the snippet content from a central function that handles other items easier
+
+## 1.2.2
+
+- Removed pseudo caching of the snippets.  Issue found when trying to do a switch to blog to get another blogs snippets and there was no easy way to force refresh
+
+## 1.2
+
+- added functionality to define default text for a snippet via the template tag and automatically create the snippet if it doesn't exist
+- fixed bug in admin page display where non-escaped HTML could cause a textarea to close and break the form
+- fixed bug in admin display where new list item number would not be correct
+- many UI improvements
