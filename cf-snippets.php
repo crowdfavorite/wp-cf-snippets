@@ -542,7 +542,6 @@ function cfsp_add_new($key = '', $description = '', $content = '') {
 		if (strlen($key) > 20) {
 			$key = substr($key, 0, 20);
 		}
-		$key = sanitize_title($key);
 	}
 	global $cf_snippet;
 	if (class_exists('CF_Snippet') && !($cf_snippet instanceof CF_Snippet)) {
@@ -550,8 +549,8 @@ function cfsp_add_new($key = '', $description = '', $content = '') {
 	}
 
 	// Make sure the key is a valid key
-	$key = sanitize_title($key);
 	$new_key = $cf_snippet->add($key, $content, $description);
+	error_log('newkey '.$newkey);
 	// Now that we have inserted, get the row to insert into the table
 	echo $cf_snippet->admin_display($new_key);
 }
@@ -563,9 +562,6 @@ function cfsp_save($key, $description = '', $content = '') {
 	if (class_exists('CF_Snippet') && !($cf_snippet instanceof CF_Snippet)) {
 		$cf_snippet = new CF_Snippet();
 	}
-
-	// Make sure the key is a valid key
-	$key = sanitize_title($key);
 
 	$cf_snippet->save($key, $content, $description);
 }
@@ -668,9 +664,6 @@ function cfsp_save_post($post_id, $post) {
 			$content = $item['content'];
 			$key = 'cfsp-'.$post_id.'-'.$id;
 			
-			// Make sure the key is a valid key
-			$key = sanitize_title($key);
-
 			$cf_snippet = new CF_Snippet();
 			
 			$args = array(

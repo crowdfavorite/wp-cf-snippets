@@ -5,22 +5,9 @@
  */
 class CF_Snippet {
 	
-	private $post_type = 'cf_snippet';
+	private $post_type = '_cf_snippet';
 	
 	public function __construct() {
-	}
-	
-	public function register_post_type() {
-		$args = array(
-			'public' => false,
-			'capability_type' => 'post',
-			'hierarchical' => false,
-			'rewrite' => false,
-			'query_var' => false,
-			'can_export' => false,
-		  );
-
-		register_post_type($this->post_type, $args);
 	}
 	
 	## Display Functions
@@ -53,7 +40,14 @@ class CF_Snippet {
 		}
 	}
 	
-/* WHATS THIS DO??? */
+	/**
+	 * This function returns a snippet with a matching key, creates one if none are found
+	 * 
+	 * @param string $key Key to get
+	 * @param string $default Data to use for the content if the key does not exist
+	 * @return stdObj A snippet with matching key
+	 */
+
 	public function get_info($key, $default = '', $create = true, $args = array()) {
 		$defaults = array(
 			'description' => '',
@@ -78,17 +72,18 @@ class CF_Snippet {
 	/**
 	 * This function provides the extra meta data for a particular snippet
 	 *
-	 * @param string $key | Key for the snippet to get the meta data for.
-	 * @return array | Meta for the snippet (also returns description)
+	 * @param string $key Key for the snippet to get the meta data for.
+	 * @return array Meta for the snippet (also returns description)
 	 */
 	public function get_meta($key) {
+		$key = sanitize_title($key);
 		$meta = array();
 		$post_id = $this->get_id($key);
 		if ($post_id) {
 			$all_meta = get_post_custom($post_id);
-			foreach ($all_meta as $key => $value) {
-				if (strpos($key, '_cfsp_') !== false) {
-					$meta[$key] = $value;
+			foreach ($all_meta as $meta_key => $meta_value) {
+				if (strpos($meta_key, '_cfsp_') !== false) {
+					$meta[htmlspecialchars_decode($meta_key)] = htmlspecialchars_decode($meta_value);
 				}
 			}
 		}
@@ -117,6 +112,7 @@ class CF_Snippet {
 	public function get_all() {
 		$posts = get_posts( array(
 			'post_type' => $this->post_type,
+			'numberposts' => -1,
 		) );
 		return $posts;
 	}
@@ -128,6 +124,7 @@ class CF_Snippet {
 	 * @return stdObj a snippet (post) object without meta
 	 */
 	public function get_snippet($key) {
+		$key = sanitize_title($key);
 		$posts = get_posts( array(
 			'post_type' => $this->post_type,
 			'name' => $key,
@@ -139,25 +136,13 @@ class CF_Snippet {
 	}
 	
 	/**
-	 *	This function gets the description of a snippet based on its key 
-	 * 
-	 * @param string $key key to search snippets for
-	 * @return string Description of the snippet 
-	 */
-	public function get_description($key) {
-		$post_id = $this->get_id($key);
-		if ($post_id) {
-			return get_post_meta($post_id, '_cfsp_description', true);
-		}
-		return false;
-	}
-	/**
 	 * This function checks to see if a specific key exists, and returns true if it does and false if it doesn't
 	 *
 	 * @param string $key - Key to search for
 	 * @return bool - Result of wether the key exists or not
 	 */
 	public function exists($key) {
+		$key = sanitize_title($key);
 		$snippet = $this->get_snippet($key);
 		if (!empty($snippet)) {
 			return true;
@@ -177,7 +162,7 @@ class CF_Snippet {
 		if (!$this->exists($key)) { return ''; }
 
 		$snippet = $this->get_snippet($key);
-		$description = $this->get_description($key);
+		$description = $snippet->post_title;
 		$content = $snippet->post_content;
 
 		$html = '
@@ -190,7 +175,7 @@ class CF_Snippet {
 					</tr>
 					<tr>
 						<th style="width:50px;">'.__('Content').'</th>
-						<td><textarea name="cfsp-content" id="cfsp-content" class="widefat cfsp-popup-edit-content" cols="50" rows="8">'.stripslashes($content).'</textarea></td>
+						<td><textarea name="cfsp-content" id="cfsp-content" class="widefat cfsp-popup-edit-content" cols="50" rows="8">'.esc_html(stripslashes($content)).'</textarea></td>
 					</tr>
 				</table>
 			</div>
@@ -215,15 +200,15 @@ class CF_Snippet {
 			<div class="cfsp-new-snip">
 				<table class="form-table" border="0">
 					<tr>
-						<th style="width:50px;">'.__('Key').'</th>
+						<th style="width:50px;">'.__('Key', 'cfsp').'</th>
 						<td><input type="text" name="cfsp-key" id="cfsp-key" value="" class="widefat" /></td>
 					</tr>
 					<tr>
-						<th style="width:50px;">'.__('Description').'</th>
+						<th style="width:50px;">'.__('Description', 'cfsp').'</th>
 						<td><input type="text" name="cfsp-description" id="cfsp-description" value="" class="widefat" /></td>
 					</tr>
 					<tr>
-						<th style="width:50px;">'.__('Content').'</th>
+						<th style="width:50px;">'.__('Content', 'cfsp').'</th>
 						<td><textarea name="cfsp-content" id="cfsp-content" class="widefat cfsp-popup-edit-content" cols="50" rows="8"></textarea></td>
 					</tr>
 				</table>
@@ -245,9 +230,9 @@ class CF_Snippet {
 	 */
 	public function admin_display($key) {
 		if (!$this->exists($key)) { return ''; }
-		
+
 		$snippet = $this->get_snippet($key);
-		$description = $this->get_description($key);
+		$description = $snippet->post_title;
 
 		// Escape the key once instead of multiple times
 		$key = esc_attr($key);
@@ -290,7 +275,7 @@ class CF_Snippet {
 		if (is_array($snippets) && !empty($snippets)) {
 			foreach ($snippets as $snippet) {
 				$key = $snippet->post_name;
-				$description = $this->get_description($key);
+				$description = $snippet->post_title;
 				$select .= '<option value="'.$key.'"'.selected($selected, $key, false).'>'.htmlentities($description).'</option>';
 			}
 		}
@@ -309,7 +294,7 @@ class CF_Snippet {
 		if (is_array($snippets) && !empty($snippets)) {
 			foreach ($snippets as $snippet) {
 				$key = $snippet->post_name;
-				$description = $this->get_description($key);
+				$description = $snippet->post_title;
 
 				if (!empty($description)) {
 					if ($links) {
@@ -344,6 +329,58 @@ class CF_Snippet {
 	## Database Interaction Functions
 	
 	/**
+	 * This function takes a key, content and description and saves them to the database
+	 *
+	 * @param string $key - Key to update
+	 * @param string $content - Content to update
+	 * @param string $description - Description to update
+	 * @return bool - Result of the save
+	 */
+	public function save($key, $content, $description, $args = array()) {
+		// Check to make sure we don't have any variable name conflicts
+		unset($args['key'], $args['content'], $args['description'], $args['snippet'], $args['post_id'], $args['mod_cap']);
+		
+		$defaults = array();
+		
+		extract( wp_parse_args( $args, $defaults ), EXTR_SKIP );
+		
+		$key = sanitize_title($key);
+		if (empty($key)) { return false; }
+		$post_id = $this->get_id($key);
+		error_log('post_id '.$post_id);
+		$snippet = array(
+			'post_type' => $this->post_type,
+			'post_name' => $key,
+			'post_content' => $content,
+			'post_status' => 'publish',
+			'post_title' => $description,
+			'ID' => $post_id,
+		);
+
+		$mod_cap = false;
+		// Manage options should only have access to this anyway
+		if (current_user_can('manage_option') && !current_user_can('unfilterd_html')) {
+			$user = wp_get_current_user();
+			$user->add_cap('unfiltered_html');
+			$mod_cap = true;
+		}
+		
+		$post_id = wp_insert_post($snippet);
+		
+		if ($mod_cap) {
+			$user->remove_cap('unfiltered_html');
+		}
+		
+		if (!$post_id) { return false; }
+		
+		foreach ($args as $arg_key => $arg_value) {
+			if (!update_post_meta($post_id, '_cfsp_'.esc_html($arg_key), esc_html($arg_value))) { return false;	}
+		}
+		
+		return $true;
+	}
+	
+	/**
 	 * This function takes a key, content and description and adds them to the database.  The key is checked to make
 	 * sure that another key doesn't exists with the same value, and updates it if it does
 	 *
@@ -354,93 +391,51 @@ class CF_Snippet {
 	 */
 	public function add($key, $content, $description, $args = array()) {
 		// Check to make sure we don't have any variable name conflicts
-		unset($args['key'], $args['content'], $args['description'], $args['snippet'], $args['post_id']);
-		
+		unset($args['key'], $args['content'], $args['description'], $args['snippet'], $args['post_id'], $args['mod_cap']);
+
 		$defaults = array(
 		);
 		extract( wp_parse_args( $args, $defaults ), EXTR_SKIP );
-
-		if (empty($key)) { return false; }
 		
+		//  Make sure key is valid
+		$key = sanitize_title($key);
 		// Check the key to see if one exists, fix if so
 		$key = $this->check_key(stripslashes($key));
 		if (empty($key)) { return false; }
-		
-		$post_id = $this->get_id($key);
-		
-		global $current_user;
-		get_currentuserinfo();
 		
 		$snippet = array(
 			'post_type' => $this->post_type,
 			'post_name' => $key,
 			'post_content' => $content,
 			'post_status' => 'publish',
-			'author' => $current_user->user_ID,
-			'post_id' => $post_id,
+			'post_title' => $description,
 		);
-
+	
+		$mod_cap = false;
+		// Manage options should only have access to this anyway
+		if (current_user_can('manage_option') && !current_user_can('unfilterd_html')) {
+			$user = wp_get_current_user();
+			$user->add_cap('unfiltered_html');
+			$mod_cap = true;
+		}
+		
 		$post_id = wp_insert_post($snippet);
+		
+		if ($mod_cap) {
+			$user->remove_cap('unfiltered_html');
+		}
 		
 		if (!$post_id) { return false; }
 
-		if (!update_post_meta($post_id, '_cfsp_description', $description)) { return false; }
-		
-		/*	foreach ($args as $arg_key => $arg_value) {
-				if (!update_post_meta($post_id, '_cfsp_'.$arg_key, $arg_value)) { return false; }
-			}*/
-		
+		foreach ($args as $arg_key => $arg_value) {
+			if (!update_post_meta($post_id, '_cfsp_'.esc_html($arg_key), esc_html($arg_value))) { return false; }
+		}
+
 		return $key;
 	}
-	
+		
 	/**
-	 * This function takes a key, content and description and saves them to the database
-	 *
-	 * @param string $key - Key to update
-	 * @param string $content - Content to update
-	 * @param string $description - Description to update
-	 * @return bool - Result of the save
-	 */
-	public function save($key, $content, $description, $args = array()) {
-		// Check to make sure we don't have any variable name conflicts
-		unset($args['key'], $args['content'], $args['description'], $args['snippet'], $args['post_id']);
-
-		$defaults = array(
-		);
-		extract( wp_parse_args( $args, $defaults ), EXTR_SKIP );
-
-		if (empty($key)) { return false; }
-
-		// Check the key to see if one exists, fix if so
-		$key = $this->check_key(stripslashes($key));
-		if (empty($key)) { return false; }
-
-		global $current_user;
-		get_currentuserinfo();
-
-		$snippet = array(
-			'post_type' => $this->post_type,
-			'post_name' => $key,
-			'post_content' => $content,
-			'post_status' => 'publish',
-			'author' => $current_user->user_ID,
-		);
-
-		$post_id = wp_insert_post($snippet);
-
-		if (!$post_id) { return false; }
-
-		if (!update_post_meta($post_id, '_cfsp_description', $description)) { return false; }
-
-	/*	foreach ($args as $arg_key => $arg_value) {
-			if (!update_post_meta($post_id, '_cfsp_'.$arg_key, $arg_value)) { return false; }
-		}*/
-
-		return true;
-	}
-	
-	/**
-	 * This function takes a key, and removes that key from the database
+	 * This function takes a key, and removes that post with matching key (post_name) from the database
 	 *
 	 * @param string $key - Key to remove
 	 * @return bool - Result of the remove
@@ -449,16 +444,6 @@ class CF_Snippet {
 		$key = sanitize_title($key);
 		$post_id = $this->get_id($key);
 		return wp_delete_post($post_id, true);
-	}
-	
-	/**
-	 * This function updates the DB option with the inserted value
-	 *
-	 * @param array $value - New value for the options table
-	 * @return bool - Result of the update
-	 */
-	public function update_option($value) {
-		return update_option('cfsnip_snippets', $value);
 	}
 
 	## Auxiliary Functions
@@ -472,7 +457,8 @@ class CF_Snippet {
 	 */
 	public function check_key($key) {
 		if (!$this->exists($key)) { return $key; }
-		
+		//  Make sure key is valid
+		$key = sanitize_title($key);
 		$i = 0;
 		while(1) {
 			$check_key = $key.'-'.$i;
@@ -483,24 +469,39 @@ class CF_Snippet {
 		return $check_key;
 	}
 	
+	/**
+	 *  This function gets a post ID based on a key (post_name)
+	 * 
+	 * @param string $key - Key to check
+	 * @return int ID of a post, 0 otherwise
+	 */
 	public function get_id($key) {
+		//  Make sure key is valid
+		$key = sanitize_title($key);
 		$snippet = $this->get_snippet($key);
-
 		if ($snippet) {
 			return $snippet->ID;
 		}
 		return 0;
 	}
-
 	
 	/**
-	 * This function adds the DB option with an empty array and an autoload value of no so it doesn't get auto loaded every time
-	 *
+	 * This function registers a custom post type where we store the snippets
+	 * 
 	 * @return void
 	 */
-	public function install() {
-	}
+	public function register_post_type() {
+		$args = array(
+			'public' => false,
+			'capability_type' => 'post',
+			'hierarchical' => false,
+			'rewrite' => false,
+			'query_var' => false,
+			'can_export' => false,
+		  );
 
+		register_post_type($this->post_type, $args);
+	}
 }
 
 ?>
