@@ -130,7 +130,7 @@ class CF_Snippet {
 	public function get_snippet($key) {
 		$posts = get_posts( array(
 			'post_type' => $this->post_type,
-			'post_name' => $key,
+			'name' => $key,
 		) );
 		if (is_array($posts) && !empty($posts)) {
 			return $posts[0];
@@ -246,7 +246,7 @@ class CF_Snippet {
 	public function admin_display($key) {
 		if (!$this->exists($key)) { return ''; }
 		
-		$snippets = $this->get_all();
+		$snippet = $this->get_snippet($key);
 		$description = $this->get_description($key);
 
 		// Escape the key once instead of multiple times
@@ -290,7 +290,7 @@ class CF_Snippet {
 		if (is_array($snippets) && !empty($snippets)) {
 			foreach ($snippets as $snippet) {
 				$key = $snippet->post_name;
-				$description = $snippet->get_description($key);
+				$description = $this->get_description($key);
 				$select .= '<option value="'.$key.'"'.selected($selected, $key, false).'>'.htmlentities($description).'</option>';
 			}
 		}
@@ -311,7 +311,7 @@ class CF_Snippet {
 				$key = $snippet->post_name;
 				$description = $this->get_description($key);
 
-				if (!empty($snippet['description'])) {
+				if (!empty($description)) {
 					if ($links) {
 						$description = '<a href="#" class="cfsp-list-link" rel="'.esc_attr($key).'">'.htmlentities($description).'</a>';
 					}
@@ -386,11 +386,11 @@ class CF_Snippet {
 
 		if (!update_post_meta($post_id, '_cfsp_description', $description)) { return false; }
 		
-		foreach ($args as $arg_key => $arg_value) {
-			if (!update_post_meta($post_id, '_cfso_',$arg_key, $arg_value)) { return false; }
-		}
+		/*	foreach ($args as $arg_key => $arg_value) {
+				if (!update_post_meta($post_id, '_cfsp_'.$arg_key, $arg_value)) { return false; }
+			}*/
 		
-		return true;
+		return $key;
 	}
 	
 	/**
@@ -432,9 +432,9 @@ class CF_Snippet {
 
 		if (!update_post_meta($post_id, '_cfsp_description', $description)) { return false; }
 
-		foreach ($args as $arg_key => $arg_value) {
+	/*	foreach ($args as $arg_key => $arg_value) {
 			if (!update_post_meta($post_id, '_cfsp_'.$arg_key, $arg_value)) { return false; }
-		}
+		}*/
 
 		return true;
 	}
@@ -448,7 +448,7 @@ class CF_Snippet {
 	public function remove($key) {
 		$key = sanitize_title($key);
 		$post_id = $this->get_id($key);
-		return delete_post($post_id, true);
+		return wp_delete_post($post_id, true);
 	}
 	
 	/**
@@ -485,8 +485,9 @@ class CF_Snippet {
 	
 	public function get_id($key) {
 		$snippet = $this->get_snippet($key);
+
 		if ($snippet) {
-			return $snipper->ID;
+			return $snippet->ID;
 		}
 		return 0;
 	}

@@ -551,7 +551,6 @@ function cfsp_add_new($key = '', $description = '', $content = '') {
 
 	// Make sure the key is a valid key
 	$key = sanitize_title($key);
-	
 	$new_key = $cf_snippet->add($key, $content, $description);
 	// Now that we have inserted, get the row to insert into the table
 	echo $cf_snippet->admin_display($new_key);
