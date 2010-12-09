@@ -347,7 +347,6 @@ class CF_Snippet {
 		$key = sanitize_title($key);
 		if (empty($key)) { return false; }
 		$post_id = $this->get_id($key);
-		error_log('post_id '.$post_id);
 		$snippet = array(
 			'post_type' => $this->post_type,
 			'post_name' => $key,
