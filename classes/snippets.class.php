@@ -29,7 +29,8 @@ class CF_Snippet {
 		$snippet = $this->get_snippet($key);
 		
 		if (!empty($snippet)) {
-			return htmlspecialchars_decode(do_shortcode(apply_filters('cfsp-get-content', stripslashes($snippet->post_content), $key)));
+			$content = get_post_meta($snippet->ID, '_cfsp_content', true);
+			return htmlspecialchars_decode(do_shortcode(apply_filters('cfsp-get-content', stripslashes($content), $key)), ENT_NOQUOTES);
 		}
 		else if (!empty($default) && $create) {
 			if (empty($description)) {
@@ -45,7 +46,7 @@ class CF_Snippet {
 	 * 
 	 * @param string $key Key to get
 	 * @param string $default Data to use for the content if the key does not exist
-	 * @return stdObj A snippet with matching key
+	 * @return stdObj A snippet with matching key, note that this does not return the content
 	 */
 
 	public function get_info($key, $default = '', $create = true, $args = array()) {
@@ -58,7 +59,7 @@ class CF_Snippet {
 		$key = sanitize_title($key);
 		
 		if (!empty($snippets[$key])) {
-			return htmlspecialchars_decode(do_shortcode(apply_filters('cfsp-get-info', $snippets[$key], $key)));
+			return htmlspecialchars_decode(do_shortcode(apply_filters('cfsp-get-info', $snippets[$key], $key)), ENT_NOQUOTES);
 		}
 		else if (!empty($default) && $create) {
 			if (empty($description)) {
@@ -73,7 +74,7 @@ class CF_Snippet {
 	 * This function provides the extra meta data for a particular snippet
 	 *
 	 * @param string $key Key for the snippet to get the meta data for.
-	 * @return array Meta for the snippet (also returns description)
+	 * @return array Meta for the snippet
 	 */
 	public function get_meta($key) {
 		$key = sanitize_title($key);
@@ -82,7 +83,7 @@ class CF_Snippet {
 		if ($post_id) {
 			$all_meta = get_post_custom($post_id);
 			foreach ($all_meta as $meta_key => $meta_value) {
-				if (strpos($meta_key, '_cfsp_') !== false) {
+				if (strpos($meta_key, '_cfsp_') !== false && $meta_key != '_cfsp_content') {
 					$meta[htmlspecialchars_decode($meta_key)] = htmlspecialchars_decode($meta_value);
 				}
 			}
@@ -121,7 +122,7 @@ class CF_Snippet {
 	 * 	This function gets a snippet (post) based on its key (title)
 	 * 
 	 * @param string $key key to search snippets for
-	 * @return stdObj a snippet (post) object without meta
+	 * @return stdObj a snippet (post) object without meta (including content)
 	 */
 	public function get_snippet($key) {
 		$key = sanitize_title($key);
@@ -163,7 +164,7 @@ class CF_Snippet {
 
 		$snippet = $this->get_snippet($key);
 		$description = $snippet->post_title;
-		$content = $snippet->post_content;
+		$content = get_post_meta($snippet->ID, '_cfsp_content', true);
 
 		$html = '
 		<div class="cfsp">
@@ -350,27 +351,18 @@ class CF_Snippet {
 		$snippet = array(
 			'post_type' => $this->post_type,
 			'post_name' => $key,
-			'post_content' => $content,
 			'post_status' => 'publish',
 			'post_title' => $description,
 			'ID' => $post_id,
 		);
-
-		$mod_cap = false;
-		// Manage options should only have access to this anyway
-		if (current_user_can('manage_option') && !current_user_can('unfilterd_html')) {
-			$user = wp_get_current_user();
-			$user->add_cap('unfiltered_html');
-			$mod_cap = true;
-		}
-		
 		$post_id = wp_insert_post($snippet);
 		
-		if ($mod_cap) {
-			$user->remove_cap('unfiltered_html');
+		if (!$post_id) { 
+			return false; 
 		}
-		
-		if (!$post_id) { return false; }
+		else if (!update_post_meta($post_id, '_cfsp_content', esc_html($content))) {
+			return false;
+		}
 		
 		foreach ($args as $arg_key => $arg_value) {
 			if (!update_post_meta($post_id, '_cfsp_'.esc_html($arg_key), esc_html($arg_value))) { return false;	}
@@ -405,26 +397,18 @@ class CF_Snippet {
 		$snippet = array(
 			'post_type' => $this->post_type,
 			'post_name' => $key,
-			'post_content' => $content,
 			'post_status' => 'publish',
 			'post_title' => $description,
 		);
-	
-		$mod_cap = false;
-		// Manage options should only have access to this anyway
-		if (current_user_can('manage_option') && !current_user_can('unfilterd_html')) {
-			$user = wp_get_current_user();
-			$user->add_cap('unfiltered_html');
-			$mod_cap = true;
-		}
 		
 		$post_id = wp_insert_post($snippet);
-		
-		if ($mod_cap) {
-			$user->remove_cap('unfiltered_html');
+	
+		if (!$post_id) {
+			 return false; 
 		}
-		
-		if (!$post_id) { return false; }
+		else if (!update_post_meta($post_id, '_cfsp_content', esc_html($content))) {
+			return false;
+		}
 
 		foreach ($args as $arg_key => $arg_value) {
 			if (!update_post_meta($post_id, '_cfsp_'.esc_html($arg_key), esc_html($arg_value))) { return false; }
