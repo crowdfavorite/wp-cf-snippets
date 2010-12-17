@@ -1,5 +1,9 @@
 # CF Snippets Changelog
 
+## 2.1.2
+
+- Converting storage to custom post_type/post_meta
+
 ## 2.1.1
 
 - Fixing some JSON issues for non WP 3.0 and PHP 5.1 servers

@@ -30,13 +30,13 @@ class CF_Snippet {
 		
 		if (!empty($snippet)) {
 			$content = get_post_meta($snippet->ID, '_cfsp_content', true);
-			return htmlspecialchars_decode(do_shortcode(apply_filters('cfsp-get-content', stripslashes($content), $key)), ENT_NOQUOTES);
+			return do_shortcode(apply_filters('cfsp-get-content', $content, $key));
 		}
 		else if (!empty($default) && $create) {
 			if (empty($description)) {
 				$description = ucwords(str_replace(array('-','_'), ' ', $key));
 			}
-			$this->save($key, $default, stripslashes($description));
+			$this->save($key, $default, $description);
 			return $this->get($key);
 		}
 	}
@@ -59,13 +59,13 @@ class CF_Snippet {
 		$key = sanitize_title($key);
 		
 		if (!empty($snippets[$key])) {
-			return htmlspecialchars_decode(do_shortcode(apply_filters('cfsp-get-info', $snippets[$key], $key)), ENT_NOQUOTES);
+			return do_shortcode(apply_filters('cfsp-get-info', $snippets[$key], $key));
 		}
 		else if (!empty($default) && $create) {
 			if (empty($description)) {
 				$description = ucwords(str_replace(array('-','_'), ' ', $key));
 			}
-			$this->save($key, $default, stripslashes($description));
+			$this->save($key, $default, $description);
 			return $this->get($key);
 		}
 	}
@@ -84,7 +84,7 @@ class CF_Snippet {
 			$all_meta = get_post_custom($post_id);
 			foreach ($all_meta as $meta_key => $meta_value) {
 				if (strpos($meta_key, '_cfsp_') !== false && $meta_key != '_cfsp_content') {
-					$meta[htmlspecialchars_decode($meta_key)] = htmlspecialchars_decode($meta_value);
+					$meta[$meta_key] = $meta_value;
 				}
 			}
 		}
@@ -176,7 +176,7 @@ class CF_Snippet {
 					</tr>
 					<tr>
 						<th style="width:50px;">'.__('Content').'</th>
-						<td><textarea name="cfsp-content" id="cfsp-content" class="widefat cfsp-popup-edit-content" cols="50" rows="8">'.esc_html(stripslashes($content)).'</textarea></td>
+						<td><textarea name="cfsp-content" id="cfsp-content" class="widefat cfsp-popup-edit-content" cols="50" rows="8">'.htmlspecialchars($content).'</textarea></td>
 					</tr>
 				</table>
 			</div>
@@ -244,7 +244,7 @@ class CF_Snippet {
 				'.$key.'
 			</td>
 			<td class="cfsp-description">
-				<span class="cfsp-description-content">'.htmlentities($description).'</span>
+				<span class="cfsp-description-content">'.esc_html($description).'</span>
 				<div id="'.$key.'-showhide" class="cfsp-tags-showhide">
 					'.__('Show: ', 'cfsp').' <a href="#" rel="'.$key.'-shortcode-template">'.__('Template Tag &amp; Shortcode', 'cfsp').'</a>
 				</div>
@@ -277,7 +277,7 @@ class CF_Snippet {
 			foreach ($snippets as $snippet) {
 				$key = $snippet->post_name;
 				$description = $snippet->post_title;
-				$select .= '<option value="'.$key.'"'.selected($selected, $key, false).'>'.htmlentities($description).'</option>';
+				$select .= '<option value="'.$key.'"'.selected($selected, $key, false).'>'.esc_html($description).'</option>';
 			}
 		}
 		return $select;
@@ -299,18 +299,18 @@ class CF_Snippet {
 
 				if (!empty($description)) {
 					if ($links) {
-						$description = '<a href="#" class="cfsp-list-link" rel="'.esc_attr($key).'">'.htmlentities($description).'</a>';
+						$description = '<a href="#" class="cfsp-list-link" rel="'.esc_attr($key).'">'.esc_html($description).'</a>';
 					}
 					else {
-						$description = htmlentities($description);
+						$description = esc_html($description);
 					}
 				}
 				else if (!empty($key)) {
 					if ($links) {
-						$description = '<a href="#" class="cfsp-list-link" rel="'.esc_attr($key).'">'.htmlentities($key).'</a>';
+						$description = '<a href="#" class="cfsp-list-link" rel="'.esc_attr($key).'">'.esc_html($key).'</a>';
 					}
 					else {
-						$description = htmlentities($key);
+						$description = esc_html($key);
 					}
 				}
 				
@@ -360,12 +360,14 @@ class CF_Snippet {
 		if (!$post_id) { 
 			return false; 
 		}
-		else if (!update_post_meta($post_id, '_cfsp_content', esc_html($content))) {
+		else if (!update_post_meta($post_id, '_cfsp_content', $content)) {
 			return false;
 		}
 		
 		foreach ($args as $arg_key => $arg_value) {
-			if (!update_post_meta($post_id, '_cfsp_'.esc_html($arg_key), esc_html($arg_value))) { return false;	}
+			if (!update_post_meta($post_id, '_cfsp_'.$arg_key, $arg_value)) { 
+				return false;	
+			}
 		}
 		
 		return $true;
@@ -391,7 +393,7 @@ class CF_Snippet {
 		//  Make sure key is valid
 		$key = sanitize_title($key);
 		// Check the key to see if one exists, fix if so
-		$key = $this->check_key(stripslashes($key));
+		$key = $this->check_key($key);
 		if (empty($key)) { return false; }
 		
 		$snippet = array(
@@ -406,12 +408,14 @@ class CF_Snippet {
 		if (!$post_id) {
 			 return false; 
 		}
-		else if (!update_post_meta($post_id, '_cfsp_content', esc_html($content))) {
+		else if (!update_post_meta($post_id, '_cfsp_content', $content)) {
 			return false;
 		}
 
 		foreach ($args as $arg_key => $arg_value) {
-			if (!update_post_meta($post_id, '_cfsp_'.esc_html($arg_key), esc_html($arg_value))) { return false; }
+			if (!update_post_meta($post_id, '_cfsp_'.$arg_key, $arg_value)) { 
+				return false; 
+			}
 		}
 
 		return $key;

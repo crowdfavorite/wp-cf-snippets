@@ -3,7 +3,7 @@
 Plugin Name: CF Snippets
 Plugin URI: http://crowdfavorite.com
 Description: Provides admin level users the ability to define html snippets for use in templates, content, or widgets.
-Version: 2.1.1
+Version: 2.1.2
 Author: Crowd Favorite
 Author URI: http://crowdfavorite.com
 */
@@ -43,7 +43,7 @@ function cfsp_request_handler() {
 		switch ($_GET['cf_action']) {
 			case 'cfsp_iframe_preview':
 				if (!empty($_GET['cfsp_key'])) {
-					cfsp_iframe_preview(stripslashes($_GET['cfsp_key']));
+					cfsp_iframe_preview($_GET['cfsp_key']);
 				}
 				die();
 				break;
@@ -61,42 +61,42 @@ function cfsp_request_handler() {
 				break;
 			case 'cfsp_new_add':
 				if (!empty($_POST['cfsp_key']) || !empty($_POST['cfsp_description'])) {
-					cfsp_add_new(stripslashes($_POST['cfsp_key']), stripslashes($_POST['cfsp_description']), stripslashes($_POST['cfsp_content']));
+					cfsp_add_new($_POST['cfsp_key'], $_POST['cfsp_description'], $_POST['cfsp_content']);
 				}
 				die();
 				break;
 			case 'cfsp_save':
 				if (!empty($_POST['cfsp_key'])) {
-					cfsp_save(stripslashes($_POST['cfsp_key']), stripslashes($_POST['cfsp_description']), stripslashes($_POST['cfsp_content']));
+					cfsp_save($_POST['cfsp_key'], $_POST['cfsp_description'], $_POST['cfsp_content']);
 				}
 				die();
 				break;
 			case 'cfsp_edit':
 				if (!empty($_POST['cfsp_key'])) {
-					cfsp_ajax_edit(stripslashes($_POST['cfsp_key']));
+					cfsp_ajax_edit($_POST['cfsp_key']);
 				}
 				die();
 				break;
 			case 'cfsp_preview':
 				if (!empty($_POST['cfsp_key'])) {
-					cfsp_ajax_preview(stripslashes($_POST['cfsp_key']));
+					cfsp_ajax_preview($_POST['cfsp_key']);
 				}
 				die();
 				break;
 			case 'cfsp_delete':
 				if (!empty($_POST['cfsp_key'])) {
 					if (!empty($_POST['cfsp_delete_confirm']) && $_POST['cfsp_delete_confirm'] == 'yes') {
-						cfsp_ajax_delete(stripslashes($_POST['cfsp_key']), true);
+						cfsp_ajax_delete($_POST['cfsp_key'], true);
 					}
 					else {
-						cfsp_ajax_delete(stripslashes($_POST['cfsp_key']), false);
+						cfsp_ajax_delete($_POST['cfsp_key'], false);
 					}
 				}
 				die();
 				break;
 			case 'cfsp_post_items_paged':
 				if (!empty($_POST['cfsp_page'])) {
-					cfsp_ajax_post_items_paged(stripslashes($_POST['cfsp_page']));
+					cfsp_ajax_post_items_paged($_POST['cfsp_page']);
 				}
 				die();
 				break;
@@ -617,7 +617,7 @@ function cfsp_post_edit() {
 						<span class="cfsp-hide"><button id="cfsp-hide-link-<?php echo esc_attr($item); ?>" class="button cfsp-hide-link" style="display:none;"><?php _e('Hide Snippet', 'cfsp'); ?></button><button id="cfsp-show-link-<?php echo esc_attr($item); ?>" class="button cfsp-show-link"><?php _e('Show Snippet', 'cfsp'); ?></button></span>
 					</div>
 					<div id="cfsp-content-<?php echo esc_attr($item); ?>" class="cfsp-content" style="display:none;">
-						<textarea id="<?php echo esc_attr($item); ?>" name="cfsp[<?php echo esc_attr($item); ?>][content]" class="cfsp-content-input widefat" rows="10"><?php echo htmlentities($cf_snippet->get($key, false, false)); ?></textarea>
+						<textarea id="<?php echo esc_attr($item); ?>" name="cfsp[<?php echo esc_attr($item); ?>][content]" class="cfsp-content-input widefat" rows="10"><?php echo htmlspecialchars($cf_snippet->get($key, false, false)); ?></textarea>
 					</div>
 					<input type="hidden" name="cfsp[<?php echo esc_attr($item); ?>][name]" id="cfsp-name-<?php echo esc_attr($item); ?>" value="<?php echo esc_attr($key); ?>" />
 					<input type="hidden" name="cfsp[<?php echo esc_attr($item); ?>][postid]" id="cfsp-postid-<?php echo esc_attr($item); ?>" value="<?php echo esc_attr($post_id); ?>" />
@@ -669,7 +669,7 @@ function cfsp_save_post($post_id, $post) {
 				'post_id' => $post_id,
 			);
 			
-			if ($cf_snippet->check_key(stripslashes($key))) {
+			if ($cf_snippet->check_key($key)) {
 				$description = 'Post Snippet created for Post ID: '.$post_id.' with a unique ID of: '.$id;
 				$cf_snippet->save($key, $content, $description, $args);
 			}
