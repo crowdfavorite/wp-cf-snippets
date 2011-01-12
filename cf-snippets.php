@@ -637,15 +637,14 @@ add_action('save_post', 'cfsp_save_post', 10, 2);
 
 // Add the JS/CSS to the CF Snippets Settings Page
 if (!empty($_GET['page']) && strpos($_GET['page'], 'cf-snippets') !== false) {
-	wp_enqueue_script('jquery');
-	wp_enqueue_script('cfsp-admin-js', get_bloginfo('template_directory'),'/plugins/cf-snippets/js/admin.js', array('jquery'), CFSP_VERSION);
-	wp_enqueue_style('cfsp-admin-css', get_bloginfo('template_directory'),'/plugins/cf-snippets/css/admin.css', array(), CFSP_VERSION, 'screen');
+	wp_enqueue_script('cfsp-admin-js', get_bloginfo('template_directory').'/plugins/cf-snippets/js/admin.js', array('jquery'), CFSP_VERSION);
+	wp_enqueue_style('cfsp-admin-css', get_bloginfo('template_directory').'/plugins/cf-snippets/css/admin.css', array(), CFSP_VERSION, 'screen');
 }
 // Add the JS/CSS to the Post New/Post Edit screens
 if (strpos($_SERVER['SCRIPT_NAME'], 'post-new.php') !== false || strpos($_SERVER['SCRIPT_NAME'], 'post.php') !== false) {
 	add_action('admin_head', 'cfsp_post_admin_head');
-	wp_enqueue_script('cfsp-post-js', get_bloginfo('template_directory'),'/plugins/cf-snippets/js/post.js', array('jquery'), CFSP_VERSION);
-	wp_enqueue_style('cfsp-post-css', get_bloginfo('template_directory'),'/plugins/cf-snippets/css/post.css', array(), CFSP_VERSION, 'screen');
+	wp_enqueue_script('cfsp-post-js', get_bloginfo('template_directory').'/plugins/cf-snippets/js/post.js', array('jquery'), CFSP_VERSION);
+	wp_enqueue_style('cfsp-post-css', get_bloginfo('template_directory').'/plugins/cf-snippets/css/post.css', array(), CFSP_VERSION, 'screen');
 }
 
 ## Display Functionality
