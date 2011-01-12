@@ -113,61 +113,6 @@ function cfsp_request_handler() {
 }
 add_action('init', 'cfsp_request_handler');
 
-function cfsp_resources() {
-	if (!empty($_GET['cf_action'])) {
-		switch ($_GET['cf_action']) {
-			case 'cfsp_admin_css':
-				cfsp_admin_css();
-				die();
-				break;
-			case 'cfsp_admin_js':
-				cfsp_admin_js();
-				die();
-				break;
-			case 'cfsp_post_css':
-				cfsp_post_css();
-				die();
-				break;
-			case 'cfsp_post_js':
-				cfsp_post_js();
-				die();
-				break;
-		}
-	}
-}
-add_action('init', 'cfsp_resources', 1);
-
-function cfsp_admin_css() {
-	header('Content-type: text/css');
-	do_action('cfsp-admin-css');
-	echo file_get_contents(CFSP_DIR.'css/content.css');
-	die();
-}
-
-function cfsp_admin_js() {
-	header('Content-type: text/javascript');
-	do_action('cfsp-admin-js');
-	echo file_get_contents(CFSP_DIR.'js/behavior.js');
-	echo file_get_contents(CFSP_DIR.'js/jquery.DOMWindow.js');
-	echo file_get_contents(CFSP_DIR.'js/json2.js');
-	echo file_get_contents(CFSP_DIR.'js/popup.js');
-	die();
-}
-
-function cfsp_post_css() {
-	header('Content-type: text/css');
-	do_action('cfsp-post-css');
-	echo file_get_contents(CFSP_DIR.'css/post.css');
-	die();
-}
-
-function cfsp_post_js() {
-	header('Content-type: text/javascript');
-	do_action('cfsp-post-js');
-	echo file_get_contents(CFSP_DIR.'js/post.js');
-	die();
-}
-
 function cfsp_admin_menu() {
 	add_options_page(
 		__('CF Snippets', 'cfsp'),
@@ -693,15 +638,14 @@ add_action('save_post', 'cfsp_save_post', 10, 2);
 // Add the JS/CSS to the CF Snippets Settings Page
 if (!empty($_GET['page']) && strpos($_GET['page'], 'cf-snippets') !== false) {
 	wp_enqueue_script('jquery');
-	wp_enqueue_script('cfsp-admin-js', admin_url('?cf_action=cfsp_admin_js'), array('jquery'), CFSP_VERSION);
-	wp_enqueue_style('cfsp-admin-css', admin_url('?cf_action=cfsp_admin_css'), array(), CFSP_VERSION, 'screen');
+	wp_enqueue_script('cfsp-admin-js', get_bloginfo('template_directory'),'/plugins/cf-snippets/js/admin.js', array('jquery'), CFSP_VERSION);
+	wp_enqueue_style('cfsp-admin-css', get_bloginfo('template_directory'),'/plugins/cf-snippets/css/admin.css', array(), CFSP_VERSION, 'screen');
 }
 // Add the JS/CSS to the Post New/Post Edit screens
 if (strpos($_SERVER['SCRIPT_NAME'], 'post-new.php') !== false || strpos($_SERVER['SCRIPT_NAME'], 'post.php') !== false) {
 	add_action('admin_head', 'cfsp_post_admin_head');
-	wp_enqueue_script('jquery');
-	wp_enqueue_script('cfsp-post-js', admin_url('?cf_action=cfsp_post_js'), array('jquery'), CFSP_VERSION);
-	wp_enqueue_style('cfsp-post-css', admin_url('?cf_action=cfsp_post_css'), array(), CFSP_VERSION, 'screen');
+	wp_enqueue_script('cfsp-post-js', get_bloginfo('template_directory'),'/plugins/cf-snippets/js/post.js', array('jquery'), CFSP_VERSION);
+	wp_enqueue_style('cfsp-post-css', get_bloginfo('template_directory'),'/plugins/cf-snippets/css/post.css', array(), CFSP_VERSION, 'screen');
 }
 
 ## Display Functionality
