@@ -596,7 +596,7 @@ function cfsp_post_edit() {
 }
 
 function cfsp_save_post($post_id, $post) {
-	$post_type_excludes = apply_filters('cfsp_post_type_excludes', array('revision', 'attachment', 'safecss', 'nav_menu_item'));
+	$post_type_excludes = apply_filters('cfsp_post_type_excludes', array('revision', 'attachment', 'safecss', 'nav_menu_item', '_cf_snippet'));
 	if ($post->post_status == 'inherit' || in_array($post->post_type, $post_type_excludes)) { return; }
 	if (!empty($_POST) && is_array($_POST) && !empty($_POST['cfsp']) && is_array($_POST['cfsp'])) {
 		unset($_POST['cfsp']['###SECTION###']);
