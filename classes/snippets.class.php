@@ -395,7 +395,9 @@ class CF_Snippet {
 		// Check the key to see if one exists, fix if so
 		$key = $this->check_key($key);
 		if (empty($key)) { return false; }
-		
+		if (empty($description)) {
+			$description = $key;
+		}
 		$snippet = array(
 			'post_type' => $this->post_type,
 			'post_name' => $key,
