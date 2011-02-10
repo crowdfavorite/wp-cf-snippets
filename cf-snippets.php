@@ -1074,4 +1074,13 @@ function cfsp_cflk_integration() {
 }
 add_action('plugins_loaded', 'cfsp_cflk_integration', 99999);
 
+## Integration with CF Revision Manager
+
+	function cfsp_register_revisions() {
+		if (function_exists('cfr_register_metadata')) {
+			cfr_register_metadata('_cfsp-keys');
+		}
+	}
+	add_action('init', 'cfsp_register_revisions');
+
 ?>
