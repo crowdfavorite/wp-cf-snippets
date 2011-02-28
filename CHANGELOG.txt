@@ -1,5 +1,10 @@
 # CF Snippets Changelog
 
+## 2.1.3
+
+- Adding support for cf-revision-manager
+- Adding support for housing plugin in theme/plugins folder
+
 ## 2.1.2
 
 - Fixing the get_info function, removing do_shortcode running on an array
