@@ -3,7 +3,7 @@
 Plugin Name: CF Snippets
 Plugin URI: http://crowdfavorite.com
 Description: Provides admin level users the ability to define html snippets for use in templates, content, or widgets.
-Version: 2.1.3
+Version: 2.1.4
 Author: Crowd Favorite
 Author URI: http://crowdfavorite.com
 */
@@ -599,8 +599,8 @@ function cfsp_post_admin_head() {
 }
 
 function cfsp_post_edit() {
-	global $post_id;
-	$keys = get_post_meta($post_id, '_cfsp-keys', true);
+	global $post;
+	$keys = get_post_meta($post->ID, '_cfsp-keys', true);
 	$cf_snippet = new CF_Snippet();
 	?>
 	<div id="cfsp-description">
