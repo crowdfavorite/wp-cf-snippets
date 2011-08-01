@@ -81,6 +81,22 @@ class CF_Snippet {
 		}
 		return $meta;
 	}
+
+	/**
+	 * This function returns the unprocessed content for the Snippet, to be used when editing
+	 *
+	 * @param string $key | Key for the snippet to get the meta data for.
+	 * @return string | Content of the snippet
+	 */
+	public function get_edit_content($key) {
+		$meta = array();
+		$snippets = $this->get_all();
+		
+		if (is_array($snippets) && !empty($snippets) && !empty($snippets[$key]) && is_array($snippets[$key]) && !empty($snippets[$key]['content'])) {
+			return stripslashes($snippets[$key]['content']);
+		}
+		return '';
+	}
 	
 	/**
 	 * This function gets all of the keys available and passes them back as an array
