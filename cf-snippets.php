@@ -11,7 +11,7 @@ Author URI: http://crowdfavorite.com
 // ini_set('display_errors', '1'); ini_set('error_reporting', E_ALL);
 
 // Constants
-define('CFSP_VERSION', '2.1.3');
+define('CFSP_VERSION', '2.1.5');
 define('CFSP_DIR', plugin_dir_path(__FILE__));
 //plugin_dir_url seems to be broken for including in theme files
 if (file_exists(trailingslashit(get_template_directory()).'plugins/'.basename(dirname(__FILE__)))) {
@@ -667,7 +667,13 @@ function cfsp_save_post($post_id, $post) {
 		foreach ($_POST['cfsp'] as $id => $item) {
 			$name = $item['name'];
 			$content = $item['content'];
-			$key = 'cfsp-'.$post_id.'-'.$id;
+			if (strpos($id, 'cfsp-'.$post_id.'-') === false) {
+				$key = 'cfsp-'.$post_id.'-'.$id;
+			}
+			else {
+				$key = $id;
+			}
+			
 			
 			// Make sure the key is a valid key
 			$key = sanitize_title($key);
@@ -691,7 +697,7 @@ function cfsp_save_post($post_id, $post) {
 				$postkeys[] = $key;
 			}
 		}
-		
+
 		update_post_meta($post_id, '_cfsp-keys', $postkeys);
 	}
 }

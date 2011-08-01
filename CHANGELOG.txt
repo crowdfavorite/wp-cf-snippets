@@ -3,6 +3,7 @@
 ## 2.1.5
 
 - Fixing issue with Post Screen Meta Box processing shortcodes instead of displaying them
+- Fixing issue with saving of Post Snippets
 
 ## 2.1.4
 
