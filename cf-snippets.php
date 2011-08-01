@@ -3,7 +3,7 @@
 Plugin Name: CF Snippets
 Plugin URI: http://crowdfavorite.com
 Description: Provides admin level users the ability to define html snippets for use in templates, content, or widgets.
-Version: 2.1.4
+Version: 2.1.5
 Author: Crowd Favorite
 Author URI: http://crowdfavorite.com
 */
@@ -11,7 +11,7 @@ Author URI: http://crowdfavorite.com
 // ini_set('display_errors', '1'); ini_set('error_reporting', E_ALL);
 
 // Constants
-define('CFSP_VERSION', '2.1.3');
+define('CFSP_VERSION', '2.1.5');
 define('CFSP_DIR', plugin_dir_path(__FILE__));
 //plugin_dir_url seems to be broken for including in theme files
 if (file_exists(trailingslashit(get_template_directory()).'plugins/'.basename(dirname(__FILE__)))) {
@@ -623,7 +623,7 @@ function cfsp_post_edit() {
 						<span class="cfsp-hide"><button id="cfsp-hide-link-<?php echo esc_attr($item); ?>" class="button cfsp-hide-link" style="display:none;"><?php _e('Hide Snippet', 'cfsp'); ?></button><button id="cfsp-show-link-<?php echo esc_attr($item); ?>" class="button cfsp-show-link"><?php _e('Show Snippet', 'cfsp'); ?></button></span>
 					</div>
 					<div id="cfsp-content-<?php echo esc_attr($item); ?>" class="cfsp-content" style="display:none;">
-						<textarea id="<?php echo esc_attr($item); ?>" name="cfsp[<?php echo esc_attr($item); ?>][content]" class="cfsp-content-input widefat" rows="10"><?php echo htmlentities($cf_snippet->get($key, false, false)); ?></textarea>
+						<textarea id="<?php echo esc_attr($item); ?>" name="cfsp[<?php echo esc_attr($item); ?>][content]" class="cfsp-content-input widefat" rows="10"><?php echo htmlentities($cf_snippet->get_edit_content($key, false, false)); ?></textarea>
 					</div>
 					<input type="hidden" name="cfsp[<?php echo esc_attr($item); ?>][name]" id="cfsp-name-<?php echo esc_attr($item); ?>" value="<?php echo esc_attr($key); ?>" />
 					<input type="hidden" name="cfsp[<?php echo esc_attr($item); ?>][postid]" id="cfsp-postid-<?php echo esc_attr($item); ?>" value="<?php echo esc_attr($post_id); ?>" />
@@ -667,7 +667,13 @@ function cfsp_save_post($post_id, $post) {
 		foreach ($_POST['cfsp'] as $id => $item) {
 			$name = $item['name'];
 			$content = $item['content'];
-			$key = 'cfsp-'.$post_id.'-'.$id;
+			if (strpos($id, 'cfsp-'.$post_id.'-') === false) {
+				$key = 'cfsp-'.$post_id.'-'.$id;
+			}
+			else {
+				$key = $id;
+			}
+			
 			
 			// Make sure the key is a valid key
 			$key = sanitize_title($key);
@@ -691,7 +697,7 @@ function cfsp_save_post($post_id, $post) {
 				$postkeys[] = $key;
 			}
 		}
-		
+
 		update_post_meta($post_id, '_cfsp-keys', $postkeys);
 	}
 }
