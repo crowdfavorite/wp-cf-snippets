@@ -1,5 +1,9 @@
 # CF Snippets Changelog
 
+## 2.1.6
+
+- Adding `esc_textarea` to the Edit box to escape textarea content properly.
+
 ## 2.1.5
 
 - Fixing issue with Post Screen Meta Box processing shortcodes instead of displaying them

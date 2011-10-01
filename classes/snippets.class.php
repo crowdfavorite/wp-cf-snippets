@@ -163,7 +163,7 @@ class CF_Snippet {
 					</tr>
 					<tr>
 						<th style="width:50px;">'.__('Content').'</th>
-						<td><textarea name="cfsp-content" id="cfsp-content" class="widefat cfsp-popup-edit-content" cols="50" rows="8">'.stripslashes($content).'</textarea></td>
+						<td><textarea name="cfsp-content" id="cfsp-content" class="widefat cfsp-popup-edit-content" cols="50" rows="8">'.esc_textarea($content).'</textarea></td>
 					</tr>
 				</table>
 			</div>
