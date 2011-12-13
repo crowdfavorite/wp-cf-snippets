@@ -1,5 +1,12 @@
 # CF Snippets Changelog
 
+## 3.0
+
+- Implementing Snippets as a Custom Post Type [_cf_snippet]
+- Extracting as much data into views as possible
+- Cleanup of CSS/JS
+- Cleanup of Old code to lighten load
+
 ## 2.1.6
 
 - Adding `esc_textarea` to the Edit box to escape textarea content properly.

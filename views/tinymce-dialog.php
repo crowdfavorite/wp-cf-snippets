@@ -7,9 +7,10 @@
 		<script type="text/javascript">
 			;(function($) {
 				$(function() {
-					$(".cfsp-list-link").live('click', function() {
+					$(".cfsp-list-link").live('click', function(e) {
 						var key = $(this).attr('rel');
 						cfsp_insert(key);
+						e.preventDefault();
 					});
 				});
 			})(jQuery);

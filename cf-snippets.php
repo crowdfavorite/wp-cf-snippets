@@ -3,7 +3,7 @@
 Plugin Name: CF Snippets
 Plugin URI: http://crowdfavorite.com
 Description: Provides admin level users the ability to define html snippets for use in templates, content, or widgets.
-Version: 2.2
+Version: 3.0
 Author: Crowd Favorite
 Author URI: http://crowdfavorite.com
 */
@@ -12,7 +12,7 @@ Author URI: http://crowdfavorite.com
 
 ## Constants
 
-define('CFSP_VERSION', '2.2');
+define('CFSP_VERSION', '3.0');
 define('CFSP_DIR', plugin_dir_path(__FILE__));
 //plugin_dir_url seems to be broken for including in theme files
 if (file_exists(trailingslashit(get_template_directory()).'plugins/'.basename(dirname(__FILE__)))) {
@@ -178,6 +178,16 @@ function cfsp_admin_menu() {
 		'cf-snippets',
 		'cfsp_options'
 	);
+	if (defined('CF_ADMIN_VER')) {
+		add_submenu_page(
+			'cf-admin-menu',
+			__('CF Snippets', 'cfsp'),
+			__('CF Snippets', 'cfsp'),
+			10,
+			'cf-snippets',
+			'cfsp_options'
+		);
+	}
 }
 add_action('admin_menu', 'cfsp_admin_menu');
 
@@ -391,6 +401,7 @@ function cfsp_post_admin_head() {
 		}
 	}
 }
+add_action('admin_init', 'cfsp_post_admin_head');
 
 function cfsp_post_edit() {
 	global $post;
@@ -452,19 +463,23 @@ add_action('save_post', 'cfsp_save_post', 10, 2);
 
 ## JS/CSS Addition
 
-// Add the JS/CSS to the CF Snippets Settings Page
-if (!empty($_GET['page']) && strpos($_GET['page'], 'cf-snippets') !== false) {
-	wp_enqueue_script('jquery');
-	wp_enqueue_script('cfsp-admin-js', admin_url('?cf_action=cfsp_admin_js'), array('jquery'), CFSP_VERSION);
-	wp_enqueue_style('cfsp-admin-css', admin_url('?cf_action=cfsp_admin_css'), array(), CFSP_VERSION, 'screen');
+function cfsp_admin_enqueue_scripts($hook = '') {
+	switch ($hook) {
+		case 'post-new.php':
+		case 'post.php':
+			// Add the proper CSS/JS to the Post/Page/Custom Post Type Edit screen
+			wp_enqueue_script('cfsp-post-js', admin_url('?cf_action=cfsp_post_js'), array('jquery'), CFSP_VERSION);
+			wp_enqueue_style('cfsp-post-css', admin_url('?cf_action=cfsp_post_css'), array(), CFSP_VERSION, 'screen');
+			break;
+		case 'settings_page_cf-snippets':
+			// Add the proper CSS/JS to the Settings screen
+			wp_enqueue_script('cfsp-admin-js', admin_url('?cf_action=cfsp_admin_js'), array('jquery'), CFSP_VERSION);
+			wp_enqueue_style('cfsp-admin-css', admin_url('?cf_action=cfsp_admin_css'), array(), CFSP_VERSION, 'screen');
+			break;
+	}
 }
-// Add the JS/CSS to the Post New/Post Edit screens
-if (strpos($_SERVER['SCRIPT_NAME'], 'post-new.php') !== false || strpos($_SERVER['SCRIPT_NAME'], 'post.php') !== false) {
-	add_action('admin_head', 'cfsp_post_admin_head');
-	wp_enqueue_script('jquery');
-	wp_enqueue_script('cfsp-post-js', admin_url('?cf_action=cfsp_post_js'), array('jquery'), CFSP_VERSION);
-	wp_enqueue_style('cfsp-post-css', admin_url('?cf_action=cfsp_post_css'), array(), CFSP_VERSION, 'screen');
-}
+add_action('admin_enqueue_scripts', 'cfsp_admin_enqueue_scripts');
+
 
 ## Display Functionality
 
@@ -708,7 +723,7 @@ function cfsp_admin_help() {
 				if (!is_array($data) || empty($data['title']) || empty($data['description'])) { continue; }
 				
 				$context_help .= '
-				<div class="cfsp-help-tab_'.sanitize_title($id).'">
+				<div class="cfsp-help-tab_'.sanitize_title($key).'">
 					<h3>'.wp_kses($data['title'], '').'</h3>
 					'.$data['description'].'
 				</div>
@@ -816,12 +831,22 @@ add_filter('cfsp-help-tab', 'cfsp_admin_help_moreinfo', 999999);
  * get into the Snippets edit screen.
  */
 function cfsp_rightnow_end() {
+	if (!defined('CF_ADMIN_VER')) {
+		$cf_snippet = new CF_Snippet();
+		$count = count($cf_snippet->get_keys());
+		$link = admin_url('options-general.php?page=cf-snippets');
+		include('views/admin-rightnow.php');
+	}
+}
+add_action('right_now_content_table_end', 'cfsp_rightnow_end');
+
+function cfsp_rightnow_cfadmin_end() {
 	$cf_snippet = new CF_Snippet();
 	$count = count($cf_snippet->get_keys());
 	$link = admin_url('options-general.php?page=cf-snippets');
 	include('views/admin-rightnow.php');
 }
-add_action('right_now_content_table_end', 'cfsp_rightnow_end');
+add_action('cf_admin_rightnow', 'cfsp_rightnow_cfadmin_end');
 
 /**
  * JSON ENCODE and DECODE for PHP < 5.2.0
@@ -886,14 +911,5 @@ function cfsp_cflk_integration() {
 	}
 }
 add_action('plugins_loaded', 'cfsp_cflk_integration', 99999);
-
-## Integration with CF Revision Manager
-
-function cfsp_register_revisions() {
-	if (function_exists('cfr_register_metadata')) {
-		cfr_register_metadata('_cfsp-keys');
-	}
-}
-add_action('init', 'cfsp_register_revisions');
 
 ?>
