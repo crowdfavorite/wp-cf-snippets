@@ -446,7 +446,7 @@ function cfsp_save_post($post_id, $post) {
 				$key = $cf_snippet->save($key, $content, $description, $args);
 			}
 			
-			if (in_array($key, $old_keys)) {
+			if (is_array($old_keys) && in_array($key, $old_keys)) {
 				$flip = array_flip($old_keys);
 				unset($old_keys[$flip[$key]]);
 			}

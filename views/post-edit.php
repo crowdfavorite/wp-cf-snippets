@@ -8,7 +8,7 @@
 	if (is_array($keys) && !empty($keys)) {
 		foreach ($keys as $key) {
 			if (!$cf_snippet->exists($key)) { continue; }
-			$item = str_replace('cfsp-'.$post_id.'-', '', $key);
+			$item = str_replace('cfsp-'.get_the_ID().'-', '', $key);
 			?>
 			<div id="cfsp-item-<?php echo esc_attr($item); ?>" class="cfsp-item">
 				<div id="cfsp-title-<?php echo esc_attr($item); ?>" class="cfsp-title">
