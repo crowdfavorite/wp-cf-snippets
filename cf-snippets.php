@@ -716,7 +716,7 @@ function cfsp_admin_help() {
 				));
 			}
 		}
-		else {
+		else if (is_admin() && $current_screen->base == 'settings_page_cf-snippets') {
 			$context_help = '';
 			
 			foreach ($cfsp_help as $key => $data) {
