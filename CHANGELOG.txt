@@ -1,5 +1,9 @@
 # CF Snippets Changelog
 
+## 3.1
+
+- Adding upgrade routine to plugin.  Prompts admins to upgrade by clicking a link in an admin notice.
+
 ## 3.0
 
 - Implementing Snippets as a Custom Post Type [_cf_snippet]
