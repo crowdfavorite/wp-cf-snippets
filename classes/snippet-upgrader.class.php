@@ -43,13 +43,12 @@ class Snippet_Upgrader {
 			return;
 		}
 
-		$upgrade_ver = $this->needs_which_upgrade();
-		if ($upgrade_ver == false) {
+		if ($this->needs_which_upgrade() == false) {
 			return;
 		}
 
 		$upgrade_url = wp_nonce_url(
-			add_query_arg(array('cf_action' => 'cfsp_upgrade', 'ver' => $upgrade_ver), admin_url()),
+			add_query_arg(array('cf_action' => 'cfsp_upgrade'), admin_url()),
 			'cfsp_upgrade'
 		);
 		?>
@@ -66,24 +65,27 @@ class Snippet_Upgrader {
 
 	public function admin_request_handler() {
 		if (isset($_GET['cf_action']) && $_GET['cf_action'] == 'cfsp_upgrade') {
-			$upgrade_ver = isset($_GET['ver'])
-				? preg_replace('|\D|', '', $_GET['ver'])
-				: 0;
 
 			if (!current_user_can('manage_options')) {
 				wp_die('Error: cfsp_99'); // Not enough permissions
 			}
 
-			if (empty($upgrade_ver) || !check_admin_referer('cfsp_upgrade')) {
-				wp_die('Error: cfsp_100'); // Didn't pass nonce or upgrade version check
+			if (!check_admin_referer('cfsp_upgrade')) {
+				wp_die('Error: cfsp_100'); // Didn't pass nonce
 			}
 
-			$function_name = 'upgrade_to_'.$upgrade_ver;
-			if (!method_exists($this, $function_name)) {
-				wp_die('Error cfsp_101'); // Invalid Version Number
-			}
 
-			$this->{$function_name}();
+			/* Ability to perform multiple upgrades at once, so user isn't concerned
+			 * by having to click a seemingly same link multiple times if there's more
+			 * than one upgrade necessary */
+			while (($upgrade_ver = $this->needs_which_upgrade())) {
+				error_log('Upgrading to Snippet Version: '.$upgrade_ver);
+				$function_name = 'upgrade_to_'.preg_replace('|\D|', '', $upgrade_ver);
+				if (!method_exists($this, $function_name)) {
+					wp_die('Error cfsp_101'); // Invalid Version Number
+				}
+				$this->{$function_name}();
+			}
 
 			wp_safe_redirect(wp_get_referer());
 			exit;
