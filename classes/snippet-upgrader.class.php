@@ -50,6 +50,11 @@ class Snippet_Upgrader {
 			$upgrade_ver = isset($_GET['ver'])
 				? intval($_GET['ver'])
 				: 0;
+
+			if (!current_user_can('manage_options')) {
+				wp_die('Error: cfsp_99'); // Not enough permissions
+			}
+
 			if (empty($upgrade_ver) || !check_admin_referer('cfsp_upgrade')) {
 				wp_die('Error: cfsp_100'); // Invalid Action
 			}
