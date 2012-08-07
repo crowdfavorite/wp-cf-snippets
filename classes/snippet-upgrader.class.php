@@ -35,7 +35,7 @@ class Snippet_Upgrader {
 
 
 		$upgrade_url = wp_nonce_url(
-			add_query_arg(array('cf_action' => 'cfscp_upgrade', 'ver' => $upgrade_ver), admin_url()),
+			add_query_arg(array('cf_action' => 'cfsp_upgrade', 'ver' => $upgrade_ver), admin_url()),
 			'cfsp_upgrade'
 		);
 		?>
