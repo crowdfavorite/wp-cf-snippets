@@ -30,7 +30,10 @@ load_plugin_textdomain('cfsp');
 ## Includes
 
 include('classes/snippets.class.php');
-
+if (is_admin()) {
+	include 'classes/snippet-upgrader.class.php';
+	Snippet_Upgrader::i()->add_actions();
+}
 
 ## Admin Functionality
 
