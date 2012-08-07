@@ -17,13 +17,23 @@ class Snippet_Upgrader {
 
 	protected function needs_which_upgrade() {
 		$ver = false;
+
+		// Changing from db option to post type
 		if (1
 			&& defined('CFSP_VERSION')
 			&& version_compare(CFSP_VERSION, '2.2') >= 0
-			&& get_option('cfsnip_snippets')
+			&& get_option('cfsnip_snippets') // AND still have old snippets
 			) {
-			$ver = '30';
+			$ver = '3.0';
 		}
+		// Simply setting an option for the plugin version
+		else if (!get_option('cfsnip_version')) {
+			$ver = '3.0.1';
+		}
+
+		/* Future versions can compare a DB option (cfsnip_version) that should
+		 * be set in the upgrade routine.  This was added in 3.0.1, so prior
+		 * versions will need to set the option */
 		return $ver;
 	}
 
@@ -57,7 +67,7 @@ class Snippet_Upgrader {
 	public function admin_request_handler() {
 		if (isset($_GET['cf_action']) && $_GET['cf_action'] == 'cfsp_upgrade') {
 			$upgrade_ver = isset($_GET['ver'])
-				? intval($_GET['ver'])
+				? preg_replace('|\D|', '', $_GET['ver'])
 				: 0;
 
 			if (!current_user_can('manage_options')) {
@@ -83,7 +93,7 @@ class Snippet_Upgrader {
 	/**
 	 * Converts storage from option to post type
 	 */
-	function upgrade_to_30() {
+	protected function upgrade_to_30() {
 		if (!class_exists('CF_Snippet')) {
 			require_once 'snippets.class.php';
 		}
@@ -105,5 +115,16 @@ class Snippet_Upgrader {
 			}
 		}
 		delete_option('cfsnip_snippets');
+	}
+
+	/**
+	 * Just set the DB option for the current version of the plugin
+	 */
+	protected function upgrade_to_301() {
+		$this->set_version();
+	}
+
+	protected function set_version() {
+		update_option('cfsnip_version', CFSP_VERSION);
 	}
 }
