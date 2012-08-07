@@ -11,8 +11,8 @@ class Snippet_Upgrader {
 	}
 
 	function add_actions() {
-		add_action('admin_init', 'admin_request_handler');
-		add_action('admin_notice', 'prompt_for_upgrade_if_necessary');
+		add_action('admin_init', array($this, 'admin_request_handler'));
+		add_action('admin_notices', array($this, 'prompt_for_upgrade_if_necessary'));
 	}
 
 	protected function needs_which_upgrade() {
