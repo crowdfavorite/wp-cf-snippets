@@ -28,6 +28,11 @@ class Snippet_Upgrader {
 	}
 
 	public function prompt_for_upgrade_if_necessary() {
+		// Only prompt for people who can do something about it.
+		if (!current_user_can('manage_options')) {
+			return;
+		}
+
 		$upgrade_ver = $this->needs_which_upgrade();
 		if ($upgrade_ver == false) {
 			return;
