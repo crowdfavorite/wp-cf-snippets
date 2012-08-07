@@ -28,11 +28,11 @@ class Snippet_Upgrader {
 		}
 		// Simply setting an option for the plugin version
 		else if (!get_option('cfsnip_version')) {
-			$ver = '3.0.1';
+			$ver = '3.1';
 		}
 
 		/* Future versions can compare a DB option (cfsnip_version) that should
-		 * be set in the upgrade routine.  This was added in 3.0.1, so prior
+		 * be set in the upgrade routine.  This was added in 3.1, so prior
 		 * versions will need to set the option */
 		return $ver;
 	}
@@ -122,7 +122,7 @@ class Snippet_Upgrader {
 	/**
 	 * Just set the DB option for the current version of the plugin
 	 */
-	protected function upgrade_to_301() {
+	protected function upgrade_to_31() {
 		$this->set_version();
 	}
 

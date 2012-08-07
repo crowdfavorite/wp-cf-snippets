@@ -1,6 +1,6 @@
 # CF Snippets Changelog
 
-## 3.0.1
+## 3.1
 
 - Adding upgrade routine to plugin.  Prompts admins to upgrade by clicking a link in an admin notice.
 
