@@ -914,5 +914,3 @@ function cfsp_cflk_integration() {
 	}
 }
 add_action('plugins_loaded', 'cfsp_cflk_integration', 99999);
-
-?>
