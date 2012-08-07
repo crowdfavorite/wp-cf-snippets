@@ -33,14 +33,18 @@ class Snippet_Upgrader {
 			return;
 		}
 
-
 		$upgrade_url = wp_nonce_url(
 			add_query_arg(array('cf_action' => 'cfsp_upgrade', 'ver' => $upgrade_ver), admin_url()),
 			'cfsp_upgrade'
 		);
 		?>
 		<div class="error">
-			<p>The CF Snippets plugin requires an data upgrade.  Please back up your database and then <a href="<?php echo esc_url($upgrade_url); ?>">click here</a> to perform this upgrade.</p>
+			<p>
+				<?php printf(
+					__('The CF Snippets plugin requires an upgrade.  Please back up your database and then <a href="%s">click here</a> to perform this upgrade.', 'cfsp'),
+					esc_url($upgrade_url)
+				); ?>
+			</p>
 		</div><!-- /error -->
 		<?php
 	}
@@ -56,7 +60,7 @@ class Snippet_Upgrader {
 			}
 
 			if (empty($upgrade_ver) || !check_admin_referer('cfsp_upgrade')) {
-				wp_die('Error: cfsp_100'); // Invalid Action
+				wp_die('Error: cfsp_100'); // Didn't pass nonce or upgrade version check
 			}
 
 			$function_name = 'upgrade_to_'.$upgrade_ver;
