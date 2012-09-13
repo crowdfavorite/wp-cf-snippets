@@ -290,6 +290,18 @@ class CF_Snippet {
 		$data = array();
 		
 		if ($snippets->have_posts()) {
+			foreach ($snippets->posts as $snippet_post) {
+				$id = $snippet_post->ID;
+				$key = $snippet_post->name;
+				$description = $title = get_the_title($snippet_post->ID);
+				$content = get_post_meta($id, '_cfsp_content', true);
+				$parent = $snippet_post->post_parent;
+				$data[] = compact('id', 'key', 'description', 'title', 'content', 'parent');
+			}
+			// This code is removed because wp_reset_query and wp_reset_postdata do not
+			// function correctly in admin, leaving the global $post in the same state as
+			// before wp_reset_postdata is called. --ssm (as of 3.4.2)
+			/*
 			while ($snippets->have_posts()) {
 				$snippets->the_post();
 				global $post;
@@ -302,6 +314,7 @@ class CF_Snippet {
 				$data[] = compact('id', 'key', 'description', 'title', 'content', 'parent');
 			}
 			wp_reset_query();
+			*/
 		}
 		
 		if (!is_array($data) || empty($data)) {
