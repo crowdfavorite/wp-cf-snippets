@@ -292,7 +292,7 @@ class CF_Snippet {
 		if ($snippets->have_posts()) {
 			foreach ($snippets->posts as $snippet_post) {
 				$id = $snippet_post->ID;
-				$key = $snippet_post->name;
+				$key = $snippet_post->post_name;
 				$description = $title = get_the_title($snippet_post->ID);
 				$content = get_post_meta($id, '_cfsp_content', true);
 				$parent = $snippet_post->post_parent;
