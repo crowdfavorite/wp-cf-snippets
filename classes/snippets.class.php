@@ -342,6 +342,8 @@ class CF_Snippet {
 		
 		$data = array();
 		
+		global $post;
+		$old_post = $post;
 		if ($snippet->have_posts()) {
 			while ($snippet->have_posts()) {
 				$snippet->the_post();
@@ -354,8 +356,8 @@ class CF_Snippet {
 				// Compile all of the data for this snippet
 				$data = compact('id', 'key', 'description', 'title', 'content', 'parent');
 			}
-			wp_reset_query();
 		}
+		$post = $old_post;
 		
 		if (!is_array($data) || empty($data)) {
 			return false;
