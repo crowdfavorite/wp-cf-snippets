@@ -1,5 +1,8 @@
 # CF Snippets Changelog
 
+## 3.1.4
+- Hotfix to preserve authordata
+
 ## 3.1.3
 - Hotfix to address blowing away subqueries through improper wp_reset_query call.
 
