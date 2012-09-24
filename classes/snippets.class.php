@@ -155,8 +155,9 @@ class CF_Snippet {
 		
 		$data = array();
 		
-		global $post;
+		global $post, $authordata;
 		$old_post = $post;
+		$old_authordata = $authordata;
 		if ($snippets->have_posts()) {
 			while ($snippets->have_posts()) {
 				$snippets->the_post();
@@ -165,6 +166,7 @@ class CF_Snippet {
 			}
 		}
 		$post = $old_post;
+		$authordata = $old_authordata;
 		
 		if (!is_array($data) || empty($data)) {
 			return false;
@@ -342,8 +344,9 @@ class CF_Snippet {
 		
 		$data = array();
 		
-		global $post;
+		global $post, $authordata;
 		$old_post = $post;
+		$old_authordata = $authordata;
 		if ($snippet->have_posts()) {
 			while ($snippet->have_posts()) {
 				$snippet->the_post();
@@ -358,6 +361,7 @@ class CF_Snippet {
 			}
 		}
 		$post = $old_post;
+		$authordata = $old_authordata;
 		
 		if (!is_array($data) || empty($data)) {
 			return false;

@@ -3,7 +3,7 @@
 Plugin Name: CF Snippets
 Plugin URI: http://crowdfavorite.com
 Description: Provides admin level users the ability to define html snippets for use in templates, content, or widgets.
-Version: 3.1.3
+Version: 3.1.4
 Author: Crowd Favorite
 Author URI: http://crowdfavorite.com
 */
