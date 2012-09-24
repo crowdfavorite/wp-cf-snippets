@@ -155,14 +155,16 @@ class CF_Snippet {
 		
 		$data = array();
 		
+		global $post;
+		$old_post = $post;
 		if ($snippets->have_posts()) {
 			while ($snippets->have_posts()) {
 				$snippets->the_post();
 				global $post;
 				$data[] = $post->post_name;
 			}
-			wp_reset_query();
 		}
+		$post = $old_post;
 		
 		if (!is_array($data) || empty($data)) {
 			return false;
