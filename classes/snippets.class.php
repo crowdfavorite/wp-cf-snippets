@@ -155,9 +155,8 @@ class CF_Snippet {
 		
 		$data = array();
 		
-		global $post, $authordata;
+		global $post;
 		$old_post = $post;
-		$old_authordata = $authordata;
 		if ($snippets->have_posts()) {
 			while ($snippets->have_posts()) {
 				$snippets->the_post();
@@ -165,8 +164,7 @@ class CF_Snippet {
 				$data[] = $post->post_name;
 			}
 		}
-		$post = $old_post;
-		$authordata = $old_authordata;
+		setup_postdata($old_post);
 		
 		if (!is_array($data) || empty($data)) {
 			return false;
@@ -205,12 +203,14 @@ class CF_Snippet {
 		$data = array();
 		
 		if ($snippets->have_posts()) {
+			global $post;
+			$old_post = $post;
 			while ($snippets->have_posts()) {
 				$snippets->the_post();
 				global $post;
 				$data[] = $post->post_name;
 			}
-			wp_reset_query();
+			setup_postdata($old_post);
 		}
 		
 		if (!is_array($data) || empty($data)) {
@@ -344,9 +344,8 @@ class CF_Snippet {
 		
 		$data = array();
 		
-		global $post, $authordata;
+		global $post;
 		$old_post = $post;
-		$old_authordata = $authordata;
 		if ($snippet->have_posts()) {
 			while ($snippet->have_posts()) {
 				$snippet->the_post();
@@ -360,8 +359,7 @@ class CF_Snippet {
 				$data = compact('id', 'key', 'description', 'title', 'content', 'parent');
 			}
 		}
-		$post = $old_post;
-		$authordata = $old_authordata;
+		setup_postdata($old_post);
 		
 		if (!is_array($data) || empty($data)) {
 			return false;

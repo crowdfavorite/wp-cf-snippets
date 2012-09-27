@@ -1,5 +1,8 @@
 # CF Snippets Changelog
 
+## 3.1.5
+- Hotfix to properly reset all postdata. Removed all calls in snippets class to wp_reset_query.
+
 ## 3.1.4
 - Hotfix to preserve authordata
 
