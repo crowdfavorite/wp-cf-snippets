@@ -1,5 +1,8 @@
 # CF Snippets Changelog
 
+## 3.1.6
+- Hotfix to set global $post object, since setup_postdata does not do so.
+
 ## 3.1.5
 - Hotfix to properly reset all postdata. Removed all calls in snippets class to wp_reset_query.
 
