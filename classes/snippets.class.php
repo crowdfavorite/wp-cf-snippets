@@ -165,6 +165,8 @@ class CF_Snippet {
 			}
 		}
 		setup_postdata($old_post);
+		// As of 3.4 setup_postdata does not set the global $post object.
+		$post = $old_post;
 		
 		if (!is_array($data) || empty($data)) {
 			return false;
@@ -211,6 +213,8 @@ class CF_Snippet {
 				$data[] = $post->post_name;
 			}
 			setup_postdata($old_post);
+			// As of 3.4 setup_postdata does not set the global $post object.
+			$post = $old_post;
 		}
 		
 		if (!is_array($data) || empty($data)) {
@@ -360,6 +364,8 @@ class CF_Snippet {
 			}
 		}
 		setup_postdata($old_post);
+		// As of 3.4 setup_postdata does not set the global $post object.
+		$post = $old_post;
 		
 		if (!is_array($data) || empty($data)) {
 			return false;
