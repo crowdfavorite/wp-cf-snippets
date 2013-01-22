@@ -23,6 +23,12 @@
 					.find('div.message').html('').hide();
 				return $editBox;
 			};
+			
+		$selectBox.change(function(e) {
+			if ($editBox.is(":visible")) {
+				$("#cfsp-edit-snippet").click();
+			}
+		});
 
 		$("#cfsp-add-snippet").click(function(e) {
 			e.preventDefault();
@@ -81,7 +87,11 @@
 						if (decoded.data.keys.length > 0) {
 							$selectBox.children().remove();
 							decoded.data.keys.forEach(function(val, index, array) {
-								$selectBox.append("<option value=\"" + val + "\">" + val + "</option>");
+								var $option = $("<option value=\"" + val + "\">" + val + "</option>");
+								if (val == decoded.data.snippet.post_name) {
+									$option.attr("selected", true);
+								}
+								$selectBox.append($option);
 							});
 						}
 					}
