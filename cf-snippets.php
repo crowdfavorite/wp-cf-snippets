@@ -71,6 +71,9 @@ function cfsp_request_handler() {
 				die();
 				break;
 			case 'cfsp_save':
+				if (!empty($_POST['cfsp_id'])) {
+					cfsp_save_snippet_post(stripslashes($_POST['cfsp_id']), stripslashes($_POST['cfsp_key']), stripslashes($_POST['cfsp_description']), stripslashes($_POST['cfsp_content']));
+				}
 				if (!empty($_POST['cfsp_key'])) {
 					cfsp_save(stripslashes($_POST['cfsp_key']), stripslashes($_POST['cfsp_description']), stripslashes($_POST['cfsp_content']));
 				}
@@ -216,7 +219,7 @@ function cfsp_options() {
 	$keys = $cf_snippet->get_keys();
 	if (is_array($keys) && !empty($keys)) {
 		foreach ($keys as $key) {
-			if (!$cf_snippet->has_parent($key)) {
+			if ($cf_snippet->exists($key)) {
 				$table_content .= $cf_snippet->admin_display($key);
 				$count++;
 				$message_display = ' style="display:none;"';
@@ -357,6 +360,19 @@ function cfsp_save($key, $description = '', $content = '') {
 	$key = sanitize_title($key);
 
 	$cf_snippet->save($key, $content, $description);
+}
+
+function cfsp_save_snippet_post($id, $key = '', $description = '', $content = '') {
+	if (empty($id)) { return false; }
+	global $cf_snippet;
+	
+	$post_arr = array('ID' => $id, 'post_name' => $key, 'post_title' => $description, 'post_content' => $content);
+	
+	if (class_exists('CF_Snippet') && !($cf_snippet instanceof CF_Snippet)) {
+		$cf_snippet = new CF_Snippet();
+	}
+	
+	$cf_snippet->save_snippet_post($post_arr);
 }
 
 function cfsp_iframe_preview($key) {

@@ -402,13 +402,14 @@ class CF_Snippet {
 	 * @return void
 	 */
 	public function edit($key) {
-		$snippet = $this->get_snippet($key);
+		$snippet = $this->get_snippet_post_by_key($key);
 		
 		// If we didn't get a snippet to display, don't proceed
-		if (!$snippet) { return ''; }
+		if (!$snippet || is_wp_error($snippet)) { return ''; }
 		
-		$description = $snippet['title'];
-		$content = $snippet['content'];
+		$description = $snippet->post_title;
+		$content = $snippet->post_content;
+		$id = $snippet->ID;
 		
 		ob_start();
 		include('views/edit.php');
@@ -583,6 +584,7 @@ class CF_Snippet {
 			'post_name' => 'cfsp-new-snippet',
 			'post_title' => 'New Snippet',
 			'post_content' => '',
+			'post_parent' => 0,
 		), $post_arr);
 		$post_arr['post_type'] = $this->post_type;
 		$post_arr['post_status'] = 'publish';

@@ -64,12 +64,13 @@
 		});
 		
 		$(".cfsp-popup-submit").click(function() {
-			var key = $("#cfsp-key").val();
-			var description = $("#cfsp-description").val();
-			var content = $("#cfsp-content").val();
+			var id = $('#cfsp-id').val(),
+				key = $("#cfsp-key").val(),
+				description = $("#cfsp-description").val(),
+				content = $("#cfsp-content").val();
 			
 			$.closeDOMWindow();
-			cfsp_save_snippet(key, description, content);
+			cfsp_save_snippet(id, key, description, content);
 			return false;
 		});
 		
