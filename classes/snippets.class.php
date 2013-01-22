@@ -306,23 +306,6 @@ class CF_Snippet {
 				$parent = $snippet_post->post_parent;
 				$data[] = compact('id', 'key', 'description', 'title', 'content', 'parent');
 			}
-			// This code is removed because wp_reset_query and wp_reset_postdata do not
-			// function correctly in admin, leaving the global $post in the same state as
-			// before wp_reset_postdata is called. --ssm (as of 3.4.2)
-			/*
-			while ($snippets->have_posts()) {
-				$snippets->the_post();
-				global $post;
-				$id = get_the_ID();
-				$key = $post->post_name;
-				$description = $title = the_title('', '', false);
-				$content = get_post_meta($id, '_cfsp_content', true);
-				$parent = $post->post_parent;
-				// Bring all of the data together for this snippet
-				$data[] = compact('id', 'key', 'description', 'title', 'content', 'parent');
-			}
-			wp_reset_query();
-			*/
 		}
 		
 		if (!is_array($data) || empty($data)) {
@@ -371,6 +354,22 @@ class CF_Snippet {
 			return false;
 		}
 		return $data;
+	}
+	
+	public function get_snippet_post_by_key($key) {
+		$post = get_posts(array(
+			'post_type' => $this->post_type,
+			'post_status' => 'publish',
+			'name' => $key,
+			'no_found_rows' => true,
+			'posts_per_page' => 1)
+		);
+		if (!is_array($post) || empty($post)) {
+			return $post;
+		}
+		else {
+			return $post[0];
+		}
 	}
 	
 	/**
@@ -576,6 +575,24 @@ class CF_Snippet {
 		}
 		
 		return true;
+	}
+	
+	public function save_snippet_post($post_arr) {
+		$post_arr = array_merge(array(
+			'ID' => null,
+			'post_name' => 'cfsp-new-snippet',
+			'post_title' => 'New Snippet',
+			'post_content' => '',
+		), $post_arr);
+		$post_arr['post_type'] = $this->post_type;
+		$post_arr['post_status'] = 'publish';
+		if (!empty($post_arr['ID'])) {
+			$result = wp_update_post($post_arr);
+		}
+		else {
+			$result = wp_insert_post($post_arr);
+		}
+		return $result;
 	}
 	
 	/**

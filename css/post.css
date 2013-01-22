@@ -1,32 +1,27 @@
-#cfsp .inside {
-	margin:0;
+#cfsp-meta-edit-window {
+	border: thin solid #cccccc;
+	margin: 7px;
+	padding: 7px;
+	border-radius: 3px;
+	background-color: #ffffff;
 }
 
-.cfsp-add {
-	margin:6px;
+#cfsp-meta-edit-window > * {
+	margin-top: 7px;
 }
 
-.cfsp-item {
-	margin:0 0 8px;
-	padding:0 10px 10px;
-	border-top: 1px solid #DFDFDF;
-	border-bottom: 1px solid #DFDFDF;
-	background: #F9F9F9 none repeat scroll 0 0;
+#cfsp-meta-edit-window > *:first-child {
+	margin-top: 0px;
 }
 
-.cfsp-name {
-	padding: 5px 10px;
-	background-color:#FFFFFF;
-	line-height:35px;
-	font-size:12px;
-	font-weight:bold;
-	vertical-align:middle;
+#cfsp-meta-edit-window label {
+	display: block;
 }
 
-.cfsp-remove-link,
-.cfsp-add-content-link, 
-.cfsp-hide-link,
-.cfsp-show-link {
-	padding-top:0;
-	padding-bottom:0;
+#cfsp-meta-edit-window .message {
+	border: thin solid #cccc00;
+	background-color: #ffffcc;
+	border-radius: 3px;
+	display: none;
+	padding: 3px;
 }
