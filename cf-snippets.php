@@ -3,7 +3,7 @@
 Plugin Name: CF Snippets
 Plugin URI: http://crowdfavorite.com
 Description: Provides admin level users the ability to define html snippets for use in templates, content, or widgets.
-Version: 3.1.6
+Version: 3.2
 Author: Crowd Favorite
 Author URI: http://crowdfavorite.com
 */
@@ -12,7 +12,7 @@ Author URI: http://crowdfavorite.com
 
 ## Constants
 
-define('CFSP_VERSION', '3.1.6');
+define('CFSP_VERSION', '3.2');
 define('CFSP_DIR', plugin_dir_path(__FILE__));
 //plugin_dir_url seems to be broken for including in theme files
 if (file_exists(trailingslashit(get_template_directory()).'plugins/'.basename(dirname(__FILE__)))) {
@@ -71,7 +71,10 @@ function cfsp_request_handler() {
 				die();
 				break;
 			case 'cfsp_save':
-				if (!empty($_POST['cfsp_key'])) {
+				if (!empty($_POST['cfsp_id'])) {
+					cfsp_save_snippet_post(stripslashes($_POST['cfsp_id']), stripslashes($_POST['cfsp_key']), stripslashes($_POST['cfsp_description']), stripslashes($_POST['cfsp_content']));
+				}
+				else if (!empty($_POST['cfsp_key'])) {
 					cfsp_save(stripslashes($_POST['cfsp_key']), stripslashes($_POST['cfsp_description']), stripslashes($_POST['cfsp_content']));
 				}
 				die();
@@ -216,32 +219,13 @@ function cfsp_options() {
 	$keys = $cf_snippet->get_keys();
 	if (is_array($keys) && !empty($keys)) {
 		foreach ($keys as $key) {
-			if (!$cf_snippet->has_parent($key)) {
+			if ($cf_snippet->exists($key)) {
 				$table_content .= $cf_snippet->admin_display($key);
 				$count++;
 				$message_display = ' style="display:none;"';
 			}
 		}
 	}
-	else {
-		$table_display = ' style="display:none;"';
-	}
-
-	$post_keys = $cf_snippet->get_all_post_keys(CFSP_SHOW_POST_COUNT);
-
-	if (is_array($post_keys) && !empty($post_keys)) {
-		foreach ($post_keys as $key) {
-			$post_table_content .= $cf_snippet->admin_display($key);
-			$post_count++;
-			$post_message_display = ' style="display:none;"';
-			$total_post_count++;
-		}
-	}
-	else {
-		$post_table_display = ' style="display:none;"';
-	}
-
-	$total_post_page_count = ceil($cf_snippet->get_post_key_count()/CFSP_SHOW_POST_COUNT);
 	include('views/options.php');
 }
 
@@ -378,6 +362,19 @@ function cfsp_save($key, $description = '', $content = '') {
 	$cf_snippet->save($key, $content, $description);
 }
 
+function cfsp_save_snippet_post($id, $key = '', $description = '', $content = '') {
+	if (empty($id)) { return false; }
+	global $cf_snippet;
+	
+	$post_arr = array('ID' => $id, 'post_name' => $key, 'post_title' => $description, 'post_content' => $content);
+	
+	if (class_exists('CF_Snippet') && !($cf_snippet instanceof CF_Snippet)) {
+		$cf_snippet = new CF_Snippet();
+	}
+	
+	$cf_snippet->save_snippet_post($post_arr);
+}
+
 function cfsp_iframe_preview($key) {
 	global $cf_snippet;
 	if (class_exists('CF_Snippet') && !($cf_snippet instanceof CF_Snippet)) {
@@ -409,7 +406,7 @@ add_action('admin_init', 'cfsp_post_admin_head');
 function cfsp_post_edit() {
 	global $post;
 	$cf_snippet = new CF_Snippet();
-	$keys = $cf_snippet->get_keys_for_post(get_the_ID());
+	$keys = $cf_snippet->get_keys();
 	include('views/post-edit.php');
 }
 
@@ -914,3 +911,59 @@ function cfsp_cflk_integration() {
 	}
 }
 add_action('plugins_loaded', 'cfsp_cflk_integration', 99999);
+
+function cfsp_ajax_get_snippet() {
+	global $cf_snippet;
+	if (empty($cf_snippet)) {
+		$cf_snippet = new CF_Snippet();
+	}
+	if (empty($_GET['key'])) {
+		header('HTTP/1.0 400 Bad Request');
+		echo json_encode(array('result' => 'error', 'data' => 'The parameter "key" is required.'));
+	}
+	$snippet_post = $cf_snippet->get_snippet_post_by_key($_GET['key']);
+	if (empty($snippet_post)) {
+		header('HTTP/1.0 404 Not Found');
+		echo json_encode(array('result' => 'error', 'data' => 'No snippet found'));
+	}
+	else if (is_wp_error($snippet_post)) {
+		header('HTTP/1.0 500 Internal Server Error');
+		echo json_encode(array('result' => 'error', 'data' => 'There was an error processing your request.'));
+	}
+	else {
+		echo json_encode(array('result' => 'success', 'data' => $snippet_post));
+	}
+	exit();
+}
+add_action('wp_ajax_cfsp_get_snippet', 'cfsp_ajax_get_snippet');
+
+function cfsp_ajax_save_snippet() {
+	// TODO: Determine appropriate permissions for creating snippets
+	global $cf_snippet;
+	if (empty($cf_snippet)) {
+		$cf_snippet = new CF_Snippet();
+	}
+	$post_arr = array_merge(array(
+		'ID' => null,
+		'post_name' => 'cfsp-new-snippet',
+		'post_title' => 'New Snippet',
+		'post_content' => '',
+	), $_POST);
+	$result = $cf_snippet->save_snippet_post($post_arr);
+	if (empty($result)) {
+		header('HTTP/1.0 500 Internal Server Error');
+		echo json_encode(array("result" => "error", "data" => "No data returned"));
+	}
+	else if (is_wp_error($result)) {
+		header('HTTP/1.0 500 Internal Server Error');
+		echo json_encode(array("result" => "error", "data" => "There was an error processing your request."));
+	}
+	else {
+		$snippet_post = get_post($result);
+		$keys = $cf_snippet->get_keys();
+		$data = array("snippet" => $snippet_post, "keys" => $keys);
+		echo json_encode(array("result" => "success", "data" => $data));
+	}
+	exit();
+}
+add_action('wp_ajax_cfsp_save_snippet', 'cfsp_ajax_save_snippet');

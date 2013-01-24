@@ -17,6 +17,7 @@ class Snippet_Upgrader {
 
 	protected function needs_which_upgrade() {
 		$ver = false;
+		$ver_option = get_option('cfsnip_version');
 
 		// Changing from db option to post type
 		if (1
@@ -27,7 +28,7 @@ class Snippet_Upgrader {
 			$ver = '3.0';
 		}
 		// Simply setting an option for the plugin version
-		else if (!get_option('cfsnip_version')) {
+		else if (!$ver_option) {
 			$ver = '3.1';
 		}
 
