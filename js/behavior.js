@@ -71,9 +71,10 @@
 			return false;
 		};
 		
-		cfsp_save_snippet = function(key, description, content) {
+		cfsp_save_snippet = function(id, key, description, content) {
 			$.post("index.php", {
 				cf_action:"cfsp_save",
+				cfsp_id:id,
 				cfsp_key:key,
 				cfsp_description:description,
 				cfsp_content:content
