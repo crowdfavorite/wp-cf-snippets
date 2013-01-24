@@ -74,7 +74,7 @@ function cfsp_request_handler() {
 				if (!empty($_POST['cfsp_id'])) {
 					cfsp_save_snippet_post(stripslashes($_POST['cfsp_id']), stripslashes($_POST['cfsp_key']), stripslashes($_POST['cfsp_description']), stripslashes($_POST['cfsp_content']));
 				}
-				if (!empty($_POST['cfsp_key'])) {
+				else if (!empty($_POST['cfsp_key'])) {
 					cfsp_save(stripslashes($_POST['cfsp_key']), stripslashes($_POST['cfsp_description']), stripslashes($_POST['cfsp_content']));
 				}
 				die();
