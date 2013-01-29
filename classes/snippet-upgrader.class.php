@@ -31,6 +31,9 @@ class Snippet_Upgrader {
 		else if (!$ver_option) {
 			$ver = '3.1';
 		}
+		else if (version_compare($ver_option, '3.2') < 0 && version_compare(CFSP_VERSION, '3.2') >= 0) {
+			$ver = '3.2';
+		}
 
 		/* Future versions can compare a DB option (cfsnip_version) that should
 		 * be set in the upgrade routine.  This was added in 3.1, so prior
@@ -125,6 +128,32 @@ class Snippet_Upgrader {
 	 */
 	protected function upgrade_to_31() {
 		$this->set_version();
+	}
+	
+	protected function upgrade_to_32() {
+		$complete = true;
+		// Convert all snippets to use post_content instead of meta value.
+		$cf_snippet = new CF_Snippet();
+		$snippets = $cf_snippet->get_all();
+		foreach ($snippets as $snippet_info) {
+			if (empty($snippet_info['content'])) {
+				continue;
+			}
+			$post_update = array(
+				'ID' => $snippet_info['id'],
+				'post_content' => $snippet_info['content'],
+			);
+			$result = wp_update_post($post_update);
+			if (!is_wp_error($result)) {
+				delete_post_meta($snippet_info['id'], '_cfsp_content');
+			}
+			else {
+				$complete = false;
+			}
+		}
+		if ($complete) {
+			$this->set_version();
+		}
 	}
 
 	protected function set_version() {
