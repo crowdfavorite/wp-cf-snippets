@@ -98,7 +98,7 @@ class CF_Snippet {
 		if ($post_id) {
 			$all_meta = get_post_custom($post_id);
 			foreach ($all_meta as $meta_key => $meta_value) {
-				if (strpos($meta_key, '_cfsp_') !== false && $meta_key != '_cfsp_content') {
+				if (strpos($meta_key, '_cfsp_') !== false) {
 					$meta[$meta_key] = $meta_value;
 				}
 			}
@@ -302,7 +302,7 @@ class CF_Snippet {
 				$id = $snippet_post->ID;
 				$key = $snippet_post->post_name;
 				$description = $title = get_the_title($snippet_post->ID);
-				$content = get_post_meta($id, '_cfsp_content', true);
+				$content = get_the_content($snippet_post->ID);
 				$parent = $snippet_post->post_parent;
 				$data[] = compact('id', 'key', 'description', 'title', 'content', 'parent');
 			}
@@ -340,7 +340,7 @@ class CF_Snippet {
 				$id = get_the_ID();
 				$key = $post->post_name;
 				$description = $title = the_title('', '', false);
-				$content = get_post_meta($id, '_cfsp_content', true);
+				$content = get_the_content($id);
 				$parent = $post->post_parent;
 				// Compile all of the data for this snippet
 				$data = compact('id', 'key', 'description', 'title', 'content', 'parent');
@@ -550,6 +550,7 @@ class CF_Snippet {
 			'post_name' => $key,
 			'post_status' => 'publish',
 			'post_title' => $description,
+			'post_content' => $content,
 		);
 		
 		if ($post_id) {
@@ -564,9 +565,6 @@ class CF_Snippet {
 		
 		if (!$post_id) { 
 			return false; 
-		}
-		else if (!update_post_meta($post_id, '_cfsp_content', $content)) {
-			return false;
 		}
 		
 		foreach ($args as $arg_key => $arg_value) {
@@ -623,6 +621,7 @@ class CF_Snippet {
 			'post_name' => $key,
 			'post_status' => 'publish',
 			'post_title' => $description,
+			'post_content' => $content,
 		);
 		
 		if (!empty($post_parent)) {
@@ -633,9 +632,6 @@ class CF_Snippet {
 		
 		if (!$post_id) { 
 			return false; 
-		}
-		else if (!update_post_meta($post_id, '_cfsp_content', $content)) {
-			return false;
 		}
 		
 		foreach ($args as $arg_key => $arg_value) {
