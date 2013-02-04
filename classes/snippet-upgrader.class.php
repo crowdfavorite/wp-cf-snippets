@@ -136,12 +136,10 @@ class Snippet_Upgrader {
 		$cf_snippet = new CF_Snippet();
 		$snippets = $cf_snippet->get_all();
 		foreach ($snippets as $snippet_info) {
-			if (empty($snippet_info['content'])) {
-				continue;
-			}
+			$snippet_content = get_post_meta($snippet_info['id'], '_cfsp_content', true);
 			$post_update = array(
 				'ID' => $snippet_info['id'],
-				'post_content' => $snippet_info['content'],
+				'post_content' => $snippet_content,
 			);
 			$result = wp_update_post($post_update);
 			if (!is_wp_error($result)) {
