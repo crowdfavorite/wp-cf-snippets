@@ -1,5 +1,9 @@
 # CF Snippets Changelog
 
+## 3.2.1
+- add 'cf_snippets_admin_permission' filter to allow different capabilities to manage snippets
+- default permission is 'manage_options'
+
 ## 3.2
 - Updated post snippet management
 - Removed "post_parent" snippet association to specific posts

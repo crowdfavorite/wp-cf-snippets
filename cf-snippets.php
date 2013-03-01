@@ -180,7 +180,7 @@ function cfsp_admin_menu() {
 	add_options_page(
 		__('CF Snippets', 'cfsp'),
 		__('CF Snippets', 'cfsp'),
-		'manage_options',
+		apply_filters( 'cf_snippets_admin_permission', 'manage_options' ),
 		'cf-snippets',
 		'cfsp_options'
 	);
@@ -189,7 +189,7 @@ function cfsp_admin_menu() {
 			'cf-admin-menu',
 			__('CF Snippets', 'cfsp'),
 			__('CF Snippets', 'cfsp'),
-			10,
+			apply_filters( 'cf_snippets_admin_permission', 'manage_options' ),
 			'cf-snippets',
 			'cfsp_options'
 		);
