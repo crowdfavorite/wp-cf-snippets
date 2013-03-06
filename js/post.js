@@ -21,6 +21,13 @@
 					.find('[name="snippet_post_title"]').val(data.post_title).end()
 					.find('[name="snippet_post_content"]').val(data.post_content).end()
 					.find('div.message').html('').hide();
+				if (data.ID > 0) {
+					// No changing the snippet name of an established snippet.
+					$editBox.find('[name="snippet_post_name"]').attr('disabled', 'disabled');
+				}
+				else {
+					$editBox.find('[name="snippet_post_name"]').removeAttr('disabled');
+				}
 				return $editBox;
 			};
 			
