@@ -3,7 +3,7 @@
 		<table class="form-table" border="0">
 			<tr>
 				<th style="width:50px;"><?php _e('Key'); ?></th>
-				<td><input type="text" name="cfsp-key" id="cfsp-key" value="<?php echo esc_attr($key); ?>" class="widefat" /></td>
+				<td><input type="text" name="cfsp-key" id="cfsp-key" value="<?php echo esc_attr($key); ?>" disabled="disabled" class="widefat" /></td>
 			</tr>
 			<tr>
 				<th style="width:50px;"><?php _e('Description'); ?></th>
