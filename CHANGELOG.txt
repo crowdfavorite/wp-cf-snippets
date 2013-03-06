@@ -1,5 +1,8 @@
 # CF Snippets Changelog
 
+## 3.2.1
+- Updated to remove ability to rename snippets.
+
 ## 3.2
 - Updated post snippet management
 - Removed "post_parent" snippet association to specific posts
