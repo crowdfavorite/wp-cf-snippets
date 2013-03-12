@@ -104,10 +104,10 @@ class Snippet_Upgrader {
 			require_once 'snippets.class.php';
 		}
 
-		$cf_snippet = new CF_Snippet();
 		$old_snippets = get_option('cfsnip_snippets');
 		if (is_array($old_snippets) && !empty($old_snippets)) {
 			foreach ($old_snippets as $key => $data) {
+				$cf_snippet = new CF_Snippet();
 				// Make sure the key is a valid key
 				$key = sanitize_title($key);
 				$args = array();
@@ -117,7 +117,7 @@ class Snippet_Upgrader {
 					$args['post_parent'] = $data['post_id'];
 				}
 
-				$cf_snippet->add($key, $data['content'], $data['description'], $args);
+				$cf_snippet->save($key, $data['content'], $data['description'], $args);
 			}
 		}
 		delete_option('cfsnip_snippets');
