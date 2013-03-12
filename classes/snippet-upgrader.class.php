@@ -22,7 +22,7 @@ class Snippet_Upgrader {
 		// Changing from db option to post type
 		if (1
 			&& defined('CFSP_VERSION')
-			&& version_compare(CFSP_VERSION, '2.2') >= 0
+			&& version_compare(CFSP_VERSION, '2.2', '>=')
 			&& get_option('cfsnip_snippets') // AND still have old snippets
 			) {
 			$ver = '3.0';
@@ -31,7 +31,7 @@ class Snippet_Upgrader {
 		else if (!$ver_option) {
 			$ver = '3.1';
 		}
-		else if (version_compare($ver_option, '3.2') < 0 && version_compare(CFSP_VERSION, '3.2') >= 0) {
+		else if (version_compare($ver_option, '3.2', '<')) {
 			$ver = '3.2';
 		}
 
