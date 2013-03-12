@@ -365,13 +365,13 @@ function cfsp_save($key, $description = '', $content = '') {
 function cfsp_save_snippet_post($id, $key = '', $description = '', $content = '') {
 	if (empty($id)) { return false; }
 	global $cf_snippet;
-	
+
 	$post_arr = array('ID' => $id, 'post_name' => $key, 'post_title' => $description, 'post_content' => $content);
-	
+
 	if (class_exists('CF_Snippet') && !($cf_snippet instanceof CF_Snippet)) {
 		$cf_snippet = new CF_Snippet();
 	}
-	
+
 	$cf_snippet->save_snippet_post($post_arr);
 }
 
