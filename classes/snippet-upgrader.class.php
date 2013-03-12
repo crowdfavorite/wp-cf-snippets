@@ -22,7 +22,7 @@ class Snippet_Upgrader {
 		// Changing from db option to post type
 		if (1
 			&& defined('CFSP_VERSION')
-			&& version_compare(CFSP_VERSION, '2.2') >= 0
+			&& version_compare(CFSP_VERSION, '2.2', '>=')
 			&& get_option('cfsnip_snippets') // AND still have old snippets
 			) {
 			$ver = '3.0';
@@ -31,7 +31,7 @@ class Snippet_Upgrader {
 		else if (!$ver_option) {
 			$ver = '3.1';
 		}
-		else if (version_compare($ver_option, '3.2') < 0 && version_compare(CFSP_VERSION, '3.2') >= 0) {
+		else if (version_compare($ver_option, '3.2', '<')) {
 			$ver = '3.2';
 		}
 
@@ -104,10 +104,10 @@ class Snippet_Upgrader {
 			require_once 'snippets.class.php';
 		}
 
-		$cf_snippet = new CF_Snippet();
 		$old_snippets = get_option('cfsnip_snippets');
 		if (is_array($old_snippets) && !empty($old_snippets)) {
 			foreach ($old_snippets as $key => $data) {
+				$cf_snippet = new CF_Snippet();
 				// Make sure the key is a valid key
 				$key = sanitize_title($key);
 				$args = array();
@@ -117,7 +117,7 @@ class Snippet_Upgrader {
 					$args['post_parent'] = $data['post_id'];
 				}
 
-				$cf_snippet->add($key, $data['content'], $data['description'], $args);
+				$cf_snippet->save($key, $data['content'], $data['description'], $args);
 			}
 		}
 		delete_option('cfsnip_snippets');
@@ -127,9 +127,9 @@ class Snippet_Upgrader {
 	 * Just set the DB option for the current version of the plugin
 	 */
 	protected function upgrade_to_31() {
-		$this->set_version();
+		$this->set_version('3.1');
 	}
-	
+
 	protected function upgrade_to_32() {
 		$complete = true;
 		// Convert all snippets to use post_content instead of meta value.
@@ -150,11 +150,11 @@ class Snippet_Upgrader {
 			}
 		}
 		if ($complete) {
-			$this->set_version();
+			$this->set_version('3.2');
 		}
 	}
 
-	protected function set_version() {
-		update_option('cfsnip_version', CFSP_VERSION);
+	protected function set_version($ver_string) {
+		update_option('cfsnip_version', $ver_string);
 	}
 }
