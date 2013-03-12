@@ -1,5 +1,8 @@
 # CF Snippets Changelog
 
+## 3.2.3
+- Updated the upgrade routine to be more robust.
+
 ## 3.2.2
 - Updated to remove ability to rename snippets.
 
