@@ -127,9 +127,9 @@ class Snippet_Upgrader {
 	 * Just set the DB option for the current version of the plugin
 	 */
 	protected function upgrade_to_31() {
-		$this->set_version();
+		$this->set_version('3.1');
 	}
-	
+
 	protected function upgrade_to_32() {
 		$complete = true;
 		// Convert all snippets to use post_content instead of meta value.
@@ -150,11 +150,11 @@ class Snippet_Upgrader {
 			}
 		}
 		if ($complete) {
-			$this->set_version();
+			$this->set_version('3.2');
 		}
 	}
 
-	protected function set_version() {
-		update_option('cfsnip_version', CFSP_VERSION);
+	protected function set_version($ver_string) {
+		update_option('cfsnip_version', $ver_string);
 	}
 }
