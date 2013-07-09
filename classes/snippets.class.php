@@ -323,37 +323,63 @@ class CF_Snippet {
 	public function get_snippet($key) {
 		$key = sanitize_title($key);
 		
-		$snippet = new WP_Query(array(
-			'post_type' => $this->post_type,
-			'name' => $key,
-			'posts_per_page' => -1
-		));
-		
-		$data = array();
-		
-		global $post;
-		$old_post = $post;
-		if ($snippet->have_posts()) {
-			while ($snippet->have_posts()) {
-				$snippet->the_post();
-				global $post;
+		if (function_exists('wpcom_vip_get_page_by_path')) {
+			global $post;
+			$old_post = $post;
+			$snippet_post = wpcom_vip_get_page_by_path($key, $this->post_type);
+			$data = array();
+			if (!empty($snippet_post)) {
+				setup_postdata($snippet_post);
+				$post = $snippet_post;
 				$id = get_the_ID();
 				$key = $post->post_name;
 				$description = $title = the_title('', '', false);
 				$content = get_the_content($id);
 				$parent = $post->post_parent;
-				// Compile all of the data for this snippet
-				$data = compact('id', 'key', 'description', 'title', 'content', 'parent');
+				$data = compact('id', 'key', 'description', title', 'content', parent');
+				$post = $old_post;
+				setup_postdata($old_post);
+			}
+			if (!is_array($data) || empty($data)) {
+				return false;
+			}
+			else {
+				return $data;
 			}
 		}
-		setup_postdata($old_post);
-		// As of 3.4 setup_postdata does not set the global $post object.
-		$post = $old_post;
-		
-		if (!is_array($data) || empty($data)) {
-			return false;
+		else {
+			$snippet = new WP_Query(array(
+				'post_type' => $this->post_type,
+				'name' => $key,
+				'posts_per_page' => -1
+			));
+			
+			$data = array();
+			
+			global $post;
+			$old_post = $post;
+			if ($snippet->have_posts()) {
+				while ($snippet->have_posts()) {
+					$snippet->the_post();
+					global $post;
+					$id = get_the_ID();
+					$key = $post->post_name;
+						$description = $title = the_title('', '', false);
+					$content = get_the_content($id);
+					$parent = $post->post_parent;
+					// Compile all of the data for this snippet
+					$data = compact('id', 'key', 'description', 'title', 'content', 'parent');
+				}
+			}
+			setup_postdata($old_post);
+			// As of 3.4 setup_postdata does not set the global $post object.
+			$post = $old_post;
+			
+			if (!is_array($data) || empty($data)) {
+				return false;
+			}
+			return $data;
 		}
-		return $data;
 	}
 	
 	public function get_snippet_post_by_key($key) {
