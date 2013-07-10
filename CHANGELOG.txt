@@ -2,7 +2,7 @@
 
 ## 2.1.2
 
-- Fixing the get_info function, removing do_shortcode running on an array
+- Converting storage to custom post_type/post_meta
 
 ## 2.1.1
 

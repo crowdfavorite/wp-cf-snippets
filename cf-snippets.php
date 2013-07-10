@@ -13,12 +13,18 @@ Author URI: http://crowdfavorite.com
 // Constants
 define('CFSP_VERSION', '2.1.2');
 define('CFSP_DIR', plugin_dir_path(__FILE__));
-define('CFSP_DIR_URL', trailingslashit(plugins_url(basename(dirname(__FILE__)))));
+//plugin_dir_url seems to be broken for including in theme files, but plugin_dir_path works
+if (file_exists(trailingslashit(get_template_directory()).'plugins/'.basename(dirname(__FILE__)))) {
+	define('CFSP_DIR_URL', trailingslashit(trailingslashit(get_bloginfo('template_url')).'plugins/'.basename(dirname(__FILE__))));
+}
+else {
+	define('CFSP_DIR_URL', trailingslashit(plugins_url(basename(dirname(__FILE__)))));	
+}
 define('CFSP_SHOW_POST_COUNT', 10);
 
 // Includes
 include('classes/snippets.class.php');
-include('classes/message.class.php');
+//include('classes/message.class.php');
 
 // Include the Deprecated File to update the old Items
 include ('deprecated.php');
@@ -37,7 +43,7 @@ function cfsp_request_handler() {
 		switch ($_GET['cf_action']) {
 			case 'cfsp_iframe_preview':
 				if (!empty($_GET['cfsp_key'])) {
-					cfsp_iframe_preview(stripslashes($_GET['cfsp_key']));
+					cfsp_iframe_preview($_GET['cfsp_key']);
 				}
 				die();
 				break;
@@ -55,42 +61,42 @@ function cfsp_request_handler() {
 				break;
 			case 'cfsp_new_add':
 				if (!empty($_POST['cfsp_key']) || !empty($_POST['cfsp_description'])) {
-					cfsp_add_new(stripslashes($_POST['cfsp_key']), stripslashes($_POST['cfsp_description']), stripslashes($_POST['cfsp_content']));
+					cfsp_add_new($_POST['cfsp_key'], $_POST['cfsp_description'], $_POST['cfsp_content']);
 				}
 				die();
 				break;
 			case 'cfsp_save':
 				if (!empty($_POST['cfsp_key'])) {
-					cfsp_save(stripslashes($_POST['cfsp_key']), stripslashes($_POST['cfsp_description']), stripslashes($_POST['cfsp_content']));
+					cfsp_save($_POST['cfsp_key'], $_POST['cfsp_description'], $_POST['cfsp_content']);
 				}
 				die();
 				break;
 			case 'cfsp_edit':
 				if (!empty($_POST['cfsp_key'])) {
-					cfsp_ajax_edit(stripslashes($_POST['cfsp_key']));
+					cfsp_ajax_edit($_POST['cfsp_key']);
 				}
 				die();
 				break;
 			case 'cfsp_preview':
 				if (!empty($_POST['cfsp_key'])) {
-					cfsp_ajax_preview(stripslashes($_POST['cfsp_key']));
+					cfsp_ajax_preview($_POST['cfsp_key']);
 				}
 				die();
 				break;
 			case 'cfsp_delete':
 				if (!empty($_POST['cfsp_key'])) {
 					if (!empty($_POST['cfsp_delete_confirm']) && $_POST['cfsp_delete_confirm'] == 'yes') {
-						cfsp_ajax_delete(stripslashes($_POST['cfsp_key']), true);
+						cfsp_ajax_delete($_POST['cfsp_key'], true);
 					}
 					else {
-						cfsp_ajax_delete(stripslashes($_POST['cfsp_key']), false);
+						cfsp_ajax_delete($_POST['cfsp_key'], false);
 					}
 				}
 				die();
 				break;
 			case 'cfsp_post_items_paged':
 				if (!empty($_POST['cfsp_page'])) {
-					cfsp_ajax_post_items_paged(stripslashes($_POST['cfsp_page']));
+					cfsp_ajax_post_items_paged($_POST['cfsp_page']);
 				}
 				die();
 				break;
@@ -107,66 +113,11 @@ function cfsp_request_handler() {
 }
 add_action('init', 'cfsp_request_handler');
 
-function cfsp_resources() {
-	if (!empty($_GET['cf_action'])) {
-		switch ($_GET['cf_action']) {
-			case 'cfsp_admin_css':
-				cfsp_admin_css();
-				die();
-				break;
-			case 'cfsp_admin_js':
-				cfsp_admin_js();
-				die();
-				break;
-			case 'cfsp_post_css':
-				cfsp_post_css();
-				die();
-				break;
-			case 'cfsp_post_js':
-				cfsp_post_js();
-				die();
-				break;
-		}
-	}
-}
-add_action('init', 'cfsp_resources', 1);
-
-function cfsp_admin_css() {
-	header('Content-type: text/css');
-	do_action('cfsp-admin-css');
-	echo file_get_contents(CFSP_DIR.'css/content.css');
-	die();
-}
-
-function cfsp_admin_js() {
-	header('Content-type: text/javascript');
-	do_action('cfsp-admin-js');
-	echo file_get_contents(CFSP_DIR.'js/behavior.js');
-	echo file_get_contents(CFSP_DIR.'js/jquery.DOMWindow.js');
-	echo file_get_contents(CFSP_DIR.'js/json2.js');
-	echo file_get_contents(CFSP_DIR.'js/popup.js');
-	die();
-}
-
-function cfsp_post_css() {
-	header('Content-type: text/css');
-	do_action('cfsp-post-css');
-	echo file_get_contents(CFSP_DIR.'css/post.css');
-	die();
-}
-
-function cfsp_post_js() {
-	header('Content-type: text/javascript');
-	do_action('cfsp-post-js');
-	echo file_get_contents(CFSP_DIR.'js/post.js');
-	die();
-}
-
 function cfsp_admin_menu() {
 	add_options_page(
 		__('CF Snippets', 'cfsp'),
 		__('CF Snippets', 'cfsp'),
-		10,
+		'manage_options',
 		'cf-snippets',
 		'cfsp_options'
 	);
@@ -536,7 +487,6 @@ function cfsp_add_new($key = '', $description = '', $content = '') {
 		if (strlen($key) > 20) {
 			$key = substr($key, 0, 20);
 		}
-		$key = sanitize_title($key);
 	}
 	global $cf_snippet;
 	if (class_exists('CF_Snippet') && !($cf_snippet instanceof CF_Snippet)) {
@@ -544,8 +494,6 @@ function cfsp_add_new($key = '', $description = '', $content = '') {
 	}
 
 	// Make sure the key is a valid key
-	$key = sanitize_title($key);
-	
 	$new_key = $cf_snippet->add($key, $content, $description);
 	// Now that we have inserted, get the row to insert into the table
 	echo $cf_snippet->admin_display($new_key);
@@ -558,9 +506,6 @@ function cfsp_save($key, $description = '', $content = '') {
 	if (class_exists('CF_Snippet') && !($cf_snippet instanceof CF_Snippet)) {
 		$cf_snippet = new CF_Snippet();
 	}
-
-	// Make sure the key is a valid key
-	$key = sanitize_title($key);
 
 	$cf_snippet->save($key, $content, $description);
 }
@@ -617,7 +562,7 @@ function cfsp_post_edit() {
 						<span class="cfsp-hide"><button id="cfsp-hide-link-<?php echo esc_attr($item); ?>" class="button cfsp-hide-link" style="display:none;"><?php _e('Hide Snippet', 'cfsp'); ?></button><button id="cfsp-show-link-<?php echo esc_attr($item); ?>" class="button cfsp-show-link"><?php _e('Show Snippet', 'cfsp'); ?></button></span>
 					</div>
 					<div id="cfsp-content-<?php echo esc_attr($item); ?>" class="cfsp-content" style="display:none;">
-						<textarea id="<?php echo esc_attr($item); ?>" name="cfsp[<?php echo esc_attr($item); ?>][content]" class="cfsp-content-input widefat" rows="10"><?php echo htmlentities($cf_snippet->get($key, false, false)); ?></textarea>
+						<textarea id="<?php echo esc_attr($item); ?>" name="cfsp[<?php echo esc_attr($item); ?>][content]" class="cfsp-content-input widefat" rows="10"><?php echo htmlspecialchars($cf_snippet->get($key, false, false)); ?></textarea>
 					</div>
 					<input type="hidden" name="cfsp[<?php echo esc_attr($item); ?>][name]" id="cfsp-name-<?php echo esc_attr($item); ?>" value="<?php echo esc_attr($key); ?>" />
 					<input type="hidden" name="cfsp[<?php echo esc_attr($item); ?>][postid]" id="cfsp-postid-<?php echo esc_attr($item); ?>" value="<?php echo esc_attr($post_id); ?>" />
@@ -651,7 +596,7 @@ function cfsp_post_edit() {
 }
 
 function cfsp_save_post($post_id, $post) {
-	$post_type_excludes = apply_filters('cfsp_post_type_excludes', array('revision', 'attachment', 'safecss', 'nav_menu_item'));
+	$post_type_excludes = apply_filters('cfsp_post_type_excludes', array('revision', 'attachment', 'safecss', 'nav_menu_item', '_cf_snippet'));
 	if ($post->post_status == 'inherit' || in_array($post->post_type, $post_type_excludes)) { return; }
 	if (!empty($_POST) && is_array($_POST) && !empty($_POST['cfsp']) && is_array($_POST['cfsp'])) {
 		unset($_POST['cfsp']['###SECTION###']);
@@ -663,16 +608,13 @@ function cfsp_save_post($post_id, $post) {
 			$content = $item['content'];
 			$key = 'cfsp-'.$post_id.'-'.$id;
 			
-			// Make sure the key is a valid key
-			$key = sanitize_title($key);
-
 			$cf_snippet = new CF_Snippet();
 			
 			$args = array(
 				'post_id' => $post_id,
 			);
 			
-			if ($cf_snippet->check_key(stripslashes($key))) {
+			if ($cf_snippet->check_key($key)) {
 				$description = 'Post Snippet created for Post ID: '.$post_id.' with a unique ID of: '.$id;
 				$cf_snippet->save($key, $content, $description, $args);
 			}
@@ -695,16 +637,14 @@ add_action('save_post', 'cfsp_save_post', 10, 2);
 
 // Add the JS/CSS to the CF Snippets Settings Page
 if (!empty($_GET['page']) && strpos($_GET['page'], 'cf-snippets') !== false) {
-	wp_enqueue_script('jquery');
-	wp_enqueue_script('cfsp-admin-js', admin_url('?cf_action=cfsp_admin_js'), array('jquery'), CFSP_VERSION);
-	wp_enqueue_style('cfsp-admin-css', admin_url('?cf_action=cfsp_admin_css'), array(), CFSP_VERSION, 'screen');
+	wp_enqueue_script('cfsp-admin-js', get_bloginfo('template_directory').'/plugins/cf-snippets/js/admin.js', array('jquery'), CFSP_VERSION);
+	wp_enqueue_style('cfsp-admin-css', get_bloginfo('template_directory').'/plugins/cf-snippets/css/admin.css', array(), CFSP_VERSION, 'screen');
 }
 // Add the JS/CSS to the Post New/Post Edit screens
 if (strpos($_SERVER['SCRIPT_NAME'], 'post-new.php') !== false || strpos($_SERVER['SCRIPT_NAME'], 'post.php') !== false) {
 	add_action('admin_head', 'cfsp_post_admin_head');
-	wp_enqueue_script('jquery');
-	wp_enqueue_script('cfsp-post-js', admin_url('?cf_action=cfsp_post_js'), array('jquery'), CFSP_VERSION);
-	wp_enqueue_style('cfsp-post-css', admin_url('?cf_action=cfsp_post_css'), array(), CFSP_VERSION, 'screen');
+	wp_enqueue_script('cfsp-post-js', get_bloginfo('template_directory').'/plugins/cf-snippets/js/post.js', array('jquery'), CFSP_VERSION);
+	wp_enqueue_style('cfsp-post-css', get_bloginfo('template_directory').'/plugins/cf-snippets/css/post.css', array(), CFSP_VERSION, 'screen');
 }
 
 ## Display Functionality
@@ -1063,9 +1003,16 @@ function cfsp_json_decode($json,$array) {
 function cfsp_cflk_integration() {
 	if (function_exists('cflk_register_link')) {
 		include('classes/cflk.snippets.class.php');
-		cflk_register_link('cfsp_link');
+		cflk_register_link('snippet', 'cfsp_link');
 	}
 }
 add_action('plugins_loaded', 'cfsp_cflk_integration', 99999);
+
+
+function cfsp_register_post_type() {
+	$snippet = new CF_Snippet();
+	$snippet->register_post_type();
+}
+add_action('init', 'cfsp_register_post_type', 1);
 
 ?>
