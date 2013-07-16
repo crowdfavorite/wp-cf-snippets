@@ -126,7 +126,12 @@ class CF_Snippet {
 	 */
 	public function get_snippet($key) {
 		$key = sanitize_title($key);
-		return wpcom_vip_get_page_by_path( $key, $this->post_type );
+		if (function_exists('wpcom_vip_get_page_by_path')) {
+			return wpcom_vip_get_page_by_path( $key, OBJECT, $this->post_type );
+		}
+		else {
+			return get_page_by_path($key, OBJECT, $this->post_type);
+		}
 	}
 	
 	/**
