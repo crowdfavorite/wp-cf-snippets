@@ -24,11 +24,11 @@
 					$DOMWindowOverlay.trigger('unload').unbind().remove();																	  
 				});
 				$DOMWindow.fadeOut('fast',function(){
-					if ($.fn.draggable){
-						$DOMWindow.draggable("destroy").trigger("unload").remove();
-					}else{
+//					if ($.fn.draggable){
+//						$DOMWindow.draggable("destroy").trigger("unload").remove();
+//					}else{
 						$DOMWindow.trigger("unload").remove();
-					}
+//					}
 				});
 			
 				$(window).unbind('scroll.DOMWindow');
