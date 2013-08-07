@@ -1,5 +1,8 @@
 # CF Snippets Changelog
 
+## dev
+- Updated to allow some functionality to work when called via WP CLI
+
 ## 3.2.3
 - Updated the upgrade routine to be more robust.
 
