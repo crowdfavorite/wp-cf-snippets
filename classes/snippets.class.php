@@ -336,7 +336,6 @@ class CF_Snippet {
 		if ($snippet->have_posts()) {
 			while ($snippet->have_posts()) {
 				$snippet->the_post();
-				global $post;
 				$id = get_the_ID();
 				$key = $post->post_name;
 				$description = $title = the_title('', '', false);
@@ -346,7 +345,9 @@ class CF_Snippet {
 				$data = compact('id', 'key', 'description', 'title', 'content', 'parent');
 			}
 		}
-		setup_postdata($old_post);
+		if (!empty($old_post)) {
+			setup_postdata($old_post);
+		}
 		// As of 3.4 setup_postdata does not set the global $post object.
 		$post = $old_post;
 		
