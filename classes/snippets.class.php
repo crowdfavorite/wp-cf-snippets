@@ -530,7 +530,9 @@ class CF_Snippet {
 	 * @param string $description - Description to update
 	 * @return bool - Result of the save
 	 */
-	public function save($key, $content, $description, $args = array()) {
+	public function save($key, $content, $description, $args = array()) {	
+		// Block sanitize_post from running.
+		$filter = isset($args['filter']) ? !($args['filter']) : false;
 		// Check to make sure we don't have any variable name conflicts
 		unset($args['key'], $args['content'], $args['description'], $args['snippet'], $args['post_id'], $args['mod_cap']);
 		
@@ -546,6 +548,7 @@ class CF_Snippet {
 			$key = $this->check_key($key);
 		}
 		
+		
 		$snippet = array(
 			'post_type' => $this->post_type,
 			'post_name' => $key,
@@ -553,6 +556,9 @@ class CF_Snippet {
 			'post_title' => $description,
 			'post_content' => $content,
 		);
+		
+		$snippet = sanitize_post($snippet);
+		$snippet->post_content = $content; // Override changes from sanitize_post
 		
 		if ($post_id) {
 			$snippet['ID'] = $post_id;
@@ -583,6 +589,7 @@ class CF_Snippet {
 			'post_name' => 'cfsp-new-snippet',
 			'post_title' => 'New Snippet',
 			'post_content' => '',
+			'filter' => true, // Credit http://pp19dd.com/2010/06/unfiltered-wp_insert_post/
 			'post_parent' => 0,
 		), $post_arr);
 		$post_arr['post_type'] = $this->post_type;
