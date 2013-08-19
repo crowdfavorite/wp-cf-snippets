@@ -1,5 +1,11 @@
 # CF Snippets Changelog
 
+## 3.2.5
+- Change deprecated jQuery 'live' to 'on' for Editor popup window.
+
+## 3.2.4
+- Comment out lines in jQuery.DOMwindow.js that casue issues with second popups not appearing
+
 ## 3.2.3
 - Updated the upgrade routine to be more robust.
 

@@ -7,7 +7,7 @@
 		<script type="text/javascript">
 			;(function($) {
 				$(function() {
-					$(".cfsp-list-link").live('click', function(e) {
+					$(".cfsp-list-link").on('click', function(e) {
 						var key = $(this).attr('rel');
 						cfsp_insert(key);
 						e.preventDefault();
