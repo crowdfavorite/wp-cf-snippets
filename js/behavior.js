@@ -8,41 +8,29 @@
 			});
 		});
 		
-		$('.cfsp-edit-button').live('click', function() {
-			cfsp_ajax_edit_button($(this).attr('id').replace('-edit-button', ''));
-		});
-
-		$('.cfsp-preview-button').live('click', function() {
-			cfsp_ajax_preview_button($(this).attr('id').replace('-preview-button', ''));
-		});
-
-		$('.cfsp-delete-button').live('click', function() {
-			cfsp_ajax_delete_button($(this).attr('id').replace('-delete-button', ''));
-		});
-		
-		$('.cfsp-tags-showhide a').live('click', function() {
-			$("#"+$(this).attr('rel')).slideToggle();
+		$("body").on("click", ".cfsp-edit-button" function() {
+			cfsp_ajax_edit_button($(this).attr("id").replace("-edit-button", ""));
+		}).on("click", ".cfsp-preview-button", function() {
+			cfsp_ajax_preview_button($(this).attr("id").replace("-preview-button", ""));
+		}).on("click", ".cfsp-delete-button", function() {
+			cfsp_ajax_delete_button($(this).attr("id").replace("-delete-button", ""));
+		}).on("click", ".cfsp-tags-showhide a", function() {
+			$("#"+$(this).attr("rel")).slideToggle();
 			return false;
-		});
-		
-		$('.cfsp-instructions').click(function() {
-			$("#"+$(this).attr('rel')).slideToggle();
-			$(".cfsp-instructions-show").toggle();
-			$(".cfsp-instructions-hide").toggle();
-			return false;
-		});
-		
-		$('.cfsp-post-next').live('click', function() {
-			var page = parseInt($('#cfsp-post-page-displayed').val());
+		}).on("click", ".cfsp-post-next", function() {
+			var page = parseInt($("#cfsp-post-page-displayed").val());
 			page += 1;
 			cfsp_ajax_display_post_items(page);
 			return false;
-		});
-
-		$('.cfsp-post-prev').live('click', function() {
-			var page = parseInt($('#cfsp-post-page-displayed').val());
+		}).on("click", ".cfsp-post-prev", function() {
+			var page = parseInt($("#cfsp-post-page-displayed").val());
 			page -= 1;
 			cfsp_ajax_display_post_items(page);
+			return false;
+		}).on("click", ".cfsp-instructions", function() {
+			$("#"+$(this).attr('rel')).slideToggle();
+			$(".cfsp-instructions-show").toggle();
+			$(".cfsp-instructions-hide").toggle();
 			return false;
 		});
 

@@ -2,6 +2,7 @@
 
 ## dev
 - Updated to allow some functionality to work when called via WP CLI
+- Updated JS to no longer use jQuery.live calls. These were generating errors in The Healthier Life admin.
 
 ## 3.2.3
 - Updated the upgrade routine to be more robust.
