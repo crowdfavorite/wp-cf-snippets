@@ -1,6 +1,6 @@
 # CF Snippets Changelog
 
-## dev
+## 4.0.0-dev
 - Updated to allow some functionality to work when called via WP CLI
 - Updated JS to no longer use jQuery.live calls. These were generating errors in The Healthier Life admin.
 
