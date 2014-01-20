@@ -157,7 +157,6 @@ function cfsp_admin_js() {
 	do_action('cfsp-admin-js');
 	echo file_get_contents(CFSP_DIR.'js/behavior.js');
 	echo file_get_contents(CFSP_DIR.'js/jquery.DOMWindow.js');
-	echo file_get_contents(CFSP_DIR.'js/json2.js');
 	echo file_get_contents(CFSP_DIR.'js/popup.js');
 	die();
 }
@@ -847,60 +846,6 @@ function cfsp_rightnow_cfadmin_end() {
 	include('views/admin-rightnow.php');
 }
 add_action('cf_admin_rightnow', 'cfsp_rightnow_cfadmin_end');
-
-/**
- * JSON ENCODE and DECODE for PHP < 5.2.0
- * Checks if json_encode is not available and defines json_encode & json_decode
- * Uses the Pear Class Services_JSON - http://pear.php.net/package/Services_JSON
- */
-function cfsp_include_json() {
-	global $wp_version;
-	if (!function_exists('json_encode') && !class_exists('Services_JSON') && version_compare($wp_version, '3.0', '<')) {
-		require_once('classes/external/JSON.php');
-	}
-}
-
-/**
- * cfsp_json_encode
- *
- * @param array/object $json
- * @return string json
- */
-function cfsp_json_encode($data) {
-	if (function_exists('json_encode')) {
-		return json_encode($data);
-	}
-	else {
-		cfsp_include_json();
-		global $cfsp_json_object;
-		if (!($cfsp_json_object instanceof Services_JSON)) {
-			$cfsp_json_object = new Services_JSON();
-		}
-		return $cfsp_json_object->encode($data);
-	}
-}
-
-/**
- * cfsp_json_decode
- *
- * @param string $json
- * @param bool $array - toggle true to return array, false to return object
- * @return array/object
- */
-function cfsp_json_decode($json,$array) {
-	if (function_exists('json_decode')) {
-		return json_decode($json,$array);
-	}
-	else {
-		cfsp_include_json();
-		global $cfsp_json_object;
-		if (!($cfsp_json_object instanceof Services_JSON)) {
-			$cfsp_json_object = new Services_JSON();
-		}
-		$cfsp_json_object->use = $array ? SERVICES_JSON_LOOSE_TYPE : 0;
-		return $cfsp_json_object->decode($json);
-	}
-}
 
 ## Integration with the CF Links Plugin
 
