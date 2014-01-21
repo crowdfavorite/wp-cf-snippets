@@ -1,11 +1,11 @@
 <?php
 
-class Snippet_Upgrader {
+class CF_Snippet_Upgrader {
 	static $i = null;
 
 	function i() {
 		if (is_null(self::$i)) {
-			self::$i = new Snippet_Upgrader;
+			self::$i = new CF_Snippet_Upgrader;
 		}
 		return self::$i;
 	}

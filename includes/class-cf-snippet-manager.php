@@ -1,11 +1,12 @@
 <?php
 /**
+ * class CF_Snippet_Manager
+ * Handles CRUD operations for snippets
  *
- * @package cfsp_snippet
+ * @package cf-snippets
+ *
  */
-class CF_Snippet {
-	
-	private $post_type = '_cf_snippet';
+class CF_Snippet_Manager extends CF_Snippet_Base {
 	
 	public function __construct() {
 	}
@@ -731,23 +732,6 @@ class CF_Snippet {
 		return 0;
 	}
 	
-	/**
-	 * This function registers a custom post type where we store the snippets
-	 * 
-	 * @return void
-	 */
-	public function register_post_type() {
-		$args = array(
-			'public' => false,
-			'capability_type' => 'post',
-			'hierarchical' => false,
-			'rewrite' => false,
-			'query_var' => false,
-			'can_export' => false,
-		  );
-
-		register_post_type($this->post_type, $args);
-	}
 }
 
 ?>
