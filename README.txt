@@ -2,7 +2,7 @@
 
 The CF Snippets plugin gives Admin users the ability to create chunks of content (including HTML content) to be inserted into posts, widgets and front end display with an easy to use Admin interface.  This functionality gives the Admin users easy ability to edit the chunks of code without editing PHP/HTML files.  The plugin provides PHP functions for display of Snippets, as well as WordPress shortcodes.  On the post edit screen, the plugin provides a TinyMCE button for easy insertion of Snippets shortcodes.
 
-** NOTE: Plugin requires WordPress 3.1 **
+** NOTE: Plugin requires WordPress 3.8 **
 
 ### Usage
 
