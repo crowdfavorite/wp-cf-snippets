@@ -68,7 +68,7 @@ function cfsp_request_handler() {
 				die();
 				break;
 			case 'cfsp-dialog':
-				cfsnip_dialog();
+				cfsp_dialog();
 				die();
 				break;
 		}
@@ -523,67 +523,10 @@ function cfsp_shortcode($attrs, $content=null) {
 }
 add_shortcode('cfsp', 'cfsp_shortcode');
 
-## Deprecated Display Functionality
-
-function cfsnip_get_snippets() {
-	global $cf_snippet;
-	if (class_exists('CF_Snippet') && !($cf_snippet instanceof CF_Snippet)) {
-		$cf_snippet = new CF_Snippet();
-	}
-	return $cf_snippet->get_all();
+function cfsp_filter_content($content, $key) {
+	return str_replace('{cfsp_template_url}', get_stylesheet_directory_uri(), $content);
 }
-
-function cfsnip_snippet($key, $default = false, $create = true) {
-	echo cfsnip_get_snippet_content($key, $default, $create);
-}
-
-function cfsnip_snippet_content($key, $default = false, $create = true) {
-	echo cfsnip_get_snippet_content($key, $default, $create);
-}
-
-function cfsnip_get_snippet($key, $default = false, $create = true) {
-	if (empty($key)) { return ''; }
-	global $cf_snippet;
-	if (class_exists('CF_Snippet') && !($cf_snippet instanceof CF_Snippet)) {
-		$cf_snippet = new CF_Snippet();
-	}
-	return $cf_snippet->get($key, $default, $create);
-}
-
-function cfsnip_get_snippet_content($key, $default = false, $create = true) {
-	if (empty($key)) { return ''; }
-	global $cf_snippet;
-	if (class_exists('CF_Snippet') && !($cf_snippet instanceof CF_Snippet)) {
-		$cf_snippet = new CF_Snippet();
-	}
-	return $cf_snippet->get($key, $default, $create);
-}
-
-function cfsnip_filter_content($content, $key) {
-	return str_replace(array('{cfsnip_template_url}', '{cfsp_template_url}'), get_stylesheet_directory_uri(), $content);
-}
-add_filter('cfsp-get-content', 'cfsnip_filter_content', 10, 2);
-
-function cfsnip_snippet_exists($key) {
-	if (empty($key)) { return ''; }
-	global $cf_snippet;
-	if (class_exists('CF_Snippet') && !($cf_snippet instanceof CF_Snippet)) {
-		$cf_snippet = new CF_Snippet();
-	}
-	return $cf_snippet->exists($key);
-}
-
-function cfsnip_handle_shortcode($attrs, $content=null) {
-	if (is_array($attrs) && !empty($attrs['name'])) {
-		global $cf_snippet;
-		if (class_exists('CF_Snippet') && !($cf_snippet instanceof CF_Snippet)) {
-			$cf_snippet = new CF_Snippet();
-		}
-		return $cf_snippet->get($attrs['name'], false, false);
-	}
-	return '';
-}
-add_shortcode('cfsnip', 'cfsnip_handle_shortcode');
+add_filter('cfsp-get-content', 'cfsp_filter_content', 10, 2);
 
 ## Widget Functionality
 
@@ -642,7 +585,7 @@ add_action('widgets_init', create_function('', "register_widget('cfsnip_Widget')
 
 ## TinyMCE Functionality
 
-function cfsnip_dialog() {
+function cfsp_dialog() {
 	global $cf_snippet;
 	if (class_exists('CF_Snippet') && !($cf_snippet instanceof CF_Snippet)) {
 		$cf_snippet = new CF_Snippet();
@@ -651,7 +594,7 @@ function cfsnip_dialog() {
 	include('views/tinymce-dialog.php');
 }
 
-function cfsnip_addtinymce() {
+function cfsp_addtinymce() {
 	// Don't bother doing this stuff if the current user lacks permissions
 	if (!current_user_can('edit_posts') && !current_user_can('edit_pages')) { return; }
 
@@ -661,7 +604,7 @@ function cfsnip_addtinymce() {
 		add_filter('mce_buttons', 'register_cfsnip_button');
 	}
 }
-add_action('init', 'cfsnip_addtinymce');
+add_action('init', 'cfsp_addtinymce');
 
 function register_cfsnip_button($buttons) {
 	array_push($buttons, '|', "cfsnip_Btn");
