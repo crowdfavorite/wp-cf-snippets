@@ -21,6 +21,9 @@ class CF_Snippet_Admin extends CF_Snippet_Base {
 		add_action('admin_menu', array($this, 'admin_menu'));
 		add_action('right_now_content_table_end', array($this, 'rightnow_end'));
 		add_action('cf_admin_rightnow', array($this, 'rightnow_cfadmin_end'));
+		if (function_exists('cfreadme_enqueue')) {
+			add_action('admin_init', array($this, 'enqueue_cf_readme'));
+		}
 	}
 
 	/**
@@ -121,5 +124,24 @@ class CF_Snippet_Admin extends CF_Snippet_Base {
 		include(CFSP_DIR . 'views/admin-rightnow.php');
 	}
 
+	/**
+	 * Support CF Readme integration - enqueue to cfreadme
+	 */
+	function enqueue_cf_readme() {
+		cfreadme_enqueue('cf-snippets', array($this, 'cf_readme'));
+	}
+
+	/**
+	 * Support CF Readme integration - output readme file
+	 */
+	function cf_readme() {
+		$file = CFSP_DIR.'README.txt';
+		if (is_file($file) && is_readable($file)) {
+			$markdown = file_get_contents($file);
+			$markdown = preg_replace('|!\[(.*?)\]\((.*?)\)|', '![$1]('.CFSP_DIR.'/$2)', $markdown);
+			return $markdown;
+		}
+		return null;
+	}
 
 }

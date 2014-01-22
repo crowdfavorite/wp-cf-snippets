@@ -509,25 +509,6 @@ function add_cfsnip_tinymce_plugin($plugin_array) {
 	return $plugin_array;
 }
 
-## CF Readme Addition
-
-if (function_exists('cfreadme_enqueue')) {
-	function cfsp_add_readme() {
-		cfreadme_enqueue('cf-snippets', 'cfsp_readme');
-	}
-	add_action('admin_init', 'cfsp_add_readme');
-
-	function cfsp_readme() {
-		$file = CFSP_DIR.'README.txt';
-		if (is_file($file) && is_readable($file)) {
-			$markdown = file_get_contents($file);
-			$markdown = preg_replace('|!\[(.*?)\]\((.*?)\)|', '![$1]('.CFSP_DIR.'/$2)', $markdown);
-			return $markdown;
-		}
-		return null;
-	}
-}
-
 ## WordPress Admin Help Addition
 
 function cfsp_admin_help() {
