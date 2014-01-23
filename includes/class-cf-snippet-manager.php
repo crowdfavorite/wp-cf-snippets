@@ -414,7 +414,7 @@ class CF_Snippet_Manager extends CF_Snippet_Base {
 		$id = $snippet->ID;
 		
 		ob_start();
-		include('views/edit.php');
+		include(CFSP_DIR . 'views/edit.php');
 		$html = ob_get_clean();
 		return $html;
 	}
@@ -426,7 +426,7 @@ class CF_Snippet_Manager extends CF_Snippet_Base {
 	 */
 	public function add_display() {
 		ob_start();
-		include('views/add_display.php');
+		include(CFSP_DIR . 'views/add_display.php');
 		$html = ob_get_clean();
 		return $html;
 	}
@@ -451,7 +451,7 @@ class CF_Snippet_Manager extends CF_Snippet_Base {
 		
 		// Get the Display from the view
 		ob_start();
-		include('views/admin_display.php');
+		include(CFSP_DIR . 'views/admin_display.php');
 		$html = ob_get_clean();
 
 		return $html;
