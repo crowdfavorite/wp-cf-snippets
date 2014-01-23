@@ -58,8 +58,12 @@ else {
 // Load the scaffolding up here
 $cf_snippet = new CF_Snippet_Core();
 
-// Load the template API
+// Load the currently non-class support code and template API
 include 'includes/template.php';
+include 'includes/shortcode.php';
+include 'includes/widget.php';
+include 'includes/tinymce.php';
+
 
 function cfsp_request_handler() {
 	if (!empty($_GET['cf_action'])) {
