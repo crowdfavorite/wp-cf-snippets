@@ -13,6 +13,7 @@ class CF_Snippet_Core extends CF_Snippet_Base {
 
 		if (is_admin()) {
 			new CF_Snippet_Admin();
+			new CF_Snippet_Admin_Help();
 			CF_Snippet_Upgrader::i()->add_actions();
 		}
 	}
