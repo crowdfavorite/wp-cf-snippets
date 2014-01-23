@@ -130,25 +130,6 @@ function cfsp_request_handler() {
 }
 add_action('init', 'cfsp_request_handler');
 
-function cfsp_get_post_snippet_keys() {
-	$snippet_keys = array();
-
-	if (class_exists('CF_Snippet') && !($cf_snippet instanceof CF_Snippet)) {
-		$cf_snippet = new CF_Snippet();
-
-		$keys = $cf_snippet->get_keys();
-		if (is_array($keys) && !empty($keys)) {
-			foreach ($keys as $key) {
-				$meta = $cf_snippet->get_meta($key);
-				if ($meta['post_id']) {
-					$snippet_keys[] = $key;
-				}
-			}
-		}
-	}
-	return $snippet_keys;
-}
-
 function cfsp_ajax_new() {
 	global $cf_snippet;
 	if (class_exists('CF_Snippet') && !($cf_snippet instanceof CF_Snippet)) {
