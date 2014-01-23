@@ -350,11 +350,6 @@ function cfsp_shortcode($attrs, $content=null) {
 }
 add_shortcode('cfsp', 'cfsp_shortcode');
 
-function cfsp_filter_content($content, $key) {
-	return str_replace('{cfsp_template_url}', get_stylesheet_directory_uri(), $content);
-}
-add_filter('cfsp-get-content', 'cfsp_filter_content', 10, 2);
-
 ## Widget Functionality
 
 class cfsnip_Widget extends WP_Widget {
