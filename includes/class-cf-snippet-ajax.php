@@ -94,7 +94,7 @@ class CF_Snippet_Ajax extends CF_Snippet_Base {
 				}
 			}
 
-			include('views/ajax-post-items-paged.php');
+			include(CFSP_DIR . 'views/ajax-post-items-paged.php');
 		}
 	}
 

@@ -7,7 +7,7 @@ function cfsp_dialog() {
 		$cf_snippet = new CF_Snippet();
 	}
 	$list = $cf_snippet->list_display(true);
-	include('views/tinymce-dialog.php');
+	include(CFSP_DIR . 'views/tinymce-dialog.php');
 }
 
 function cfsp_addtinymce() {

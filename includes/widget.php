@@ -46,10 +46,10 @@ class cfsnip_Widget extends WP_Widget {
 		$select = $cf_snippet->select_display($instance['list_key']);
 
 		if (!empty($select)) {
-			include('views/widget-edit.php');
+			include(CFSP_DIR . 'views/widget-edit.php');
 		}
 		else {
-			include('views/widget-empty.php');
+			include(CFSP_DIR . 'views/widget-empty.php');
 		}
 	}
 }

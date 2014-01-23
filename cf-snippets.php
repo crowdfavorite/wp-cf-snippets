@@ -142,7 +142,7 @@ function cfsp_ajax_new() {
 	if (class_exists('CF_Snippet') && !($cf_snippet instanceof CF_Snippet)) {
 		$cf_snippet = new CF_Snippet();
 	}
-	include('views/ajax-new.php');
+	include(CFSP_DIR . 'views/ajax-new.php');
 	die();
 }
 
@@ -153,10 +153,10 @@ function cfsp_ajax_edit($key) {
 	}
 
 	if (!empty($key) && $cf_snippet->exists($key)) {
-		include('views/ajax-edit-exists.php');
+		include(CFSP_DIR . 'views/ajax-edit-exists.php');
 	}
 	else {
-		include('views/ajax-edit-error.php');
+		include(CFSP_DIR . 'views/ajax-edit-error.php');
 	}
 	die();
 }
@@ -168,10 +168,10 @@ function cfsp_ajax_preview($key) {
 	}
 
 	if (!empty($key) && $cf_snippet->exists($key)) {
-		include('views/ajax-preview-exists.php');
+		include(CFSP_DIR . 'views/ajax-preview-exists.php');
 	}
 	else {
-		include('views/ajax-preview-error.php');
+		include(CFSP_DIR . 'views/ajax-preview-error.php');
 	}
 	die();
 }
@@ -188,11 +188,11 @@ function cfsp_ajax_delete($key, $confirm = false) {
 			$cf_snippet->remove($key);
 		}
 		else {
-			include('views/ajax-delete-exists.php');
+			include(CFSP_DIR . 'views/ajax-delete-exists.php');
 		}
 	}
 	else {
-		include('views/ajax-delete-error.php');
+		include(CFSP_DIR . 'views/ajax-delete-error.php');
 	}
 	die();
 }
