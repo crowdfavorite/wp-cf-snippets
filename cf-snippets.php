@@ -117,12 +117,6 @@ function cfsp_request_handler() {
 				}
 				die();
 				break;
-			case 'cfsp_post_items_paged':
-				if (!empty($_POST['cfsp_page'])) {
-					cfsp_ajax_post_items_paged(stripslashes($_POST['cfsp_page']));
-				}
-				die();
-				break;
 		}
 	}
 
@@ -135,26 +129,6 @@ function cfsp_request_handler() {
 	}
 }
 add_action('init', 'cfsp_request_handler');
-
-function cfsp_ajax_post_items_paged($page) {
-	if (class_exists('CF_Snippet') && !($cf_snippet instanceof CF_Snippet)) {
-		$cf_snippet = new CF_Snippet();
-
-		$offset = (CFSP_SHOW_POST_COUNT*($page-1));
-		$keys = $cf_snippet->get_all_post_keys(CFSP_SHOW_POST_COUNT, $offset);
-
-		$post_table_content = '';
-		$total_pages = ceil($cf_snippet->get_post_key_count()/CFSP_SHOW_POST_COUNT);
-
-		if (is_array($keys) && !empty($keys)) {
-			foreach ($keys as $key) {
-				$post_table_content .= $cf_snippet->admin_display($key);
-			}
-		}
-
-		include('views/ajax-post-items-paged.php');
-	}
-}
 
 function cfsp_get_post_snippet_keys() {
 	$snippet_keys = array();
