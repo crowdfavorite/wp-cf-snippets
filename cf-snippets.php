@@ -56,7 +56,8 @@ else {
 }
 
 // Load the scaffolding up here
-$cf_snippet = new CF_Snippet_Core();
+$cf_snippet_core = new CF_Snippet_Core();
+$cf_snippet = new CF_Snippet_Manager();
 
 // Load the currently non-class support code and template API
 include 'includes/template.php';
@@ -130,8 +131,8 @@ function cfsp_request_handler() {
 	// Setup the class object
 	if (!empty($_GET['page']) && strpos($_GET['page'], 'cf-snippets') !== false) {
 		global $cf_snippet;
-		if (class_exists('CF_Snippet') && !($cf_snippet instanceof CF_Snippet)) {
-			$cf_snippet = new CF_Snippet();
+		if (class_exists('CF_Snippet_Manager') && !($cf_snippet instanceof CF_Snippet_Manager)) {
+			$cf_snippet = new CF_Snippet_Manager();
 		}
 	}
 }
@@ -139,8 +140,8 @@ add_action('init', 'cfsp_request_handler');
 
 function cfsp_ajax_new() {
 	global $cf_snippet;
-	if (class_exists('CF_Snippet') && !($cf_snippet instanceof CF_Snippet)) {
-		$cf_snippet = new CF_Snippet();
+	if (class_exists('CF_Snippet_Manager') && !($cf_snippet instanceof CF_Snippet_Manager)) {
+		$cf_snippet = new CF_Snippet_Manager();
 	}
 	include(CFSP_DIR . 'views/ajax-new.php');
 	die();
@@ -148,8 +149,8 @@ function cfsp_ajax_new() {
 
 function cfsp_ajax_edit($key) {
 	global $cf_snippet;
-	if (class_exists('CF_Snippet') && !($cf_snippet instanceof CF_Snippet)) {
-		$cf_snippet = new CF_Snippet();
+	if (class_exists('CF_Snippet_Manager') && !($cf_snippet instanceof CF_Snippet_Manager)) {
+		$cf_snippet = new CF_Snippet_Manager();
 	}
 
 	if (!empty($key) && $cf_snippet->exists($key)) {
@@ -163,8 +164,8 @@ function cfsp_ajax_edit($key) {
 
 function cfsp_ajax_preview($key) {
 	global $cf_snippet;
-	if (class_exists('CF_Snippet') && !($cf_snippet instanceof CF_Snippet)) {
-		$cf_snippet = new CF_Snippet();
+	if (class_exists('CF_Snippet_Manager') && !($cf_snippet instanceof CF_Snippet_Manager)) {
+		$cf_snippet = new CF_Snippet_Manager();
 	}
 
 	if (!empty($key) && $cf_snippet->exists($key)) {
@@ -178,8 +179,8 @@ function cfsp_ajax_preview($key) {
 
 function cfsp_ajax_delete($key, $confirm = false) {
 	global $cf_snippet;
-	if (class_exists('CF_Snippet') && !($cf_snippet instanceof CF_Snippet)) {
-		$cf_snippet = new CF_Snippet();
+	if (class_exists('CF_Snippet_Manager') && !($cf_snippet instanceof CF_Snippet_Manager)) {
+		$cf_snippet = new CF_Snippet_Manager();
 	}
 
 	if (!empty($key) && $cf_snippet->exists($key)) {
@@ -205,8 +206,8 @@ function cfsp_add_new($key = '', $description = '', $content = '') {
 		}
 	}
 	global $cf_snippet;
-	if (class_exists('CF_Snippet') && !($cf_snippet instanceof CF_Snippet)) {
-		$cf_snippet = new CF_Snippet();
+	if (class_exists('CF_Snippet_Manager') && !($cf_snippet instanceof CF_Snippet_Manager)) {
+		$cf_snippet = new CF_Snippet_Manager();
 	}
 
 	// Make sure the key is a valid key
@@ -221,8 +222,8 @@ function cfsp_save($key, $description = '', $content = '') {
 	if (empty($key)) { return false; }
 
 	global $cf_snippet;
-	if (class_exists('CF_Snippet') && !($cf_snippet instanceof CF_Snippet)) {
-		$cf_snippet = new CF_Snippet();
+	if (class_exists('CF_Snippet_Manager') && !($cf_snippet instanceof CF_Snippet_Manager)) {
+		$cf_snippet = new CF_Snippet_Manager();
 	}
 
 	// Make sure the key is a valid key
@@ -237,8 +238,8 @@ function cfsp_save_snippet_post($id, $key = '', $description = '', $content = ''
 
 	$post_arr = array('ID' => $id, 'post_name' => $key, 'post_title' => $description, 'post_content' => $content);
 
-	if (class_exists('CF_Snippet') && !($cf_snippet instanceof CF_Snippet)) {
-		$cf_snippet = new CF_Snippet();
+	if (class_exists('CF_Snippet_Manager') && !($cf_snippet instanceof CF_Snippet_Manager)) {
+		$cf_snippet = new CF_Snippet_Manager();
 	}
 
 	$cf_snippet->save_snippet_post($post_arr);
@@ -246,8 +247,8 @@ function cfsp_save_snippet_post($id, $key = '', $description = '', $content = ''
 
 function cfsp_iframe_preview($key) {
 	global $cf_snippet;
-	if (class_exists('CF_Snippet') && !($cf_snippet instanceof CF_Snippet)) {
-		$cf_snippet = new CF_Snippet();
+	if (class_exists('CF_Snippet_Manager') && !($cf_snippet instanceof CF_Snippet_Manager)) {
+		$cf_snippet = new CF_Snippet_Manager();
 	}
 
 	if (!empty($key) && $cf_snippet->exists($key)) {
@@ -263,7 +264,7 @@ function cfsp_save_post($post_id, $post) {
 	if (!empty($_POST) && is_array($_POST) && !empty($_POST['cfsp']) && is_array($_POST['cfsp'])) {
 		unset($_POST['cfsp']['###SECTION###']);
 
-		$cf_snippet = new CF_Snippet();
+		$cf_snippet = new CF_Snippet_Manager();
 		// Get the old list of keys so we make sure that we remove any deleted snippets
 		$old_keys = $cf_snippet->get_keys_for_post(get_the_ID());
 
