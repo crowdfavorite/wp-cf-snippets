@@ -257,27 +257,6 @@ function cfsp_iframe_preview($key) {
 
 ## Post Functionality
 
-function cfsp_post_admin_head() {
-	// Get the post types so we can add snippets to all needed
-	$post_types = get_post_types();
-	$post_type_excludes = apply_filters('cfsp_post_type_excludes', array('revision', 'attachment', 'safecss', 'nav_menu_item', '_cf_snippet'));
-
-	if (is_array($post_types) && !empty($post_types)) {
-		foreach ($post_types as $type) {
-			if (!in_array($type, $post_type_excludes)) {
-				add_meta_box('cfsp', __('CF Snippets', 'cfsp'), 'cfsp_post_edit', $type, 'advanced', 'high');
-			}
-		}
-	}
-}
-add_action('admin_init', 'cfsp_post_admin_head');
-
-function cfsp_post_edit() {
-	global $post;
-	$cf_snippet = new CF_Snippet();
-	$keys = $cf_snippet->get_keys();
-	include('views/post-edit.php');
-}
 
 function cfsp_save_post($post_id, $post) {
 	if ($post->post_status == 'inherit' || in_array($post->post_type, apply_filters('cfsp_post_type_excludes', array('revision', 'attachment', 'safecss', 'nav_menu_item', '_cf_snippet')))) { return; }

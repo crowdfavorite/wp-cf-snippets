@@ -21,6 +21,7 @@ class CF_Snippet_Admin extends CF_Snippet_Base {
 		add_action('admin_menu', array($this, 'admin_menu'));
 		add_action('right_now_content_table_end', array($this, 'rightnow_end'));
 		add_action('cf_admin_rightnow', array($this, 'rightnow_cfadmin_end'));
+		add_action('admin_init', array($this, 'post_admin_head'));
 		if (function_exists('cfreadme_enqueue')) {
 			add_action('admin_init', array($this, 'enqueue_cf_readme'));
 		}
@@ -144,4 +145,25 @@ class CF_Snippet_Admin extends CF_Snippet_Base {
 		return null;
 	}
 
+
+	function post_edit_callback() {
+		global $post;
+		$cf_snippet = new CF_Snippet();
+		$keys = $cf_snippet->get_keys();
+		include(CFSP_DIR . 'views/post-edit.php');
+	}
+
+	function post_admin_head() {
+		// Get the post types so we can add snippets to all needed
+		$post_types = get_post_types();
+		$post_type_excludes = apply_filters('cfsp_post_type_excludes', array('revision', 'attachment', 'safecss', 'nav_menu_item', '_cf_snippet'));
+
+		if (is_array($post_types) && !empty($post_types)) {
+			foreach ($post_types as $type) {
+				if (!in_array($type, $post_type_excludes)) {
+					add_meta_box('cfsp', __('CF Snippets', 'cfsp'), array($this, 'post_edit_callback'), $type, 'advanced', 'high');
+				}
+			}
+		}
+	}
 }
