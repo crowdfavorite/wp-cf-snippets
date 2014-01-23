@@ -55,8 +55,11 @@ else {
 	}
 }
 
-// Load everything up here
+// Load the scaffolding up here
 $cf_snippet = new CF_Snippet_Core();
+
+// Load the template API
+include 'includes/template.php';
 
 function cfsp_request_handler() {
 	if (!empty($_GET['cf_action'])) {
@@ -325,30 +328,6 @@ add_action('save_post', 'cfsp_save_post', 10, 2);
 
 ## JS/CSS Addition
 
-
-## Display Functionality
-
-function cfsp_get_snippet_info($key, $default = false, $create = true, $args = array()) {
-	if (empty($key)) { return ''; }
-	global $cf_snippet;
-	if (class_exists('CF_Snippet') && !($cf_snippet instanceof CF_Snippet)) {
-		$cf_snippet = new CF_Snippet();
-	}
-	return $cf_snippet->get($key, $default, $create, $args);
-}
-
-function cfsp_content($key, $default = false, $create = true, $args = array()) {
-	echo cfsp_get_content($key, $default, $create, $args);
-}
-
-function cfsp_get_content($key, $default = false, $create = true, $args = array()) {
-	if (empty($key)) { return ''; }
-	global $cf_snippet;
-	if (class_exists('CF_Snippet') && !($cf_snippet instanceof CF_Snippet)) {
-		$cf_snippet = new CF_Snippet();
-	}
-	return $cf_snippet->get($key, $default, $create, $args);
-}
 
 function cfsp_shortcode($attrs, $content=null) {
 	if (is_array($attrs)) {
