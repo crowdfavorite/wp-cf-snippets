@@ -1,10 +1,12 @@
 <?php
 ## TinyMCE Functionality
 
+add_action('wp_ajax_cfsp_dialog', 'cfsp_dialog');
+
 function cfsp_dialog() {
 	global $cf_snippet;
-	if (class_exists('CF_Snippet') && !($cf_snippet instanceof CF_Snippet)) {
-		$cf_snippet = new CF_Snippet();
+	if (class_exists('CF_Snippet') && !($cf_snippet instanceof CF_Snippet_Manager)) {
+		$cf_snippet = new CF_Snippet_Manager();
 	}
 	$list = $cf_snippet->list_display(true);
 	include(CFSP_DIR . 'views/tinymce-dialog.php');
