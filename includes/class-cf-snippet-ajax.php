@@ -14,6 +14,51 @@ class CF_Snippet_Ajax extends CF_Snippet_Base {
 		add_action('wp_ajax_cfsp_get_snippet', array($this, 'ajax_get_snippet'));
 		add_action('wp_ajax_cfsp_save_snippet', array($this, 'ajax_save_snippet'));
 		add_action('wp_ajax_cfsp_post_items_paged', array($this, 'ajax_post_items_paged'));
+		//TODO
+		add_action('wp_ajax_cfsp_iframe_preview', array($this, 'ajax_iframe_preview')); // stripslashes($_GET['cfsp_key'])
+		add_action('wp_ajax_cfsp_new', array($this, 'ajax_new'));
+		add_action('wp_ajax_cfsp_new_add', array($this, 'ajax_new_add')); 
+		/*
+				if (!empty($_POST['cfsp_key']) || !empty($_POST['cfsp_description'])) {
+					cfsp_add_new(stripslashes($_POST['cfsp_key']), stripslashes($_POST['cfsp_description']), stripslashes($_POST['cfsp_content']));
+				}
+		 */
+
+		add_action('wp_ajax_cfsp_save', array($this, 'ajax_save'));
+		/*
+				if (!empty($_POST['cfsp_id'])) {
+					cfsp_save_snippet_post(stripslashes($_POST['cfsp_id']), stripslashes($_POST['cfsp_key']), stripslashes($_POST['cfsp_description']), stripslashes($_POST['cfsp_content']));
+				}
+				else if (!empty($_POST['cfsp_key'])) {
+					cfsp_save(stripslashes($_POST['cfsp_key']), stripslashes($_POST['cfsp_description']), stripslashes($_POST['cfsp_content']));
+				}
+		 */
+
+		add_action('wp_ajax_cfsp_edit', array($this, 'ajax_edit'));
+		/*
+				if (!empty($_POST['cfsp_key'])) {
+					cfsp_ajax_edit(stripslashes($_POST['cfsp_key']));
+				}
+		 */
+
+		add_action('wp_ajax_cfsp_preview', array($this, 'ajax_preview'));
+		/*
+				if (!empty($_POST['cfsp_key'])) {
+					cfsp_ajax_preview(stripslashes($_POST['cfsp_key']));
+				}
+		 */
+		add_action('wp_ajax_cfsp_delete', array($this, 'ajax_delete'));
+		/*
+				if (!empty($_POST['cfsp_key'])) {
+					if (!empty($_POST['cfsp_delete_confirm']) && $_POST['cfsp_delete_confirm'] == 'yes') {
+						cfsp_ajax_delete(stripslashes($_POST['cfsp_key']), true);
+					}
+					else {
+						cfsp_ajax_delete(stripslashes($_POST['cfsp_key']), false);
+					}
+				}
+		 */
+
 	}
 
 	function ajax_get_snippet() {
