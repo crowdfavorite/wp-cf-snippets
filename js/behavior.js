@@ -8,7 +8,7 @@
 			});
 		});
 		
-		$("body").on("click", ".cfsp-edit-button" function() {
+		$("body").on("click", ".cfsp-edit-button", function() {
 			cfsp_ajax_edit_button($(this).attr("id").replace("-edit-button", ""));
 		}).on("click", ".cfsp-preview-button", function() {
 			cfsp_ajax_preview_button($(this).attr("id").replace("-preview-button", ""));
