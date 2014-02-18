@@ -17,7 +17,7 @@ class CF_Snippet_Ajax extends CF_Snippet_Base {
 		//TODO
 		add_action('wp_ajax_cfsp_iframe_preview', array($this, 'ajax_iframe_preview')); // stripslashes($_GET['cfsp_key'])
 		add_action('wp_ajax_cfsp_new', array($this, 'ajax_new'));
-		add_action('wp_ajax_cfsp_new_add', array($this, 'ajax_new_add')); 
+		add_action('wp_ajax_cfsp_new_add', array($this, 'ajax_new_add'));
 		/*
 				if (!empty($_POST['cfsp_key']) || !empty($_POST['cfsp_description'])) {
 					cfsp_add_new(stripslashes($_POST['cfsp_key']), stripslashes($_POST['cfsp_description']), stripslashes($_POST['cfsp_content']));
