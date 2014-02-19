@@ -2,14 +2,14 @@
 	tinymce.create('tinymce.plugins.cfsnippets', {
 		init : function(ed, url) {
 			var pluginUrl = url.replace('js', '');
-			
+
 			// Register button
 			ed.addButton('cfsnip_Btn', {
 				title : 'Click to Insert Snippet',
 				image : pluginUrl + '/images/snippet.gif',
 				cmd : 'CFSP_Insert'
 			});
-			
+
 			// Register command
 			ed.addCommand('CFSP_Insert', function() {
 				ed.windowManager.open({

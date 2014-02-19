@@ -7,7 +7,7 @@
 				cfsp_popup(r, 984);
 			});
 		});
-		
+
 		$("body").on("click", ".cfsp-edit-button", function() {
 			cfsp_ajax_edit_button($(this).attr("id").replace("-edit-button", ""));
 		}).on("click", ".cfsp-preview-button", function() {
@@ -18,12 +18,12 @@
 			$("#"+$(this).attr("rel")).slideToggle();
 			return false;
 		}).on("click", ".cfsp-post-next", function() {
-			var page = parseInt($("#cfsp-post-page-displayed").val());
+			var page = parseInt($("#cfsp-post-page-displayed").val(), 10);
 			page += 1;
 			cfsp_ajax_display_post_items(page);
 			return false;
 		}).on("click", ".cfsp-post-prev", function() {
-			var page = parseInt($("#cfsp-post-page-displayed").val());
+			var page = parseInt($("#cfsp-post-page-displayed").val(), 10);
 			page -= 1;
 			cfsp_ajax_display_post_items(page);
 			return false;
@@ -44,7 +44,7 @@
 			$("#cfsp-"+id).remove();
 			return false;
 		};
-		
+
 		cfsp_new_snippet = function(key, description, content) {
 			$.post("index.php", {
 				cf_action:"cfsp_new_add",
@@ -58,7 +58,7 @@
 			});
 			return false;
 		};
-		
+
 		cfsp_save_snippet = function(id, key, description, content) {
 			$.post("index.php", {
 				cf_action:"cfsp_save",
@@ -71,7 +71,7 @@
 			});
 			return false;
 		};
-		
+
 		cfsp_ajax_edit_button = function(id) {
 			$.post("index.php", {
 				cf_action:"cfsp_edit",
@@ -81,7 +81,7 @@
 			});
 			return false;
 		};
-		
+
 		cfsp_ajax_preview_button = function(id) {
 			$.post("index.php", {
 				cf_action:"cfsp_preview",
@@ -91,7 +91,7 @@
 			});
 			return false;
 		};
-		
+
 		cfsp_ajax_delete_button = function(id) {
 			$.post("index.php", {
 				cf_action:"cfsp_delete",
