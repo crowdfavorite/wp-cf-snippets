@@ -16,20 +16,15 @@ class CF_Snippet_Ajax extends CF_Snippet_Base {
 
 		// Fully Hooked Up
 		add_action('wp_ajax_cfsp_preview', array($this, 'ajax_preview'));
+		add_action('wp_ajax_cfsp_new', array($this, 'ajax_new'));
+		add_action('wp_ajax_cfsp_new_add', array($this, 'ajax_new_add'));
+		add_action('wp_ajax_cfsp_delete', array($this, 'ajax_delete'));
 
 		// Authenticated only
 		add_action('wp_ajax_cfsp_get_snippet', array($this, 'ajax_get_snippet'));
 		add_action('wp_ajax_cfsp_save_snippet', array($this, 'ajax_save_snippet'));
 		add_action('wp_ajax_cfsp_post_items_paged', array($this, 'ajax_post_items_paged'));
 
-		//TODO
-		add_action('wp_ajax_cfsp_new', array($this, 'ajax_new'));
-		add_action('wp_ajax_cfsp_new_add', array($this, 'ajax_new_add'));
-		/*
-				if (!empty($_POST['cfsp_key']) || !empty($_POST['cfsp_description'])) {
-					cfsp_add_new(stripslashes($_POST['cfsp_key']), stripslashes($_POST['cfsp_description']), stripslashes($_POST['cfsp_content']));
-				}
-		 */
 
 		add_action('wp_ajax_cfsp_save', array($this, 'ajax_save'));
 		/*
@@ -48,18 +43,6 @@ class CF_Snippet_Ajax extends CF_Snippet_Base {
 				}
 		 */
 
-		add_action('wp_ajax_cfsp_delete', array($this, 'ajax_delete'));
-		/*
-				if (!empty($_POST['cfsp_key'])) {
-					if (!empty($_POST['cfsp_delete_confirm']) && $_POST['cfsp_delete_confirm'] == 'yes') {
-						cfsp_ajax_delete(stripslashes($_POST['cfsp_key']), true);
-					}
-					else {
-						cfsp_ajax_delete(stripslashes($_POST['cfsp_key']), false);
-					}
-				}
-		 */
-
 		add_action('admin_enqueue_scripts', array($this, 'set_nonces'));
 	}
 
@@ -71,7 +54,7 @@ class CF_Snippet_Ajax extends CF_Snippet_Base {
 			"cfsp_new" => wp_create_nonce("cfsp_new"),
 			"cfsp_new_add" => wp_create_nonce("cfsp_new_add"),
 			"cfsp_save" => wp_create_nonce("cfsp_save"),
-			"cfsp_edit" => wp_create_nonce("cfsp_save"),
+			"cfsp_edit" => wp_create_nonce("cfsp_edit"),
 			"cfsp_preview" => wp_create_nonce("cfsp_preview"),
 			"cfsp_delete" => wp_create_nonce("cfsp_delete"),
 		));
@@ -80,12 +63,7 @@ class CF_Snippet_Ajax extends CF_Snippet_Base {
 
 	function iframe_preview() {
 		global $cf_snippet;
-
-		if (!isset($_GET['key'])) {
-			return;
-		}
-
-		$key = stripslashes($_GET['key']);
+		$key = isset($_GET['key']) ? stripslashes($_GET['key']) : '';
 
 		if (class_exists('CF_Snippet_Manager') && !($cf_snippet instanceof CF_Snippet_Manager)) {
 			$cf_snippet = new CF_Snippet_Manager();
@@ -155,9 +133,12 @@ class CF_Snippet_Ajax extends CF_Snippet_Base {
 	}
 
 	function ajax_post_items_paged() {
+		check_ajax_referer('cfsp_post_items_paged');
+
 		if (!isset($_POST['cfsp_page']) || empty($_POST['cfsp_page'])) {
 			exit();
 		}
+
 		$page = $_POST['cfsp_page'];
 
 		if (class_exists('CF_Snippet') && !($cf_snippet instanceof CF_Snippet)) {
@@ -182,12 +163,7 @@ class CF_Snippet_Ajax extends CF_Snippet_Base {
 	function ajax_preview() {
 		global $cf_snippet;
 		check_ajax_referer('cfsp_preview');
-
-		if (!isset($_POST['key'])) {
-			return;
-		}
-
-		$key = stripslashes($_POST['key']);
+		$key = isset($_POST['key']) ? stripslashes($_POST['key']) : '';
 
 		if (class_exists('CF_Snippet_Manager') && !($cf_snippet instanceof CF_Snippet_Manager)) {
 			$cf_snippet = new CF_Snippet_Manager();
@@ -202,98 +178,104 @@ class CF_Snippet_Ajax extends CF_Snippet_Base {
 		die();
 	}
 
-function cfsp_ajax_new() {
-	global $cf_snippet;
-	if (class_exists('CF_Snippet_Manager') && !($cf_snippet instanceof CF_Snippet_Manager)) {
-		$cf_snippet = new CF_Snippet_Manager();
-	}
-	include(CFSP_DIR . 'views/ajax-new.php');
-	die();
-}
+	function ajax_delete() {
+		global $cf_snippet;
+		check_ajax_referer('cfsp_delete');
+		$key = isset($_POST['key']) ? stripslashes($_POST['key']) : '';
 
-function cfsp_ajax_edit($key) {
-	global $cf_snippet;
-	if (class_exists('CF_Snippet_Manager') && !($cf_snippet instanceof CF_Snippet_Manager)) {
-		$cf_snippet = new CF_Snippet_Manager();
-	}
+		if (class_exists('CF_Snippet_Manager') && !($cf_snippet instanceof CF_Snippet_Manager)) {
+			$cf_snippet = new CF_Snippet_Manager();
+		}
 
-	if (!empty($key) && $cf_snippet->exists($key)) {
-		include(CFSP_DIR . 'views/ajax-edit-exists.php');
-	}
-	else {
-		include(CFSP_DIR . 'views/ajax-edit-error.php');
-	}
-	die();
-}
-
-
-function cfsp_ajax_delete($key, $confirm = false) {
-	global $cf_snippet;
-	if (class_exists('CF_Snippet_Manager') && !($cf_snippet instanceof CF_Snippet_Manager)) {
-		$cf_snippet = new CF_Snippet_Manager();
-	}
-
-	if (!empty($key) && $cf_snippet->exists($key)) {
-		// If the delete has been confirmed, remove the key and return
-		if ($confirm) {
-			$cf_snippet->remove($key);
+		if (!empty($key) && $cf_snippet->exists($key)) {
+			// If the delete has been confirmed, remove the key and return
+			if (true) {
+				$cf_snippet->remove($key);
+			}
+			else {
+				include(CFSP_DIR . 'views/ajax-delete-exists.php');
+			}
 		}
 		else {
-			include(CFSP_DIR . 'views/ajax-delete-exists.php');
+			include(CFSP_DIR . 'views/ajax-delete-error.php');
 		}
+		die();
 	}
-	else {
-		include(CFSP_DIR . 'views/ajax-delete-error.php');
-	}
-	die();
-}
 
-function cfsp_add_new($key = '', $description = '', $content = '') {
-	if (empty($key)) {
-		$key = $description;
-		if (strlen($key) > 20) {
-			$key = substr($key, 0, 20);
+	function ajax_new() {
+		global $cf_snippet;
+		check_ajax_referer('cfsp_new');
+		if (class_exists('CF_Snippet_Manager') && !($cf_snippet instanceof CF_Snippet_Manager)) {
+			$cf_snippet = new CF_Snippet_Manager();
 		}
-	}
-	global $cf_snippet;
-	if (class_exists('CF_Snippet_Manager') && !($cf_snippet instanceof CF_Snippet_Manager)) {
-		$cf_snippet = new CF_Snippet_Manager();
+		include(CFSP_DIR . 'views/ajax-new.php');
+		die();
 	}
 
-	// Make sure the key is a valid key
-	$key = sanitize_title($key);
+	function ajax_new_add() {
+		global $cf_snippet;
+		check_ajax_referer('cfsp_new_add');
 
-	$new_key = $cf_snippet->add($key, $content, $description);
-	// Now that we have inserted, get the row to insert into the table
-	echo $cf_snippet->admin_display($new_key);
-}
+		$key = isset($_POST['key']) ? stripslashes($_POST['key']) : '';
+		$description = isset($_POST['description']) ? stripslashes($_POST['description']) : '';
+		$content = isset($_POST['content']) ? stripslashes($_POST['content']) : '';
 
-function cfsp_save($key, $description = '', $content = '') {
-	if (empty($key)) { return false; }
+		if (empty($key)) {
+			$key = $description;
+			if (strlen($key) > 20) {
+				$key = substr($key, 0, 20);
+			}
+		}
+		if (class_exists('CF_Snippet_Manager') && !($cf_snippet instanceof CF_Snippet_Manager)) {
+			$cf_snippet = new CF_Snippet_Manager();
+		}
 
-	global $cf_snippet;
-	if (class_exists('CF_Snippet_Manager') && !($cf_snippet instanceof CF_Snippet_Manager)) {
-		$cf_snippet = new CF_Snippet_Manager();
+		// Make sure the key is a valid key
+		$key = sanitize_title($key);
+
+		$new_key = $cf_snippet->add($key, $content, $description);
+		// Now that we have inserted, get the row to insert into the table
+		echo $cf_snippet->admin_display($new_key);
 	}
 
-	// Make sure the key is a valid key
-	$key = sanitize_title($key);
+	function ajax_edit() {
+		global $cf_snippet;
+		check_ajax_referer('cfsp_edit');
+		$key = isset($_POST['key']) ? stripslashes($_POST['key']) : '';
 
-	$cf_snippet->save($key, $content, $description);
-}
+		if (class_exists('CF_Snippet_Manager') && !($cf_snippet instanceof CF_Snippet_Manager)) {
+			$cf_snippet = new CF_Snippet_Manager();
+		}
 
-function cfsp_save_snippet_post($id, $key = '', $description = '', $content = '') {
-	if (empty($id)) { return false; }
-	global $cf_snippet;
-
-	$post_arr = array('ID' => $id, 'post_name' => $key, 'post_title' => $description, 'post_content' => $content);
-
-	if (class_exists('CF_Snippet_Manager') && !($cf_snippet instanceof CF_Snippet_Manager)) {
-		$cf_snippet = new CF_Snippet_Manager();
+		if (!empty($key) && $cf_snippet->exists($key)) {
+			include(CFSP_DIR . 'views/ajax-edit-exists.php');
+		}
+		else {
+			include(CFSP_DIR . 'views/ajax-edit-error.php');
+		}
+		die();
 	}
 
-	$cf_snippet->save_snippet_post($post_arr);
-}
+	function ajax_save() {
+		global $cf_snippet;
+		check_ajax_referer('cfsp_save');
 
+		$id = isset($_POST['id']) ? stripslashes($_POST['id']) : '';
+		$key = isset($_POST['key']) ? stripslashes($_POST['key']) : '';
+		$description = isset($_POST['description']) ? stripslashes($_POST['description']) : '';
+		$content = isset($_POST['content']) ? stripslashes($_POST['content']) : '';
 
+		$post_arr = array(
+			'ID' => $id,
+			'post_name' => $key,
+			'post_title' => $description,
+			'post_content' => $content
+		);
+
+		if (class_exists('CF_Snippet_Manager') && !($cf_snippet instanceof CF_Snippet_Manager)) {
+			$cf_snippet = new CF_Snippet_Manager();
+		}
+
+		$cf_snippet->save_snippet_post($post_arr);
+	}
 }

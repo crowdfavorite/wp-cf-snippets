@@ -1,11 +1,16 @@
 ;(function($) {
 	$(function() {
 		$(".cfsp-new-button").click(function() {
-			$.post("index.php", {
-				cf_action:"cfsp_new"
-			}, function(r) {
-				cfsp_popup(r, 984);
-			});
+			$.post(
+				ajaxurl,
+				{
+					action:"cfsp_new",
+					_ajax_nonce: nonces.cfsp_new
+				},
+				function(r) {
+					cfsp_popup(r, 984);
+				}
+			);
 		});
 
 		$("body").on("click", ".cfsp-edit-button", function() {
@@ -34,51 +39,55 @@
 			return false;
 		});
 
-		cfsp_delete_snippet = function(id) {
-			$.post("index.php", {
-				cf_action:"cfsp_delete",
-				cfsp_key:id,
-				cfsp_delete_confirm:"yes"
-			}, function(r) {
-			});
-			$("#cfsp-"+id).remove();
-			return false;
-		};
-
 		cfsp_new_snippet = function(key, description, content) {
-			$.post("index.php", {
-				cf_action:"cfsp_new_add",
-				cfsp_key:key,
-				cfsp_description:description,
-				cfsp_content:content
-			}, function(r) {
-				$("#cfsp-display tbody").append(r);
-				$(".cfsp-message").hide();
-				$("#cfsp-display").show();
-			});
+			$.post(
+				ajaxurl,
+				{
+					action:"cfsp_new_add",
+					key:key,
+					description:description,
+					content:content,
+					_ajax_nonce: nonces.cfsp_new_add
+				},
+				function(r) {
+					$("#cfsp-display tbody").append(r);
+					$(".cfsp-message").hide();
+					$("#cfsp-display").show();
+				}
+			);
 			return false;
 		};
 
 		cfsp_save_snippet = function(id, key, description, content) {
-			$.post("index.php", {
-				cf_action:"cfsp_save",
-				cfsp_id:id,
-				cfsp_key:key,
-				cfsp_description:description,
-				cfsp_content:content
-			}, function(r) {
-				$("#cfsp-"+key+" span.cfsp-description-content").html(description);
-			});
+			$.post(
+				ajaxurl,
+				{
+					action: "cfsp_save",
+					id: id,
+					key: key,
+					description: description,
+					content: content,
+					_ajax_nonce: nonces.cfsp_save
+				},
+				function(r) {
+					$("#cfsp-"+key+" span.cfsp-description-content").html(description);
+				}
+			);
 			return false;
 		};
 
 		cfsp_ajax_edit_button = function(id) {
-			$.post("index.php", {
-				cf_action:"cfsp_edit",
-				cfsp_key:id
-			}, function(r) {
-				cfsp_popup(r, 984);
-			});
+			$.post(
+				ajaxurl,
+				{
+					action: "cfsp_edit",
+					key: id,
+					_ajax_nonce: nonces.cfsp_edit
+				},
+				function(r) {
+					cfsp_popup(r, 984);
+				}
+			);
 			return false;
 		};
 
@@ -98,22 +107,34 @@
 		};
 
 		cfsp_ajax_delete_button = function(id) {
-			$.post("index.php", {
-				cf_action:"cfsp_delete",
-				cfsp_key:id
-			}, function(r) {
-				cfsp_popup(r, 984);
-			});
+			if (confirm('Are you sure?')) {
+				$.post(
+					ajaxurl,
+					{
+						action: "cfsp_delete",
+						key: id,
+						_ajax_nonce: nonces.cfsp_delete
+					},
+					function(r) {
+						$("#cfsp-"+id).remove();
+					}
+				);
+			}
 			return false;
 		};
 
 		cfsp_ajax_display_post_items = function(page) {
-			$.post("index.php", {
-				cf_action:"cfsp_post_items_paged",
-				cfsp_page:page
-			}, function(r) {
-				$("#cfsp-post-display").html(r);
-			});
+			$.post(
+				ajaxurl,
+				{
+					action: "cfsp_post_items_paged",
+					page: page,
+					_ajax_nonce: nonces.cfsp_post_items_paged
+				},
+				function(r) {
+					$("#cfsp-post-display").html(r);
+				}
+			);
 		};
 	});
 })(jQuery);
