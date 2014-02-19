@@ -59,6 +59,8 @@ else {
 $cf_snippet_core = new CF_Snippet_Core();
 $cf_snippet = new CF_Snippet_Manager();
 
+$cf_snippet_ajax = new CF_Snippet_Ajax();
+
 // Load the currently non-class support code and template API
 include 'includes/template.php';
 include 'includes/shortcode.php';

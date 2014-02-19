@@ -10,12 +10,19 @@ class CF_Snippet_Ajax extends CF_Snippet_Base {
 	}
 
 	function add_actions() {
+
+		// Iframe Preview Display
+		add_action('admin_post_cfsp_iframe_preview', array($this, 'iframe_preview'));
+
+		// Fully Hooked Up
+		add_action('wp_ajax_cfsp_preview', array($this, 'ajax_preview'));
+
 		// Authenticated only
 		add_action('wp_ajax_cfsp_get_snippet', array($this, 'ajax_get_snippet'));
 		add_action('wp_ajax_cfsp_save_snippet', array($this, 'ajax_save_snippet'));
 		add_action('wp_ajax_cfsp_post_items_paged', array($this, 'ajax_post_items_paged'));
+
 		//TODO
-		add_action('wp_ajax_cfsp_iframe_preview', array($this, 'ajax_iframe_preview')); // stripslashes($_GET['cfsp_key'])
 		add_action('wp_ajax_cfsp_new', array($this, 'ajax_new'));
 		add_action('wp_ajax_cfsp_new_add', array($this, 'ajax_new_add'));
 		/*
@@ -41,12 +48,6 @@ class CF_Snippet_Ajax extends CF_Snippet_Base {
 				}
 		 */
 
-		add_action('wp_ajax_cfsp_preview', array($this, 'ajax_preview'));
-		/*
-				if (!empty($_POST['cfsp_key'])) {
-					cfsp_ajax_preview(stripslashes($_POST['cfsp_key']));
-				}
-		 */
 		add_action('wp_ajax_cfsp_delete', array($this, 'ajax_delete'));
 		/*
 				if (!empty($_POST['cfsp_key'])) {
@@ -59,10 +60,45 @@ class CF_Snippet_Ajax extends CF_Snippet_Base {
 				}
 		 */
 
+		add_action('admin_enqueue_scripts', array($this, 'set_nonces'));
 	}
 
+	function set_nonces() {
+		wp_localize_script('cfsp-admin-js-behavior', 'nonces', array(
+			"cfsp_get_snippet" => wp_create_nonce("cfsp_get_snippet"),
+			"cfsp_save_snippet" => wp_create_nonce("cfsp_save_snippet"),
+			"cfsp_post_items_paged" => wp_create_nonce("cfsp_post_items_paged"),
+			"cfsp_new" => wp_create_nonce("cfsp_new"),
+			"cfsp_new_add" => wp_create_nonce("cfsp_new_add"),
+			"cfsp_save" => wp_create_nonce("cfsp_save"),
+			"cfsp_edit" => wp_create_nonce("cfsp_save"),
+			"cfsp_preview" => wp_create_nonce("cfsp_preview"),
+			"cfsp_delete" => wp_create_nonce("cfsp_delete"),
+		));
+	}
+
+
+	function iframe_preview() {
+		global $cf_snippet;
+
+		if (!isset($_GET['key'])) {
+			return;
+		}
+
+		$key = stripslashes($_GET['key']);
+
+		if (class_exists('CF_Snippet_Manager') && !($cf_snippet instanceof CF_Snippet_Manager)) {
+			$cf_snippet = new CF_Snippet_Manager();
+		}
+
+		if (!empty($key) && $cf_snippet->exists($key)) {
+			echo $cf_snippet->get($key);
+		}
+	}
+
+
 	function ajax_get_snippet() {
-		check_ajax_referer('csfp_get_snippet');
+		check_ajax_referer('cfsp_get_snippet');
 
 		global $cf_snippet;
 		if (empty($cf_snippet)) {
@@ -88,7 +124,7 @@ class CF_Snippet_Ajax extends CF_Snippet_Base {
 	}
 
 	function ajax_save_snippet() {
-		check_ajax_referer('csfp_save_snippet');
+		check_ajax_referer('cfsp_save_snippet');
 		// TODO: Determine appropriate permissions for creating snippets
 		global $cf_snippet;
 		if (empty($cf_snippet)) {
@@ -143,6 +179,28 @@ class CF_Snippet_Ajax extends CF_Snippet_Base {
 		}
 	}
 
+	function ajax_preview() {
+		global $cf_snippet;
+		check_ajax_referer('cfsp_preview');
+
+		if (!isset($_POST['key'])) {
+			return;
+		}
+
+		$key = stripslashes($_POST['key']);
+
+		if (class_exists('CF_Snippet_Manager') && !($cf_snippet instanceof CF_Snippet_Manager)) {
+			$cf_snippet = new CF_Snippet_Manager();
+		}
+
+		if (!empty($key) && $cf_snippet->exists($key)) {
+			include(CFSP_DIR . 'views/ajax-preview-exists.php');
+		}
+		else {
+			include(CFSP_DIR . 'views/ajax-preview-error.php');
+		}
+		die();
+	}
 
 function cfsp_ajax_new() {
 	global $cf_snippet;
@@ -168,20 +226,6 @@ function cfsp_ajax_edit($key) {
 	die();
 }
 
-function cfsp_ajax_preview($key) {
-	global $cf_snippet;
-	if (class_exists('CF_Snippet_Manager') && !($cf_snippet instanceof CF_Snippet_Manager)) {
-		$cf_snippet = new CF_Snippet_Manager();
-	}
-
-	if (!empty($key) && $cf_snippet->exists($key)) {
-		include(CFSP_DIR . 'views/ajax-preview-exists.php');
-	}
-	else {
-		include(CFSP_DIR . 'views/ajax-preview-error.php');
-	}
-	die();
-}
 
 function cfsp_ajax_delete($key, $confirm = false) {
 	global $cf_snippet;
@@ -251,15 +295,5 @@ function cfsp_save_snippet_post($id, $key = '', $description = '', $content = ''
 	$cf_snippet->save_snippet_post($post_arr);
 }
 
-function cfsp_iframe_preview($key) {
-	global $cf_snippet;
-	if (class_exists('CF_Snippet_Manager') && !($cf_snippet instanceof CF_Snippet_Manager)) {
-		$cf_snippet = new CF_Snippet_Manager();
-	}
-
-	if (!empty($key) && $cf_snippet->exists($key)) {
-		echo $cf_snippet->get($key);
-	}
-}
 
 }

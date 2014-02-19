@@ -83,12 +83,17 @@
 		};
 
 		cfsp_ajax_preview_button = function(id) {
-			$.post("index.php", {
-				cf_action:"cfsp_preview",
-				cfsp_key:id
-			}, function(r) {
-				cfsp_popup(r, 984);
-			});
+			$.post(
+				ajaxurl,
+				{
+					action: "cfsp_preview",
+					key: id,
+					_ajax_nonce: nonces.cfsp_preview
+				},
+				function(r) {
+					cfsp_popup(r, 984);
+				}
+			);
 			return false;
 		};
 
