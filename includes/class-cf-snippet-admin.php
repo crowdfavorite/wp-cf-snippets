@@ -148,7 +148,7 @@ class CF_Snippet_Admin extends CF_Snippet_Base {
 
 	function post_edit_callback() {
 		global $post;
-		$cf_snippet = new CF_Snippet();
+		$cf_snippet = new CF_Snippet_Manager();
 		$keys = $cf_snippet->get_keys();
 		include(CFSP_DIR . 'views/post-edit.php');
 	}
