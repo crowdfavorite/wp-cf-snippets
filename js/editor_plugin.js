@@ -13,7 +13,7 @@
 			// Register command
 			ed.addCommand('CFSP_Insert', function() {
 				ed.windowManager.open({
-					file : 'index.php?cf_action=cfsp-dialog',
+					file : 'admin-post.php?action=cfsp_dialog',
 					width : 450 + ed.getLang('cfsnippet.delta_width', 0),
 					height : 350 + ed.getLang('cfsnippet.delta_height', 0),
 					inline : 1

@@ -1,7 +1,7 @@
 <?php
 ## TinyMCE Functionality
 
-add_action('wp_ajax_cfsp_dialog', 'cfsp_dialog');
+add_action('admin_post_cfsp_dialog', 'cfsp_dialog');
 
 function cfsp_dialog() {
 	global $cf_snippet;
@@ -10,6 +10,7 @@ function cfsp_dialog() {
 	}
 	$list = $cf_snippet->list_display(true);
 	include(CFSP_DIR . 'views/tinymce-dialog.php');
+	die();
 }
 
 function cfsp_addtinymce() {
