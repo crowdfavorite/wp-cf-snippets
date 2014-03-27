@@ -303,7 +303,8 @@ class CF_Snippet_Manager extends CF_Snippet_Base {
 				$id = $snippet_post->ID;
 				$key = $snippet_post->post_name;
 				$description = $title = get_the_title($snippet_post->ID);
-				$content = get_the_content($snippet_post->ID);
+//				$content = get_the_content($snippet_post->ID);
+				$content = $snippet_post->post_content;
 				$parent = $snippet_post->post_parent;
 				$data[] = compact('id', 'key', 'description', 'title', 'content', 'parent');
 			}
