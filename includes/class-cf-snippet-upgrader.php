@@ -19,6 +19,14 @@ class CF_Snippet_Upgrader {
 		$ver = false;
 		$ver_option = get_option('cfsnip_version');
 
+		// No option stored and no snippets, then it's a new install with nothing to update.
+ 		if (!$ver_option && !get_option('cfsnip_snippets')) {
+			// Set to lastest verison.
+			error_log('Fresh install detected. Setting CF Snippet version to ' . CFSP_VERSION);
+			$this->set_version(CFSP_VERSION);
+			return false;
+		}
+
 		// Changing from db option to post type
 		if (1
 			&& defined('CFSP_VERSION')
