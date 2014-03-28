@@ -62,6 +62,11 @@ class CF_Snippet_Ajax extends CF_Snippet_Base {
 
 
 	function iframe_preview() {
+
+		if ($this->user_can_admin_snippets() == false) {
+			return;
+		}
+
 		global $cf_snippet;
 		$key = isset($_GET['key']) ? stripslashes($_GET['key']) : '';
 
@@ -77,6 +82,10 @@ class CF_Snippet_Ajax extends CF_Snippet_Base {
 
 	function ajax_get_snippet() {
 		check_ajax_referer('cfsp_get_snippet');
+
+		if ($this->user_can_admin_snippets() == false) {
+			return;
+		}
 
 		global $cf_snippet;
 		if (empty($cf_snippet)) {
@@ -103,7 +112,11 @@ class CF_Snippet_Ajax extends CF_Snippet_Base {
 
 	function ajax_save_snippet() {
 		check_ajax_referer('cfsp_save_snippet');
-		// TODO: Determine appropriate permissions for creating snippets
+
+		if ($this->user_can_admin_snippets() == false) {
+			return;
+		}
+
 		global $cf_snippet;
 		if (empty($cf_snippet)) {
 			$cf_snippet = new CF_Snippet();
@@ -163,6 +176,11 @@ class CF_Snippet_Ajax extends CF_Snippet_Base {
 	function ajax_preview() {
 		global $cf_snippet;
 		check_ajax_referer('cfsp_preview');
+
+		if ($this->user_can_admin_snippets() == false) {
+			return;
+		}
+
 		$key = isset($_POST['key']) ? stripslashes($_POST['key']) : '';
 
 		if (class_exists('CF_Snippet_Manager') && !($cf_snippet instanceof CF_Snippet_Manager)) {
@@ -181,6 +199,11 @@ class CF_Snippet_Ajax extends CF_Snippet_Base {
 	function ajax_delete() {
 		global $cf_snippet;
 		check_ajax_referer('cfsp_delete');
+
+		if ($this->user_can_admin_snippets() == false) {
+			return;
+		}
+
 		$key = isset($_POST['key']) ? stripslashes($_POST['key']) : '';
 
 		if (class_exists('CF_Snippet_Manager') && !($cf_snippet instanceof CF_Snippet_Manager)) {
@@ -205,6 +228,11 @@ class CF_Snippet_Ajax extends CF_Snippet_Base {
 	function ajax_new() {
 		global $cf_snippet;
 		check_ajax_referer('cfsp_new');
+
+		if ($this->user_can_admin_snippets() == false) {
+			return;
+		}
+
 		if (class_exists('CF_Snippet_Manager') && !($cf_snippet instanceof CF_Snippet_Manager)) {
 			$cf_snippet = new CF_Snippet_Manager();
 		}
@@ -215,6 +243,10 @@ class CF_Snippet_Ajax extends CF_Snippet_Base {
 	function ajax_new_add() {
 		global $cf_snippet;
 		check_ajax_referer('cfsp_new_add');
+
+		if ($this->user_can_admin_snippets() == false) {
+			return;
+		}
 
 		$key = isset($_POST['key']) ? stripslashes($_POST['key']) : '';
 		$description = isset($_POST['description']) ? stripslashes($_POST['description']) : '';
@@ -241,6 +273,11 @@ class CF_Snippet_Ajax extends CF_Snippet_Base {
 	function ajax_edit() {
 		global $cf_snippet;
 		check_ajax_referer('cfsp_edit');
+
+		if ($this->user_can_admin_snippets() == false) {
+			return;
+		}
+
 		$key = isset($_POST['key']) ? stripslashes($_POST['key']) : '';
 
 		if (class_exists('CF_Snippet_Manager') && !($cf_snippet instanceof CF_Snippet_Manager)) {
@@ -259,6 +296,10 @@ class CF_Snippet_Ajax extends CF_Snippet_Base {
 	function ajax_save() {
 		global $cf_snippet;
 		check_ajax_referer('cfsp_save');
+
+		if ($this->user_can_admin_snippets() == false) {
+			return;
+		}
 
 		$id = isset($_POST['id']) ? stripslashes($_POST['id']) : '';
 		$key = isset($_POST['key']) ? stripslashes($_POST['key']) : '';

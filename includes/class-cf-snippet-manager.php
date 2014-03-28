@@ -608,6 +608,10 @@ class CF_Snippet_Manager extends CF_Snippet_Base {
 	 * @return bool - Result of the add
 	 */
 	public function add($key, $content, $description, $args = array()) {
+		if ($this->user_can_admin_snippets() == false) {
+			return;
+		}
+
 		// Check to make sure we don't have any variable name conflicts
 		unset($args['key'], $args['content'], $args['description'], $args['snippet'], $args['post_id'], $args['mod_cap']);
 		
@@ -653,6 +657,10 @@ class CF_Snippet_Manager extends CF_Snippet_Base {
 	 * @return bool - Result of the remove
 	 */
 	public function remove($key) {
+		if ($this->user_can_admin_snippets() == false) {
+			return;
+		}
+
 		$key = sanitize_title($key);
 		$post_id = $this->get_id($key);
 		if ($post_id) {
