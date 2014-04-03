@@ -22,41 +22,27 @@ class CF_Snippet_Admin_Help extends CF_Snippet_Base {
 	}
 
 	function cfsp_admin_help() {
-		global $current_screen, $wp_version;
+
+		$current_screen = get_current_screen();
+
+		// Return early if we're not on the book post type.
+		if ( '_cf_snippet' != $current_screen->post_type ) {
+	    	return;
+	    }
 
 		// Let other parts of the plugin filter in content for the help
 		$cfsp_help = apply_filters('cfsp-help-tab', array());
 
 		if (is_array($cfsp_help) && !empty($cfsp_help) && is_admin()) {
 			// Check to WordPress 3.3 support.  This is a much improved Help interface and makes it much easier to add Help content to.
-			if (version_compare(floatval($wp_version), '3.3') >= 0 && is_admin() && $current_screen->base == 'settings_page_cf-snippets') {
-				foreach ($cfsp_help as $key => $data) {
-					if (!is_array($data) || empty($data['title']) || empty($data['description'])) { continue; }
+			foreach ($cfsp_help as $key => $data) {
+				if (!is_array($data) || empty($data['title']) || empty($data['description'])) { continue; }
 
 				$current_screen->add_help_tab(array(
 					'id' => 'cfsp-help-tab_'.sanitize_title($key),
 					'title' => wp_kses($data['title'], ''),
 					'content' => '<h2>CF Snippets Help</h2>'.$data['description']
 				));
-				}
-			}
-			else if (is_admin() && $current_screen->base == 'settings_page_cf-snippets') {
-				$context_help = '';
-
-				foreach ($cfsp_help as $key => $data) {
-					if (!is_array($data) || empty($data['title']) || empty($data['description'])) { continue; }
-
-				$context_help .= '
-					<div class="cfsp-help-tab_'.sanitize_title($key).'">
-					<h3>'.wp_kses($data['title'], '').'</h3>
-					'.$data['description'].'
-					</div>
-					';
-				}
-
-				if (!empty($context_help)) {
-					add_contextual_help('settings_page_cf-snippets', $context_help);
-				}
 			}
 		}
 	}
@@ -68,7 +54,7 @@ class CF_Snippet_Admin_Help extends CF_Snippet_Base {
 				<p>The <b>CF Snippets</b> plugin gives Admin users the ability to create chunks of content (including HTML content) to be inserted into posts, widgets and front end display with an easy to use Admin interface.</p>
 				<p>This functionality gives the Admin users easy ability to edit the chunks of code without editing PHP/HTML files.  The plugin provides PHP functions for display of Snippets, as well as WordPress shortcodes.</p>
 				<p>On the post edit screen, the plugin provides a TinyMCE button for easy insertion of Snippets shortcodes.</p>
-				<p><small><b>** NOTE: Plugin requires WordPress 3.1 **</b></small></p>
+				<p><small><b>** NOTE: Plugin versions 4.0 and up require WordPress 3.8 **</b></small></p>
 				';
 			$help['description'] = array(
 				'title' => __('Description', 'cfsp'),
