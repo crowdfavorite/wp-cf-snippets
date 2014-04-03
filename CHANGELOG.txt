@@ -5,7 +5,10 @@
 - Updated JS to no longer use jQuery.live calls. These were generating errors in The Healthier Life admin.
 - Remove call to get_the_content($snippet_post->ID) and replace with $snippet_post->post_content to prevent notices in admin screen.
 - Add logic to detect a fresh plugin install (no version set in options, no snippets set in options). Set version number to current CFSP_VERSION and bypasses any upgrade actions.
-- Add permissions detection to Ajax calls and in other places
+- Add permissions detection to Ajax calls and in other places.
+- Add error message is snippet not removed via ajax.
+- Remove snippet admin page, make post tyep public to allow native WordPress handling.
+- Move help to post type pages.
 
 ## 3.2.3
 - Updated the upgrade routine to be more robust.

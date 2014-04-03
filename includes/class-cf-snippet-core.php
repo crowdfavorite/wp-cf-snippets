@@ -53,13 +53,32 @@ class CF_Snippet_Core extends CF_Snippet_Base {
 	 * @return void
 	 */
 	public function register_post_types() {
+
+		$labels = array(
+			'name' => _x( 'Snippets', 'post type general name', 'cf-cnippets' ),
+			'singular_name' => _x( 'Snippet', 'post type singular name', 'cf-cnippets' ),
+			'menu_name' => _x( 'Snippets', 'admin menu', 'cf-cnippets' ),
+			'name_admin_bar' => _x( 'Snippet', 'add new on admin bar', 'cf-cnippets' ),
+			'add_new' => _x( 'Add New', 'Snippet', 'cf-cnippets' ),
+			'add_new_item' => __( 'Add New Snippet', 'cf-cnippets' ),
+			'new_item' => __( 'New Snippet', 'cf-cnippets' ),
+			'edit_item' => __( 'Edit Snippet', 'cf-cnippets' ),
+			'view_item' => __( 'View Snippet', 'cf-cnippets' ),
+			'all_items' => __( 'All Snippets', 'cf-cnippets' ),
+			'search_items' => __( 'Search Snippets', 'cf-cnippets' ),
+			'not_found' => __( 'No snippets found.', 'cf-cnippets' ),
+			'not_found_in_trash' => __( 'No snippets found in Trash.', 'cf-cnippets' ),
+		);		
+	
 		$args = array(
-			'public' => false,
+			'public' => true,
+			'labels' => $labels,
 			'capability_type' => 'post',
 			'hierarchical' => false,
 			'rewrite' => false,
 			'query_var' => false,
 			'can_export' => false,
+			'menu_icon' => 'dashicons-editor-insertmore',
 		  );
 
 		register_post_type($this->post_type, $args);
