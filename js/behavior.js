@@ -116,7 +116,13 @@
 						_ajax_nonce: nonces.cfsp_delete
 					},
 					function(r) {
-						$("#cfsp-"+id).remove();
+						console.log(r);
+						if (r == '0') {
+							alert('There was an error removing this snippet.');
+						} 
+						else {
+							$("#cfsp-"+id).remove();
+						}
 					}
 				);
 			}
