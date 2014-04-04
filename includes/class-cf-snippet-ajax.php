@@ -6,6 +6,8 @@
 
 class CF_Snippet_Ajax extends CF_Snippet_Base {
 	function __construct() {
+
+		return;
 		$this->add_actions();
 	}
 
