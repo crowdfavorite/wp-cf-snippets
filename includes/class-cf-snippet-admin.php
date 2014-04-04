@@ -6,6 +6,7 @@
 
 class CF_Snippet_Admin extends CF_Snippet_Base {
 	function __construct() {
+
 		if (!is_admin()) {
 			return;
 		}
@@ -17,112 +18,48 @@ class CF_Snippet_Admin extends CF_Snippet_Base {
 	 * Register all admin-specific actions
 	 */
 	function add_actions() {
-		add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_resources'));
-		add_action('admin_menu', array($this, 'admin_menu'));
-		add_action('right_now_content_table_end', array($this, 'rightnow_end'));
-		add_action('cf_admin_rightnow', array($this, 'rightnow_cfadmin_end'));
-		add_action('admin_init', array($this, 'post_admin_head'));
+
+		// Add admin screen columsn and sorting
+		add_filter('manage__cf_snippet_posts_columns', array($this, 'add_key_column'));
+		add_action('manage__cf_snippet_posts_custom_column', array($this, 'key_column_content'), 10, 2);
+		add_filter('manage_edit-_cf_snippet_sortable_columns',  array($this, 'key_column_sort'));
+		add_action('pre_get_posts',  array($this, 'key_column_orderby'));
+	
 		if (function_exists('cfreadme_enqueue')) {
 			add_action('admin_init', array($this, 'enqueue_cf_readme'));
 		}
 	}
 
-	/**
-	 * Called during admin_enqueue_scripts hook processing
-	 */
-	public function enqueue_admin_resources($hook = '') {
-		switch ($hook) {
-		case 'post-new.php':
-			// fallthrough
-		case 'post.php':
-			// Add the proper CSS/JS to the Post/Page/Custom Post Type Edit screen
-			wp_enqueue_script('cfsp-post-js', CFSP_DIR_URL . 'js/post.js', array('jquery'), CFSP_VERSION);
-			wp_enqueue_style('cfsp-post-css', CFSP_DIR_URL . 'css/post.css', array(), CFSP_VERSION, 'screen');
-			break;
-		case 'settings_page_cf-snippets':
-			// Add the proper CSS/JS to the Settings screen
-			// if (defined('SCRIPT_DEBUG') && SCRIPT_DEBUG) {
-			wp_enqueue_script('cfsp-admin-js', false, array('cfsp-admin-js-behavior', 'csfp-admin-js-domwindow', 'cfsp-admin-js-popup'), CFSP_VERSION);
-			wp_enqueue_script('cfsp-admin-js-behavior', CFSP_DIR_URL . 'js/behavior.js', array('jquery'), CFSP_VERSION);
-			wp_enqueue_script('cfsp-admin-js-domwindow', CFSP_DIR_URL . 'js/jquery.DOMWindow.js', array('cfsp-admin-js-behavior'), CFSP_VERSION);
-			wp_enqueue_script('cfsp-admin-js-popup', CFSP_DIR_URL . 'js/popup.js', array('cfsp-admin-js-domwindow'), CFSP_VERSION);
-			// } else { <concatenated resource> }
-
-			wp_enqueue_style('cfsp-admin-css', CFSP_DIR_URL . 'css/content.css', array(), CFSP_VERSION, 'screen');
-			break;
+	public function key_column_content($column_name, $id) {
+		if( $column_name == 'key' ) {
+			$post_slug = get_post($id)->post_name;
+			echo $post_slug;
 		}
 	}
 
-	public function admin_menu() {
-		add_options_page(
-			__('CF Snippets', 'cfsp'),
-			__('CF Snippets', 'cfsp'),
-			'manage_options',
-			'cf-snippets',
-			array($this, 'options_page')
+	public function add_key_column($defaults) {
+
+		$defaults = array(
+			'title' => __('Description'),
+			'key' => __('Key'),
 		);
-		if (defined('CF_ADMIN_VER')) {
-			add_submenu_page(
-				'cf-admin-menu',
-				__('CF Snippets', 'cfsp'),
-				__('CF Snippets', 'cfsp'),
-				10,
-				'cf-snippets',
-				array($this, 'options_page')
-			);
-		}
+
+		return $defaults;
 	}
 
-	function options_page() {
-		global $cf_snippet;
-		if (class_exists('CF_Snippet_Manager') && !($cf_snippet instanceof CF_Snippet_Manager)) {
-			$cf_snippet = new CF_Snippet_Manager();
-		}
-
-		$table_display = '';
-		$message_display = '';
-		$post_table_display = '';
-		$post_message_display = '';
-		$count = 0;
-		$post_count = 0;
-		$show_post_count = CFSP_SHOW_POST_COUNT;
-		$total_post_count = 0;
-		$total_post_page_count = 0;
-
-		$table_content = '';
-		$post_table_content = '';
-
-		$keys = $cf_snippet->get_keys();
-		if (is_array($keys) && !empty($keys)) {
-			foreach ($keys as $key) {
-				if ($cf_snippet->exists($key)) {
-					$table_content .= $cf_snippet->admin_display($key);
-					$count++;
-					$message_display = ' style="display:none;"';
-				}
-			}
-		}
-		include(CFSP_DIR . 'views/options.php');
+	public function key_column_sort($columns) {
+		$columns['key'] = 'key';
+		return $columns;
 	}
 
-	/**
-	 * Add some information to the "Right Now" section of the WP Admin Dashboard.  This will make it easier to
-	 * get into the Snippets edit screen.
-	 */
-	function rightnow_end() {
-		if (!defined('CF_ADMIN_VER')) {
-			$cf_snippet = new CF_Snippet_Manager();
-			$count = count($cf_snippet->get_keys());
-			$link = admin_url('options-general.php?page=cf-snippets');
-			include(CFSP_DIR . 'views/admin-rightnow.php');
+	public function key_column_orderby( $query ) {
+		if( ! is_admin() ) {
+			return;
 		}
-	}
-
-	function rightnow_cfadmin_end() {
-		$cf_snippet = new CF_Snippet_Manager();
-		$count = count($cf_snippet->get_keys());
-		$link = admin_url('options-general.php?page=cf-snippets');
-		include(CFSP_DIR . 'views/admin-rightnow.php');
+		$orderby = $query->get('orderby');
+		if( 'key' == $orderby ) {
+			$query->set('orderby','name');
+		}
 	}
 
 	/**
@@ -153,17 +90,4 @@ class CF_Snippet_Admin extends CF_Snippet_Base {
 		include(CFSP_DIR . 'views/post-edit.php');
 	}
 
-	function post_admin_head() {
-		// Get the post types so we can add snippets to all needed
-		$post_types = get_post_types();
-		$post_type_excludes = apply_filters('cfsp_post_type_excludes', array('revision', 'attachment', 'safecss', 'nav_menu_item', '_cf_snippet'));
-
-		if (is_array($post_types) && !empty($post_types)) {
-			foreach ($post_types as $type) {
-				if (!in_array($type, $post_type_excludes)) {
-					add_meta_box('cfsp', __('CF Snippets', 'cfsp'), array($this, 'post_edit_callback'), $type, 'advanced', 'high');
-				}
-			}
-		}
-	}
 }
