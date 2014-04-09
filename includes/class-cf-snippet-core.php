@@ -55,19 +55,19 @@ class CF_Snippet_Core extends CF_Snippet_Base {
 	public function register_post_types() {
 
 		$labels = array(
-			'name' => _x( 'Snippets', 'post type general name', 'cf-cnippets' ),
-			'singular_name' => _x( 'Snippet', 'post type singular name', 'cf-cnippets' ),
-			'menu_name' => _x( 'Snippets', 'admin menu', 'cf-cnippets' ),
-			'name_admin_bar' => _x( 'Snippet', 'add new on admin bar', 'cf-cnippets' ),
-			'add_new' => _x( 'Add New', 'Snippet', 'cf-cnippets' ),
-			'add_new_item' => __( 'Add New Snippet', 'cf-cnippets' ),
-			'new_item' => __( 'New Snippet', 'cf-cnippets' ),
-			'edit_item' => __( 'Edit Snippet', 'cf-cnippets' ),
-			'view_item' => __( 'View Snippet', 'cf-cnippets' ),
-			'all_items' => __( 'All Snippets', 'cf-cnippets' ),
-			'search_items' => __( 'Search Snippets', 'cf-cnippets' ),
-			'not_found' => __( 'No snippets found.', 'cf-cnippets' ),
-			'not_found_in_trash' => __( 'No snippets found in Trash.', 'cf-cnippets' ),
+			'name' => _x( 'Snippets', 'post type general name', 'cf-snippets' ),
+			'singular_name' => _x( 'Snippet', 'post type singular name', 'cf-snippets' ),
+			'menu_name' => _x( 'Snippets', 'admin menu', 'cf-snippets' ),
+			'name_admin_bar' => _x( 'Snippet', 'add new on admin bar', 'cf-snippets' ),
+			'add_new' => _x( 'Add New', 'Snippet', 'cf-snippets' ),
+			'add_new_item' => __( 'Add New Snippet', 'cf-snippets' ),
+			'new_item' => __( 'New Snippet', 'cf-snippets' ),
+			'edit_item' => __( 'Edit Snippet', 'cf-snippets' ),
+			'view_item' => __( 'View Snippet', 'cf-snippets' ),
+			'all_items' => __( 'All Snippets', 'cf-snippets' ),
+			'search_items' => __( 'Search Snippets', 'cf-snippets' ),
+			'not_found' => __( 'No snippets found.', 'cf-snippets' ),
+			'not_found_in_trash' => __( 'No snippets found in Trash.', 'cf-snippets' ),
 		);		
 	
 		$args = array(
