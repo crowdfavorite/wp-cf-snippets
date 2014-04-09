@@ -83,7 +83,7 @@
 			};
 		})($extension));
 		
-		$extension.on("keyup ready", (function($this) {
+		$extension.on("keyup focus ready", (function($this) {
 			return function() {
 				var searchString = $extension.text();
 				$extension.val(null);
@@ -142,6 +142,12 @@
 				}
 				return $editBox;
 			};
+			
+		function updateButtons() {
+			if (typeAhead.val()) {
+				
+			}
+		}
 
 		typeAhead.on("change", function(e) {
 			if (typeAhead.val()) {
@@ -149,7 +155,7 @@
 			}
 			else {
 				$("#cfsp-add-snippet, #cfsp-edit-snippet").prop("disabled", "disabled").hide();
-			}	
+			}
 			$editBox.hide();
 		});
 		
@@ -162,7 +168,7 @@
 			e.stopPropagation();
 			$(this).parent().trigger("click"); // Allow it to bubble without that initial action
 			cfsp_add_to_content(typeAhead.val());
-		});
+		}).prop("disabled", "disabled").hide();
 
 		$("#cfsp-new-snippet").click(function(e) {
 			e.preventDefault();
@@ -194,7 +200,7 @@
 					}
 				}
 			);
-		});
+		}).prop("disabled", "disabled").hide();
 
 		$("#cfsp-save-snippet").click(function(e) {
 			// TODO Create AJAX call to save snippet. Should return updated list content for select box and updated post information on success.
