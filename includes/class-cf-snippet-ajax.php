@@ -25,6 +25,7 @@ class CF_Snippet_Ajax extends CF_Snippet_Base {
 		add_action('wp_ajax_cfsp_get_snippet', array($this, 'ajax_get_snippet'));
 		add_action('wp_ajax_cfsp_save_snippet', array($this, 'ajax_save_snippet'));
 		add_action('wp_ajax_cfsp_post_items_paged', array($this, 'ajax_post_items_paged'));
+		add_action('wp_ajax_cfsp_typeahead_key', array($this, 'ajax_typeahead_key'));
 
 
 		add_action('wp_ajax_cfsp_save', array($this, 'ajax_save'));
@@ -85,7 +86,7 @@ class CF_Snippet_Ajax extends CF_Snippet_Base {
 		check_ajax_referer('cf-snippets-key', 'security');
 
 		if ($this->user_can_admin_snippets() == false) {
-			header('HTTP/1.0 401 Forbidden');
+			header('HTTP/1.0 403 Forbidden');
 			echo json_encode(array('result' => 'error', 'data' => '[CFSP=002] Unauthorized access'));
 			exit();
 		}
@@ -321,5 +322,37 @@ class CF_Snippet_Ajax extends CF_Snippet_Base {
 		}
 
 		$cf_snippet->save_snippet_post($post_arr);
+	}
+	
+	function ajax_typeahead_key() {global $cf_snippet;
+		check_ajax_referer('cf-snippets-key', 'security');
+
+		$key = isset($_GET['snippet_key']) ? stripslashes($_GET['snippet_key']) : '';
+		$return = array(
+			'result' => 'success',
+			'data' => array(),
+		);
+		if (strlen($key) == 0) {
+			header('HTTP/1.0 400 Bad Request');
+			$return['result'] = 'error';
+			$return['data'] = 'Missing search string';
+		}
+		else {
+			// We're manually building this query to only return back the fields we require.
+			global $wpdb;
+			$key .= '%';
+			$query = 
+				$wpdb->prepare(
+					"SELECT post_name as `value`, post_name as `text` FROM {$wpdb->posts} WHERE post_type = '_cf_snippet' AND post_status = 'publish' AND post_name LIKE %s ORDER BY LENGTH(post_name) ASC, post_name ASC LIMIT 5",
+					$key
+				);
+			$results = $wpdb->get_results(
+				$query,
+				ARRAY_A
+			);
+			$return['data'] = $results;
+		}
+		echo json_encode($return);
+		exit();
 	}
 }

@@ -5,16 +5,7 @@
 </div>
 <?php if (is_array($keys) && !empty($keys)) { ?>
 <div id="cfsp-select-snippet">
-<select id="sel-cfsp-select-snippet" name="sel_snippet">
-<?php
-foreach ($keys as $key) {
-	if (!$cf_snippet->exists($key)) { continue; }
-?>
-	<option value="<?php echo esc_attr($key); ?>"><?php echo esc_html($key); ?></option>
-<?php
-}
-?>
-</select>
+<input type="text" id="inp-cfsp-typeahead-key" />
 <span class="cfsp-add-snippet"><button id="cfsp-add-snippet" class="button cfsp-add-snippet"><?php _e('Add to Content', 'cfsp'); ?></button>
 <span class="cfsp-edit-snippet"><button id="cfsp-edit-snippet" class="button cfsp-edit-snippet"><?php _e('Edit Snippet', 'cfsp'); ?></button>
 <span class="cfsp-new-snippet"><button id="cfsp-new-snippet" class="button cfsp-new-snippet"><?php _e('Add New Snippet', 'cfsp'); ?></button>
