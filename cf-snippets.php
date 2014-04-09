@@ -39,7 +39,7 @@ function cfsp_autoload($class) {
 		return;
 	}
 
-	$file = 'includes/class-' . str_replace('_', '-', strtolower($class)) . '.php';
+	$file = CFSP_DIR . 'includes/class-' . str_replace('_', '-', strtolower($class)) . '.php';
 	include $file;
 }
 
@@ -47,25 +47,24 @@ if (function_exists('spl_autoload_register')) {
 	spl_autoload_register('cfsp_autoload');
 }
 else {
-	include 'includes/class-cf-snippet-base.php';
-	include 'includes/class-cf-snippet-core.php';
-	include 'includes/class-cf-snippet-manager.php';
+	CFSP_DIR . include 'includes/class-cf-snippet-base.php';
+	CFSP_DIR . include 'includes/class-cf-snippet-core.php';
+	CFSP_DIR . include 'includes/class-cf-snippet-manager.php';
 	if (is_admin()) {
-		include 'includes/class-cf-snippet-upgrader.php';
+		CFSP_DIR . include 'includes/class-cf-snippet-upgrader.php';
 	}
 }
 
 // Load the scaffolding up here
 $cf_snippet_core = new CF_Snippet_Core();
 $cf_snippet = new CF_Snippet_Manager();
-
 $cf_snippet_ajax = new CF_Snippet_Ajax();
 
 // Load the currently non-class support code and template API
-include 'includes/template.php';
-include 'includes/shortcode.php';
-include 'includes/widget.php';
-include 'includes/tinymce.php';
+include CFSP_DIR . 'includes/template.php';
+include CFSP_DIR . 'includes/shortcode.php';
+include CFSP_DIR . 'includes/widget.php';
+include CFSP_DIR . 'includes/tinymce.php';
 
 
 ## Post Functionality
