@@ -71,13 +71,16 @@ class CF_Snippet_Core extends CF_Snippet_Base {
 		);		
 	
 		$args = array(
-			'public' => true,
 			'labels' => $labels,
 			'capability_type' => 'post',
+			'public' => false,
+			'show_ui' => true,
+			'show_in_menu' => true,
 			'hierarchical' => false,
+			'has_archive' => false,
 			'rewrite' => false,
 			'query_var' => false,
-			'can_export' => false,
+			'can_export' => true,
 			'menu_icon' => 'dashicons-editor-insertmore',
 		  );
 
