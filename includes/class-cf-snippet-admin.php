@@ -78,6 +78,10 @@ class CF_Snippet_Admin extends CF_Snippet_Base {
 			wp_localize_script('cfsp-post-js', 'snippetKey', wp_create_nonce('cf-snippets-key'));
 			wp_enqueue_style('cfsp-post-css', CFSP_DIR_URL . 'css/post.css', array(), CFSP_VERSION, 'screen');
 			break;
+		case 'edit.php':
+			// Add custom script to remove Quick Edit links
+			wp_enqueue_script('cfsp-remove-quickedit', CFSP_DIR_URL . 'js/remove-quickedit.js', array('jquery'), CFSP_VERSION);
+			break;
 		case 'settings_page_cf-snippets':
 			// Add the proper CSS/JS to the Settings screen
 			// if (defined('SCRIPT_DEBUG') && SCRIPT_DEBUG) {
@@ -119,12 +123,16 @@ class CF_Snippet_Admin extends CF_Snippet_Base {
 		$keys = $cf_snippet->get_keys();
 		include(CFSP_DIR . 'views/post-edit.php');
 	}
+	
+	function metabox_key_callback() {
+		include(CFSP_DIR . 'views/metabox-key-edit.php');
+	}
 
 	function post_admin_head() {
 		// Get the post types so we can add snippets to all needed
 		$post_types = get_post_types();
 		$post_type_excludes = apply_filters('cfsp_post_type_excludes', array('revision', 'attachment', 'safecss', 'nav_menu_item', '_cf_snippet'));
-
+		
 		if (is_array($post_types) && !empty($post_types)) {
 			foreach ($post_types as $type) {
 				if (!in_array($type, $post_type_excludes)) {
@@ -132,5 +140,10 @@ class CF_Snippet_Admin extends CF_Snippet_Base {
 				}
 			}
 		}
+		
+		// Set up the custom divs and meta information used for cfsnippets
+		// We want to use a special meta box instead of the default slug box to handle the post name field.
+		remove_meta_box('slugdiv', '_cf_snippet', 'normal');
+		add_meta_box('cfspkey', __('Key', 'cfsp'), array($this, 'metabox_key_callback'), '_cf_snippet', 'normal', 'high');
 	}
 }

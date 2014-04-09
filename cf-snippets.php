@@ -70,7 +70,17 @@ include 'includes/tinymce.php';
 
 ## Post Functionality
 
-function cfsp_save_post($post_id, $post) {
+function cfsp_save_post($post_id, $post) {	
+	
+	if ($post->post_type == '_cf_snippet' && isset($_POST['cf_snippet_post_name']) && $_POST['cf_snippet_post_name'] != $post->post_name) {
+		remove_action('save_post', 'cfsp_save_post', 10, 2);
+		wp_update_post(array(
+			'ID' => $post_id,
+			'post_name' => $_REQUEST['cf_snippet_post_name'],
+		));
+		add_action('save_post', 'cfsp_save_post', 10, 2);
+	}
+	
 	if ($post->post_status == 'inherit' || in_array($post->post_type, apply_filters('cfsp_post_type_excludes', array('revision', 'attachment', 'safecss', 'nav_menu_item', '_cf_snippet')))) { return; }
 	if (!empty($_POST) && is_array($_POST) && !empty($_POST['cfsp']) && is_array($_POST['cfsp'])) {
 		unset($_POST['cfsp']['###SECTION###']);
@@ -124,14 +134,4 @@ add_action('save_post', 'cfsp_save_post', 10, 2);
 ## JS/CSS Addition
 
 ## Auxillary Functionality
-
-## Integration with the CF Links Plugin
-
-function cfsp_cflk_integration() {
-	if (function_exists('cflk_register_link')) {
-		include('classes/cflk.snippets.class.php');
-		cflk_register_link('cfsp_link');
-	}
-}
-add_action('plugins_loaded', 'cfsp_cflk_integration', 99999);
 
