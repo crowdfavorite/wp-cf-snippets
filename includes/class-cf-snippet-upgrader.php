@@ -145,16 +145,19 @@ class CF_Snippet_Upgrader {
 		$snippets = $cf_snippet->get_all();
 		foreach ($snippets as $snippet_info) {
 			$snippet_content = get_post_meta($snippet_info['id'], '_cfsp_content', true);
-			$post_update = array(
-				'ID' => $snippet_info['id'],
-				'post_content' => $snippet_content,
-			);
-			$result = wp_update_post($post_update);
-			if (!is_wp_error($result)) {
-				delete_post_meta($snippet_info['id'], '_cfsp_content');
-			}
-			else {
-				$complete = false;
+			$post = get_post($snippet_info['id']);
+			if (!empty($snippet_content) && !empty($post->post_content)) {
+				$post_update = array(
+					'ID' => $snippet_info['id'],
+					'post_content' => $snippet_content,
+				);
+				$result = wp_update_post($post_update);
+				if (!is_wp_error($result)) {
+					delete_post_meta($snippet_info['id'], '_cfsp_content');
+				}
+				else {
+					$complete = false;
+				}
 			}
 		}
 		if ($complete) {
