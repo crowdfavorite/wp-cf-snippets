@@ -10,6 +10,8 @@
 			edInsertContent(edCanvas, shortcode);
 		}
 	};
+	
+	window.snippetKey = window.snippetKey || false; // Just used to prevent an error. If this happens, AJAX requests won't validate anyway.
 
 	$(function() {
 		var $editBox = $("#cfsp-meta-edit-window"),
@@ -60,7 +62,7 @@
 			}
 			ajaxRequest = $.get(
 				ajaxurl, // Defined by WordPress
-				{"action": "cfsp_get_snippet", "key": $selectBox.val() },
+				{"action": "cfsp_get_snippet", "key": $selectBox.val(), "security": snippetKey },
 				function (data) {
 					var decoded = $.parseJSON(data);
 					if (decoded.result == "success") {
@@ -72,7 +74,7 @@
 
 		$("#cfsp-save-snippet").click(function(e) {
 			// TODO Create AJAX call to save snippet. Should return updated list content for select box and updated post information on success.
-			var params = {"action": "cfsp_save_snippet"};
+			var params = {"action": "cfsp_save_snippet", "security": snippetKey};
 			e.preventDefault();
 			e.stopPropagation();
 			$editBox.find('input, textarea').each(function() {
