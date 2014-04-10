@@ -181,23 +181,29 @@ class CF_Snippet_Ajax extends CF_Snippet_Base {
 		global $cf_snippet;
 		check_ajax_referer('cf-snippets-key', 'security');
 
-		if ($this->user_can_admin_snippets() == false) {
-			return;
-		}
-
-		$key = isset($_POST['key']) ? stripslashes($_POST['key']) : '';
+		$key = isset($_REQUEST['key']) ? stripslashes($_REQUEST['key']) : '';
 
 		if (class_exists('CF_Snippet_Manager') && !($cf_snippet instanceof CF_Snippet_Manager)) {
 			$cf_snippet = new CF_Snippet_Manager();
 		}
+		
+		$response = array(
+			'result' => 'error',
+			'data' => 'Snippet not found'
+		);
 
 		if (!empty($key) && $cf_snippet->exists($key)) {
-			include(CFSP_DIR . 'views/ajax-preview-exists.php');
+			global $post;
+			$post = $cf_snippet->get_snippet_post_by_key($key);
+			setup_postdata($post);
+			$response['result'] = 'success';
+			$response['data'] = get_the_content();
 		}
 		else {
-			include(CFSP_DIR . 'views/ajax-preview-error.php');
+			header('HTTP/1.0 400 Bad Request');
 		}
-		die();
+		echo json_encode($response);
+		exit();
 	}
 
 	function ajax_delete() {

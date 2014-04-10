@@ -59,7 +59,7 @@
 				});
 				if (resultsArray && resultsArray.length > 0) {
 					for (var result in resultsArray) {
-						this._typeaheadResults.append("<div></div>").data("value", resultsArray[result].value).html(resultsArray[result].text);
+						this._typeaheadResults.append($("<div></div>").data("value", resultsArray[result].value).html(resultsArray[result].text));
 					}
 				}
 				else {
@@ -71,10 +71,12 @@
 		
 		$extension._typeaheadResults.on("click", (function($this) {
 			return function(e) {
-				var $target = $(e.target);
-				if ($target.data("value")) {
-					$this.val($target.data("value"));
-					$this.text($target.html())
+				var $target = $(e.target),
+					value = $target.data("value"),
+					text = $target.html();
+				if (value) {
+					$this.val(value);
+					$this.text(text);
 				}
 				else {
 					$this.val(null);
@@ -118,13 +120,15 @@
 			};
 		})($extension));
 		
-		return $extension;
+		return $extension.prop("autocomplete", "off");
 	};
 	
 	window.snippetKey = window.snippetKey || false; // Just used to prevent an error. If this happens, AJAX requests won't validate anyway.
 
 	$(function() {
 		var $editBox = $("#cfsp-meta-edit-window"),
+			$previewBox = $("#cfsp-meta-preview-window"),
+			$previewArea = $previewBox.find("#cfsp-preview-area"),
 			typeAhead = new TypeAhead("#inp-cfsp-typeahead-key"),
 			ajaxRequest = null,
 			setupEditBox = function(data) {
@@ -141,22 +145,23 @@
 					$editBox.find('[name="snippet_post_name"]').removeAttr('disabled');
 				}
 				return $editBox;
+			},
+			setupPreviewBox = function(markup) {
+				$previewArea.html(markup);
+				$previewBox.show();
+				return $previewBox;
 			};
-			
-		function updateButtons() {
-			if (typeAhead.val()) {
-				
-			}
-		}
 
 		typeAhead.on("change", function(e) {
 			if (typeAhead.val()) {
-				$("#cfsp-add-snippet, #cfsp-edit-snippet").prop("disabled", "").show();
+				$("#cfsp-add-snippet, #cfsp-edit-snippet, #cfsp-preview-snippet").prop("disabled", "").show();
+				$("#cfsp-preview-snippet").click();
 			}
 			else {
-				$("#cfsp-add-snippet, #cfsp-edit-snippet").prop("disabled", "disabled").hide();
+				$("#cfsp-add-snippet, #cfsp-edit-snippet, #cfsp-preview-snippet").prop("disabled", "disabled").hide();
 			}
 			$editBox.hide();
+			$previewBox.hide();
 		});
 		
 		$("body").on("click", function() {
@@ -176,6 +181,30 @@
 			$(this).parent().trigger("click"); // Allow it to bubble without that initial action
 			setupEditBox({"ID": "", "post_name": typeAhead.text(), "post_title": "", "post_content": ""}).show();
 		});
+		
+		$("#cfsp-preview-snippet").click(function(e) {
+			e.preventDefault();
+			e.stopPropagation();
+			$(this).parent().trigger("click"); // Allow event to bubble without that initial action.
+			if (!typeAhead.val()) {
+				return;
+			}
+			if (typeof ajaxRequest != "undefined" && ajaxRequest !== null) {
+				ajaxRequest.abort();
+				ajaxRequest = null;
+			}
+			ajaxRequest = $.get(
+				ajaxurl,
+				{"action": "cfsp_preview", "key": typeAhead.val(), "security": snippetKey },
+				function(data) {
+					var decoded = $.parseJSON(data);
+					if (decoded && decoded.result && decoded.result == "success") {
+						setupPreviewBox(decoded.data);
+					}
+					$editBox.hide();
+				}
+			);
+		}).prop("disabled", "disabled").hide();
 
 		$("#cfsp-edit-snippet").click(function(e) {
 			// TODO Create AJAX call to get snippet post and populate
@@ -198,6 +227,7 @@
 					if (decoded.result == "success") {
 						setupEditBox(decoded.data).show();
 					}
+					$previewBox.hide();
 				}
 			);
 		}).prop("disabled", "disabled").hide();
@@ -245,7 +275,14 @@
 			$(this).parent().trigger("click"); // Allow it to bubble without that initial action
 			$editBox.hide();
 		});
+		
+		$("#cfsp-close-preview-window").click(function(e) {
+			e.preventDefault();
+			e.stopPropagation();
+			$previewBox.hide();
+		});
 
 		$editBox.hide();
+		$previewBox.hide();
 	});
 })(jQuery);
