@@ -21,10 +21,15 @@ class CF_Snippet_Upgrader {
 
 		// No option stored and no snippets, then it's a new install with nothing to update.
  		if (!$ver_option && !get_option('cfsnip_snippets')) {
-			// Set to lastest verison.
-			error_log('Fresh install detected. Setting CF Snippet version to ' . CFSP_VERSION);
-			$this->set_version(CFSP_VERSION);
-			return false;
+			// Check to see if posts exist. It's possible these will need migration.
+			global $wpdb;
+			$has_posts = (bool) ($wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_type = '_cf_snippet'")) > 0;
+			if (!$has_posts) {
+				// Set to latest verison.
+				error_log('Fresh install detected. Setting CF Snippet version to ' . CFSP_VERSION);
+				$this->set_version(CFSP_VERSION);
+				return false;
+			}
 		}
 
 		// Changing from db option to post type
@@ -139,14 +144,14 @@ class CF_Snippet_Upgrader {
 	}
 
 	protected function upgrade_to_32() {
+		global $cf_snippet;
 		$complete = true;
 		// Convert all snippets to use post_content instead of meta value.
-		$cf_snippet = new CF_Snippet();
 		$snippets = $cf_snippet->get_all();
 		foreach ($snippets as $snippet_info) {
 			$snippet_content = get_post_meta($snippet_info['id'], '_cfsp_content', true);
 			$post = get_post($snippet_info['id']);
-			if (!empty($snippet_content) && !empty($post->post_content)) {
+			if (!empty($snippet_content) && empty($post->post_content)) {
 				$post_update = array(
 					'ID' => $snippet_info['id'],
 					'post_content' => $snippet_content,
