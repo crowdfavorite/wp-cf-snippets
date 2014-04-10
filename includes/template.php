@@ -20,7 +20,7 @@ function cfsp_get_content($key, $default = false, $create = true, $args = array(
 	if (empty($key)) { return ''; }
 	global $cf_snippet;
 	if (class_exists('CF_Snippet') && !($cf_snippet instanceof CF_Snippet)) {
-		$cf_snippet = new CF_Snippet();
+		$cf_snippet = new CF_Snippet_Manager();
 	}
 	return $cf_snippet->get($key, $default, $create, $args);
 }

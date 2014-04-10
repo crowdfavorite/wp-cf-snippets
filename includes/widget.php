@@ -12,7 +12,7 @@ class cfsnip_Widget extends WP_Widget {
 		extract($args, EXTR_SKIP);
 		global $cf_snippet;
 		if (class_exists('CF_Snippet') && !($cf_snippet instanceof CF_Snippet)) {
-			$cf_snippet = new CF_Snippet();
+			$cf_snippet = new CF_Snippet_Manager();
 		}
 		// Get the snippet content
 		$content = $cf_snippet->get($instance['list_key']);
@@ -41,7 +41,7 @@ class cfsnip_Widget extends WP_Widget {
 		$title = esc_attr($instance['title']);
 		global $cf_snippet;
 		if (class_exists('CF_Snippet') && !($cf_snippet instanceof CF_Snippet)) {
-			$cf_snippet = new CF_Snippet();
+			$cf_snippet = new CF_Snippet_Manager();
 		}
 		$select = $cf_snippet->select_display($instance['list_key']);
 

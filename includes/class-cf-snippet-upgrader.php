@@ -120,7 +120,7 @@ class CF_Snippet_Upgrader {
 		$old_snippets = get_option('cfsnip_snippets');
 		if (is_array($old_snippets) && !empty($old_snippets)) {
 			foreach ($old_snippets as $key => $data) {
-				$cf_snippet = new CF_Snippet();
+				$cf_snippet = new CF_Snippet_Manager();
 				// Make sure the key is a valid key
 				$key = sanitize_title($key);
 				$args = array();

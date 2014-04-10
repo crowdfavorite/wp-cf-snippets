@@ -64,7 +64,6 @@ $cf_snippet_ajax = new CF_Snippet_Ajax();
 include CFSP_DIR . 'includes/template.php';
 include CFSP_DIR . 'includes/shortcode.php';
 include CFSP_DIR . 'includes/widget.php';
-include CFSP_DIR . 'includes/tinymce.php';
 
 
 ## Post Functionality

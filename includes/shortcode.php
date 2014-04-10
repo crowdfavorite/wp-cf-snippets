@@ -14,7 +14,7 @@ function cfsp_shortcode($attrs, $content=null) {
 		if (empty($key)) { return ''; }
 		global $cf_snippet;
 		if (class_exists('CF_Snippet') && !($cf_snippet instanceof CF_Snippet)) {
-			$cf_snippet = new CF_Snippet();
+			$cf_snippet = new CF_Snippet_Manager();
 		}
 		return $cf_snippet->get($key, false, false);
 	}

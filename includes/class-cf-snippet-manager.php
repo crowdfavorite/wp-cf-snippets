@@ -398,66 +398,6 @@ class CF_Snippet_Manager extends CF_Snippet_Base {
 	## Admin Display Functions
 	
 	/**
-	 * This function builds a display to edit the content with the specified key
-	 *
-	 * @param string $key - Key to edit
-	 * @return void
-	 */
-	public function edit($key) {
-		$snippet = $this->get_snippet_post_by_key($key);
-		
-		// If we didn't get a snippet to display, don't proceed
-		if (!$snippet || is_wp_error($snippet)) { return ''; }
-		
-		$description = $snippet->post_title;
-		$content = $snippet->post_content;
-		$id = $snippet->ID;
-		
-		ob_start();
-		include(CFSP_DIR . 'views/edit.php');
-		$html = ob_get_clean();
-		return $html;
-	}
-	
-	/**
-	 * This function builds a display to add a new item
-	 *
-	 * @return void
-	 */
-	public function add_display() {
-		ob_start();
-		include(CFSP_DIR . 'views/add_display.php');
-		$html = ob_get_clean();
-		return $html;
-	}
-	
-	/**
-	 * This function display basic information about the key passed in.  Including the Key and description, along with edit, preview and delete buttons
-	 *
-	 * @param string $key - Key to display
-	 * @return void
-	 */
-	public function admin_display($key) {
-		// Get the snippet
-		$snippet = $this->get_snippet($key);
-		// If nothing is returned, we can't proceed
-		if (!$snippet) { return ''; }
-		
-		$html = '';
-		$description = $snippet['title'];
-
-		// Escape the key once instead of multiple times
-		$key = esc_attr($key);
-		
-		// Get the Display from the view
-		ob_start();
-		include(CFSP_DIR . 'views/admin_display.php');
-		$html = ob_get_clean();
-
-		return $html;
-	}
-	
-	/**
 	 * This function will return a list of select options with each of the items keys as the option and description as the display.  A 
 	 * selected key can be passed in to select the proper key.
 	 *
