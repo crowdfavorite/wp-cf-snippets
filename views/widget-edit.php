@@ -9,6 +9,3 @@
 		<?php echo $select; ?>
 	</select>
 </p>
-<p>
-	<a href="<?php echo admin_url('options-general.php?page=cf-snippets'); ?>"><?php _e('Edit Snippets','cfsp') ?></a>
-</p>
