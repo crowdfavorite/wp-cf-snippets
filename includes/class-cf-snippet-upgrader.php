@@ -113,8 +113,9 @@ class CF_Snippet_Upgrader {
 	 * Converts storage from option to post type
 	 */
 	protected function upgrade_to_30() {
-		if (!class_exists('CF_Snippet')) {
-			require_once 'snippets.class.php';
+		global $cf_snippet;
+		if (empty($cf_snippet)) {
+			$cf_snippet = new CF_Snippet_Manager();
 		}
 
 		$old_snippets = get_option('cfsnip_snippets');
