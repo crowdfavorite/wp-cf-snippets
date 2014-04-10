@@ -6,9 +6,19 @@ The CF Snippets plugin gives Admin users the ability to create chunks of content
 
 ### Usage
 
-The Snippets admin page allows for the creation of multiple snippets. From the plugin page:
+Edit a post you'd like to use a snippet in.
+If you know a snippet you're looking for, begin typing its key in the text box, then select the one you want from the suggestions.
+If the snippet doesn't yet exist, click "Add New Snippet" and fill in the fields there, then Save.
+Once that is done, in the post content area, put your cursor where you'd like the snippet added.
+Click the "Add to Content" button and a shortcode will be added in the location of the cursor.
 
-	Paste in HTML content for a snippet and give it a name. The name will be automatically "sanitized:" lowercased and all spaces converted to dashes.
+#### Alternate management
+
+Go to the "Snippets" post type in admin.
+From here, you can edit, create, and delete snippets through the normal post admin interfaces.
+
+
+## Programmatic use and shortcodes
 
 	To insert a snippet in your template, type <?php cfsp_content('my-snippet-name'); ?>
 	Use the shortcode syntax: [cfsp name="my-snippet-name"] in post or page content to insert your snippet there.
@@ -60,10 +70,6 @@ To add the snippet shortcode:
 - Place the cursor in the WYSIWYG where the snippet should be displayed
 - Click the "cog" icon
 - Click on the Snippet Description that is desired to be displayed
-
-### Post Created Snippets
-
-The Snippets plugin provides the ability to create snippets on the Post/Page edit screens.  Snippets created on the post edit screen have a button for easily adding the snippet content to the content of the post via Shortcode.  Snippets created on a post or page edit screen will always be displayed there until the snippet is removed using the "Remove Snippet from this Post" button.  Snippets created in posts are also displayed on the Snippets settings screen, and can be added to any post/page desired using the Snippets shortcode.  These snippets can also be used with the Snippets template tag wherever desired.  To add a Post/Page created snippet to the content of a post, simply place the cursor in the position to insert the shortcode and click the "Add to Content" button for the Snippet desired.
 
 ### Widgets
 

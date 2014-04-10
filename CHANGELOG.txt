@@ -7,9 +7,10 @@
 - Add logic to detect a fresh plugin install (no version set in options, no snippets set in options). Set version number to current CFSP_VERSION and bypasses any upgrade actions.
 - Add permissions detection to Ajax calls and in other places.
 - Add error message is snippet not removed via ajax.
-- Make post type public to allow native WordPress handling. Add appropraite post type labels.
 - Move contextual help to post type pages.
 - Add sortable "key" column to post admin pages. Change "title" to "description".
+- Added ability to edit/create/preview snippets on post pages with appropriate permissions for security.
+- Cleaned up code base.
 
 ## 3.2.3
 - Updated the upgrade routine to be more robust.
