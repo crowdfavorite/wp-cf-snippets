@@ -53,6 +53,8 @@ class cfsnip_Widget extends WP_Widget {
 		}
 	}
 }
-add_action('widgets_init', create_function('', "register_widget('cfsnip_Widget');"));
+add_action('widgets_init', 'cfsnip_register_widget');
 
-
+function cfsnip_register_widget() {
+	register_widget('cfsnip_Widget');
+}

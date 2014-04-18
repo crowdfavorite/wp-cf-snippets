@@ -11,6 +11,7 @@
 - Add sortable "key" column to post admin pages. Change "title" to "description".
 - Added ability to edit/create/preview snippets on post pages with appropriate permissions for security.
 - Cleaned up code base.
+- Replace create_function() call with standard function.
 
 ## 3.2.3
 - Updated the upgrade routine to be more robust.
