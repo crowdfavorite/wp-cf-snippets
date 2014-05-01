@@ -38,7 +38,7 @@ class cfsnip_Widget extends WP_Widget {
 	function form($instance) {
 		$instance = wp_parse_args((array) $instance, array('title' => '', 'list_key' => ''));
 
-		$title = esc_attr($instance['title']);
+		$title = $instance['title'];
 		global $cf_snippet;
 		if (class_exists('CF_Snippet') && !($cf_snippet instanceof CF_Snippet)) {
 			$cf_snippet = new CF_Snippet_Manager();
