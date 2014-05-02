@@ -21,7 +21,7 @@
 		
 		$.extend($extension, $input, {
 			"_typeaheadResults":
-				$("<div></div>")
+				$("<div style='z-index: 2;'></div>")
 				.hide()
 				.insertAfter($input),
 			"typeaheadHasChanged": false,
