@@ -74,7 +74,7 @@ function cfsp_save_post($post_id, $post) {
 		remove_action('save_post', 'cfsp_save_post', 10, 2);
 		wp_update_post(array(
 			'ID' => $post_id,
-			'post_name' => $_REQUEST['cf_snippet_post_name'],
+			'post_name' => sanitize_title($_POST['cf_snippet_post_name']),
 		));
 		add_action('save_post', 'cfsp_save_post', 10, 2);
 	}
