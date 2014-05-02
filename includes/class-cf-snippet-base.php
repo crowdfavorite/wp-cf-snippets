@@ -16,7 +16,7 @@ abstract class CF_Snippet_Base {
 	/**
 	 * Central function to control the mangement of snippets
 	 */
-	protected function user_can_admin_snippets() {
+	public function user_can_admin_snippets() {
 		if (!$this->required_permission) {
 			$this->required_permission = apply_filters('cfsp_admin_permission', 'manage_options');
 		}

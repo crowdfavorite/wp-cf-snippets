@@ -151,7 +151,7 @@ class CF_Snippet_Manager extends CF_Snippet_Base {
 		$snippets = new WP_Query(array(
 			'post_type' => $this->post_type,
 			'post_parent' => $post_id,
-			'posts_per_page' => -1
+			'posts_per_page' => 100,
 		));
 		
 		$data = array();
@@ -174,66 +174,66 @@ class CF_Snippet_Manager extends CF_Snippet_Base {
 		}
 		return $data;
 	}
-	
-	/**
-	 * This function returns a list of all of the keys for snippets that have a parent
-	 *
-	 * @param int $count Amount of keys to show (0 to show all)
-	 * @param int $offset Offset
-	 * @return array
-	 */
-	public function get_all_post_keys($count = 0, $offset = 0) {
-		$query = array(
-			'post_type' => $this->post_type,
-			'posts_per_page' => -1
-		);
-		if ($count && $offset) {
-			$query['offset'] = $offset;
-			$query['posts_per_page'] = $count;
-		}
-		else if ($count && !$offset) {
-			$query['posts_per_page'] = $count;
-		}
-		else if (!$count && $offset) {
-			$query['offset'] = $offset;
-			unset($query['posts_per_page']);
-		}
-		
-		add_filter('posts_where', array($this, 'get_all_post_keys_where'));
-		$snippets = new WP_Query($query);
-		remove_filter('posts_where', array($this, 'get_all_post_keys_where'));
-		
-		$data = array();
-		
-		if ($snippets->have_posts()) {
-			global $post;
-			$old_post = $post;
-			while ($snippets->have_posts()) {
-				$snippets->the_post();
-				global $post;
-				$data[] = $post->post_name;
-			}
-			setup_postdata($old_post);
-			// As of 3.4 setup_postdata does not set the global $post object.
-			$post = $old_post;
-		}
-		
-		if (!is_array($data) || empty($data)) {
-			return false;
-		}
-		return $data;
-	}
-	
+//	
+//	/**
+//	 * This function returns a list of all of the keys for snippets that have a parent
+//	 *
+//	 * @param int $count Amount of keys to show (0 to show all)
+//	 * @param int $offset Offset
+//	 * @return array
+//	 */
+//	public function get_all_post_keys($count = 0, $offset = 0) {
+//		$query = array(
+//			'post_type' => $this->post_type,
+//			'posts_per_page' => -1
+//		);
+//		if ($count && $offset) {
+//			$query['offset'] = $offset;
+//			$query['posts_per_page'] = $count;
+//		}
+//		else if ($count && !$offset) {
+//			$query['posts_per_page'] = $count;
+//		}
+//		else if (!$count && $offset) {
+//			$query['offset'] = $offset;
+//			unset($query['posts_per_page']);
+//		}
+//		
+//		add_filter('posts_where', array($this, 'get_all_post_keys_where'));
+//		$snippets = new WP_Query($query);
+//		remove_filter('posts_where', array($this, 'get_all_post_keys_where'));
+//		
+//		$data = array();
+//		
+//		if ($snippets->have_posts()) {
+//			global $post;
+//			$old_post = $post;
+//			while ($snippets->have_posts()) {
+//				$snippets->the_post();
+//				global $post;
+//				$data[] = $post->post_name;
+//			}
+//			setup_postdata($old_post);
+//			// As of 3.4 setup_postdata does not set the global $post object.
+//			$post = $old_post;
+//		}
+//		
+//		if (!is_array($data) || empty($data)) {
+//			return false;
+//		}
+//		return $data;
+//	}
+//	
 	public function get_key_count() {
 		add_filter('posts_fields', array($this, 'get_all_keys_fields'));
 		$snippets = new WP_Query(array(
 			'post_type' => $this->post_type,
-			'posts_per_page' => -1
+			'posts_per_page' => 1,
 		));
 		remove_filter('posts_fields', array($this, 'get_all_keys_fields'));
 		
 		if ($snippets->have_posts()) {
-			return $snippets->post_count;
+			return $snippets->found_rows;
 		}
 		return false;
 	}
@@ -248,13 +248,13 @@ class CF_Snippet_Manager extends CF_Snippet_Base {
 		add_filter('posts_fields', array($this, 'get_all_keys_fields'));
 		$snippets = new WP_Query(array(
 			'post_type' => $this->post_type,
-			'posts_per_page' => -1
+			'posts_per_page' => 1
 		));
 		remove_filter('posts_fields', array($this, 'get_all_keys_fields'));
 		remove_filter('posts_where', array($this, 'get_all_post_keys_where'));
 		
 		if ($snippets->have_posts()) {
-			return $snippets->post_count;
+			return $snippets->found_rows;
 		}
 		return false;
 	}
@@ -293,7 +293,7 @@ class CF_Snippet_Manager extends CF_Snippet_Base {
 			'post_type' => $this->post_type,
 			'orderby' => 'ID',
 			'order' => 'ASC',
-			'posts_per_page' => -1
+			'posts_per_page' => 500
 		));
 		
 		$data = array();
@@ -423,43 +423,43 @@ class CF_Snippet_Manager extends CF_Snippet_Base {
 	 * @param bool $links - Wether to make the list items links
 	 * @return string - Unordered list of links
 	 */
-	public function list_display($links = true) {
-		$snippets = $this->get_all();
-		$list = '';
-		if (is_array($snippets) && !empty($snippets)) {
-			foreach ($snippets as $snippet) {
-				$key = $snippet['key'];
-				$description = $snippet['title'];
-
-				if (!empty($description)) {
-					if ($links) {
-						$description = '<a href="#" class="cfsp-list-link" rel="'.esc_attr($key).'">'.esc_html($description).'</a>';
-					}
-					else {
-						$description = esc_html($description);
-					}
-				}
-				else if (!empty($key)) {
-					if ($links) {
-						$description = '<a href="#" class="cfsp-list-link" rel="'.esc_attr($key).'">'.esc_html($key).'</a>';
-					}
-					else {
-						$description = esc_html($key);
-					}
-				}
-				
-				if (!empty($description)) {
-					$list .= '<li>'.$description.'</li>';
-				}
-			}
-		}
-		
-		if (!empty($list)) {
-			$list = '<ul class="cfsp-list">'.$list.'</ul>';
-		}
-		
-		return $list;
-	}
+//	public function list_display($links = true) {
+//		$snippets = $this->get_all();
+//		$list = '';
+//		if (is_array($snippets) && !empty($snippets)) {
+//			foreach ($snippets as $snippet) {
+//				$key = $snippet['key'];
+//				$description = $snippet['title'];
+//
+//				if (!empty($description)) {
+//					if ($links) {
+//						$description = '<a href="#" class="cfsp-list-link" rel="'.esc_attr($key).'">'.esc_html($description).'</a>';
+//					}
+//					else {
+//						$description = esc_html($description);
+//					}
+//				}
+//				else if (!empty($key)) {
+//					if ($links) {
+//						$description = '<a href="#" class="cfsp-list-link" rel="'.esc_attr($key).'">'.esc_html($key).'</a>';
+//					}
+//					else {
+//						$description = esc_html($key);
+//					}
+//				}
+//				
+//				if (!empty($description)) {
+//					$list .= '<li>'.$description.'</li>';
+//				}
+//			}
+//		}
+//		
+//		if (!empty($list)) {
+//			$list = '<ul class="cfsp-list">'.$list.'</ul>';
+//		}
+//		
+//		return $list;
+//	}
 	
 	## Database Interaction Functions
 	

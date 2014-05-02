@@ -43,6 +43,8 @@ class cfsnip_Widget extends WP_Widget {
 		if (class_exists('CF_Snippet') && !($cf_snippet instanceof CF_Snippet)) {
 			$cf_snippet = new CF_Snippet_Manager();
 		}
+		$keys = $cf_snippet->get_key_count();
+		
 		$select = $cf_snippet->select_display($instance['list_key']);
 
 		if (!empty($select)) {

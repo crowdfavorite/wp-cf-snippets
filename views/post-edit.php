@@ -3,7 +3,7 @@
 		<?php _e('The CF Snippets plugin adds the ability to create new CF Snippets on the fly for each post. These CF Snippets can be reused anywhere on the site that the code is needed. Any changes to these snippets will be lost unless this post is saved. To delete a snippet completely, go to the CF Snippets settings screen and click the Delete button on the snippet to be removed.  Clicking the remove button on a snippet on this screen will only remove it from this post.', 'cfsp'); ?>
 	</p>
 </div>
-<?php if (is_array($keys) && !empty($keys)) : ?>
+<?php if ($keys !== false) : ?>
 <div>
 	<input type="text" id="inp-cfsp-typeahead-key" />
 	<span class="cfsp-add-snippet"><button id="cfsp-add-snippet" class="button cfsp-add-snippet"><?php _e('Add to Content', 'cfsp'); ?></button>
