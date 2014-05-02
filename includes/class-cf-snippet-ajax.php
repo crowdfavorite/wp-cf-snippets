@@ -109,7 +109,9 @@ class CF_Snippet_Ajax extends CF_Snippet_Base {
 		exit();
 	}
 	
-	function ajax_typeahead_key() {global $cf_snippet;
+	function ajax_typeahead_key() {
+
+		global $cf_snippet;
 		check_ajax_referer('cf-snippets-key', 'security');
 
 		$key = isset($_GET['snippet_key']) ? stripslashes($_GET['snippet_key']) : '';
@@ -123,21 +125,39 @@ class CF_Snippet_Ajax extends CF_Snippet_Base {
 			$return['data'] = 'Missing search string';
 		}
 		else {
-			// We're manually building this query to only return back the fields we require.
-			global $wpdb;
-			$key .= '%';
-			$query = 
-				$wpdb->prepare(
-					"SELECT post_name as `value`, post_name as `text` FROM {$wpdb->posts} WHERE post_type = '_cf_snippet' AND post_status = 'publish' AND post_name LIKE %s ORDER BY LENGTH(post_name) ASC, post_name ASC LIMIT 5",
-					$key
-				);
-			$results = $wpdb->get_results(
-				$query,
-				ARRAY_A
+			add_filter( 'posts_clauses', array($this, 'ajax_typeahed_query'), 0, 2 );
+			$args = array (
+				 'post_type' => '_cf_snippet',
+				 'post_status' => 'publish',
+				 'posts_per_page' => 5,
+				 'post_name' => $key . '%',
+				 'snippet_search' => $key . '%',
+				 'fields' => 'ids',
 			);
+			$query = new WP_Query($args);
+
+			$results = array();
+			foreach ($query->posts as $snippet) {
+				$results[] = array(
+					'value' => $snippet,
+					'text' => $snippet,
+				);
+			}
+			remove_filter('posts_clauses', array($this, 'ajax_typeahed_query'));
+
 			$return['data'] = $results;
+
+			echo json_encode($return);
+			exit();
 		}
-		echo json_encode($return);
-		exit();
+	}
+
+	function ajax_typeahed_query($pieces, $query) {
+		$pieces['fields'] = 'post_name';
+		$pieces['where'] = $pieces['where'] . " AND post_name LIKE '" . esc_sql( $query->get('snippet_search')) . "'";
+		$pieces['orderby'] = 'LENGTH(post_name) ASC, post_name ASC';
+
+		return $pieces;
 	}
 }
+
