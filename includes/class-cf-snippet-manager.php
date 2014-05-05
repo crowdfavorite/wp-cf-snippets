@@ -107,38 +107,38 @@ class CF_Snippet_Manager extends CF_Snippet_Base {
 		return $meta;
 	}
 	
-	/**
-	 * This function checks to see if the snippet is attached to a parent or not
-	 *
-	 * @param string $key Key to check
-	 * @return bool Result of the check
-	 */
-	public function has_parent($key) {
-		$key = sanitize_title($key);
-		$snippet = $this->get_snippet($key);
-		
-		if ($snippet && !empty($snippet['parent']) && $snippet['parent']) {
-			return true;
-		}
-		return false;
-	}
+//	/**
+//	 * This function checks to see if the snippet is attached to a parent or not
+//	 *
+//	 * @param string $key Key to check
+//	 * @return bool Result of the check
+//	 */
+//	public function has_parent($key) {
+//		$key = sanitize_title($key);
+//		$snippet = $this->get_snippet($key);
+//		
+//		if ($snippet && !empty($snippet['parent']) && $snippet['parent']) {
+//			return true;
+//		}
+//		return false;
+//	}
 	
-	/**
-	 * This function gets all of the keys available and passes them back as an array
-	 *
-	 * @return array - Array of keys
-	 */
-	public function get_keys() {
-		$snippets = $this->get_all();
-		if (is_array($snippets) && !empty($snippets)) {
-			$keys = array();
-			foreach ($snippets as $snippet) {
-				$keys[] = $snippet['key'];
-			}
-			return $keys;
-		}
-		return false;
-	}
+//	/**
+//	 * This function gets all of the keys available and passes them back as an array
+//	 *
+//	 * @return array - Array of keys
+//	 */
+//	public function get_keys() {
+//		$snippets = $this->get_all();
+//		if (is_array($snippets) && !empty($snippets)) {
+//			$keys = array();
+//			foreach ($snippets as $snippet) {
+//				$keys[] = $snippet['key'];
+//			}
+//			return $keys;
+//		}
+//		return false;
+//	}
 	
 	/**
 	 * This function gets all of the keys that have been created on a particular post
@@ -231,10 +231,6 @@ class CF_Snippet_Manager extends CF_Snippet_Base {
 			'posts_per_page' => 1,
 		));
 		remove_filter('posts_fields', array($this, 'get_all_keys_fields'));
-
-//echo "<pre>|";
-//var_dump($snippets);
-//echo "|</pre>";
 		
 		if ($snippets->have_posts()) {
 			return $snippets->found_posts;
@@ -287,37 +283,37 @@ class CF_Snippet_Manager extends CF_Snippet_Base {
 		return $fields;
 	}
 	
-	/**
-	 * This function gets all of the data for all of the snippets and returns it as an array
-	 *
-	 * @return array - Array of content
-	 */
-	public function get_all() {
-		$snippets = new WP_Query(array(
-			'post_type' => $this->post_type,
-			'orderby' => 'ID',
-			'order' => 'ASC',
-			'posts_per_page' => 500
-		));
-		
-		$data = array();
-		
-		if ($snippets->have_posts()) {
-			foreach ($snippets->posts as $snippet_post) {
-				$id = $snippet_post->ID;
-				$key = $snippet_post->post_name;
-				$description = $title = get_the_title($snippet_post->ID);
-				$content = $snippet_post->post_content;
-				$parent = $snippet_post->post_parent;
-				$data[] = compact('id', 'key', 'description', 'title', 'content', 'parent');
-			}
-		}
-		
-		if (!is_array($data) || empty($data)) {
-			return false;
-		}
-		return $data;
-	}
+//	/**
+//	 * This function gets all of the data for all of the snippets and returns it as an array
+//	 *
+//	 * @return array - Array of content
+//	 */
+//	public function get_all() {
+//		$snippets = new WP_Query(array(
+//			'post_type' => $this->post_type,
+//			'orderby' => 'ID',
+//			'order' => 'ASC',
+//			'posts_per_page' => 500
+//		));
+//		
+//		$data = array();
+//		
+//		if ($snippets->have_posts()) {
+//			foreach ($snippets->posts as $snippet_post) {
+//				$id = $snippet_post->ID;
+//				$key = $snippet_post->post_name;
+//				$description = $title = get_the_title($snippet_post->ID);
+//				$content = $snippet_post->post_content;
+//				$parent = $snippet_post->post_parent;
+//				$data[] = compact('id', 'key', 'description', 'title', 'content', 'parent');
+//			}
+//		}
+//		
+//		if (!is_array($data) || empty($data)) {
+//			return false;
+//		}
+//		return $data;
+//	}
 	
 	/**
 	 * 	This function gets a snippet (post) based on its key (name)
@@ -328,12 +324,16 @@ class CF_Snippet_Manager extends CF_Snippet_Base {
 	public function get_snippet($key) {
 		$key = sanitize_title($key);
 		
+		if (! trim($key)) {
+			return false;
+		}
+
 		$snippet = new WP_Query(array(
 			'post_type' => $this->post_type,
 			'name' => $key,
-			'posts_per_page' => -1
+			'posts_per_page' => 1,
 		));
-		
+
 		$data = array();
 		
 		global $post;
@@ -390,7 +390,7 @@ class CF_Snippet_Manager extends CF_Snippet_Base {
 		$snippet = new WP_Query(array(
 			'post_type' => $this->post_type,
 			'name' => $key,
-			'posts_per_page' => -1
+			'posts_per_page' => 1
 		));
 		
 		if ($snippet->have_posts()) {
@@ -400,26 +400,26 @@ class CF_Snippet_Manager extends CF_Snippet_Base {
 	}
 
 	## Admin Display Functions
-	
-	/**
-	 * This function will return a list of select options with each of the items keys as the option and description as the display.  A 
-	 * selected key can be passed in to select the proper key.
-	 *
-	 * @param string $selected - Item key to be selected
-	 * @return string - Options with the key as the value and description as the display
-	 */
-	public function select_display($selected = '') {
-		$snippets = $this->get_all();
-		$select = '';
-		if (is_array($snippets) && !empty($snippets)) {
-			foreach ($snippets as $snippet) {
-				$key = $snippet['key'];
-				$description = $snippet['title'];
-				$select .= '<option value="'.$key.'"'.selected($selected, $key, false).'>'.esc_html($description).'</option>';
-			}
-		}
-		return $select;
-	}
+
+//	/**
+//	 * This function will return a list of select options with each of the items keys as the option and description as the display.  A 
+//	 * selected key can be passed in to select the proper key.
+//	 *
+//	 * @param string $selected - Item key to be selected
+//	 * @return string - Options with the key as the value and description as the display
+//	 */
+//	public function select_display($selected = '') {
+//		$snippets = $this->get_all();
+//		$select = '';
+//		if (is_array($snippets) && !empty($snippets)) {
+//			foreach ($snippets as $snippet) {
+//				$key = $snippet['key'];
+//				$description = $snippet['title'];
+//				$select .= '<option value="'.$key.'"'.selected($selected, $key, false).'>'.esc_html($description).'</option>';
+//			}
+//		}
+//		return $select;
+//	}
 	
 	/**
 	 * This function will return an unordered list of descriptions.  An option is available to make a link with the key as the rel of that link
@@ -685,5 +685,3 @@ class CF_Snippet_Manager extends CF_Snippet_Base {
 	}
 	
 }
-
-?>
