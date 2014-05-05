@@ -125,6 +125,35 @@
 	
 	window.snippetKey = window.snippetKey || false; // Just used to prevent an error. If this happens, AJAX requests won't validate anyway.
 
+	// Binding for snippets widget admin
+	SnippetBindWidgets = function () {
+		$('.widget-snippet-typeahead').each( function() {
+
+			if ( ! ($.data(this, 'TypeAheadInit'))) {
+
+				var typeAhead = new TypeAhead(this),
+				snippet = this,
+				clear = $(this).nextAll('button.cfsp-clear-snippet');
+
+				clear.on('click', function(e) {
+					console.log(snippet);
+					$(snippet).val('');
+					e.preventDefault();
+				});
+				$.data(this, 'TypeAheadInit', true);
+			}
+		});
+	};
+
+	$(function() {
+		SnippetBindWidgets();
+
+		$('div.widgets-sortables').bind('sortstop',function(event,ui){
+			// We need to wait jsut a bit for WordPress to give it a proper ID.
+			setTimeout(SnippetBindWidgets, 50);
+		});
+	});
+
 	$(function() {
 		var $editBox = $("#cfsp-meta-edit-window"),
 			$previewBox = $("#cfsp-meta-preview-window"),

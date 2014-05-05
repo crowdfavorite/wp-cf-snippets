@@ -73,6 +73,7 @@ class CF_Snippet_Admin extends CF_Snippet_Base {
 			case 'post-new.php':
 				// fallthrough
 			case 'post.php':
+			case 'widgets.php':
 				// Add the proper CSS/JS to the Post/Page/Custom Post Type Edit screen
 				wp_enqueue_script('cfsp-post-js', CFSP_DIR_URL . 'js/post.js', array('jquery'), CFSP_VERSION);
 				wp_localize_script('cfsp-post-js', 'snippetKey', wp_create_nonce('cf-snippets-key'));
