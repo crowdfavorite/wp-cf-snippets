@@ -231,9 +231,13 @@ class CF_Snippet_Manager extends CF_Snippet_Base {
 			'posts_per_page' => 1,
 		));
 		remove_filter('posts_fields', array($this, 'get_all_keys_fields'));
+
+//echo "<pre>|";
+//var_dump($snippets);
+//echo "|</pre>";
 		
 		if ($snippets->have_posts()) {
-			return $snippets->found_rows;
+			return $snippets->found_posts;
 		}
 		return false;
 	}
@@ -254,7 +258,7 @@ class CF_Snippet_Manager extends CF_Snippet_Base {
 		remove_filter('posts_where', array($this, 'get_all_post_keys_where'));
 		
 		if ($snippets->have_posts()) {
-			return $snippets->found_rows;
+			return $snippets->found_posts;
 		}
 		return false;
 	}
