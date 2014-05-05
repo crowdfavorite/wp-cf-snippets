@@ -15,6 +15,7 @@
 - Typeahead Ajax: convert databasse query using $wpdb to use WP_Query and a custom filter
 - Add esc_attr() to attributes.
 - Change $_REQUEST reference to $_POST, sanitze titles in widget
+- Convert widget to use type-ahead, removing the need for a drop-down listing all snippets
 - Remove unbounded queries
 
 ## 3.2.3
