@@ -34,7 +34,9 @@
 		<button id="cfsp-close-edit-window" class="button cfsp-close-edit-window"><?php _e('Close'); ?></button>
 	</fieldset>
 </div>
-<?php endif; ?>
+<?php else: 
+	include(CFSP_DIR . 'views/widget-empty.php');
+endif; ?>
 <div id="cfsp-meta-preview-window" style="border-top:thin solid #ccc; margin: 7px 0;">
 	<h4>Snippet Preview</h4>
 	<div id="cfsp-preview-area" style="border: thin solid #ccc; margin: 7px; padding: 3px; position: relative; overflow: hidden;"></div>
