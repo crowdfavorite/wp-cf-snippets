@@ -21,7 +21,7 @@
 		
 		$.extend($extension, $input, {
 			"_typeaheadResults":
-				$("<div style='z-index: 2;'></div>")
+				$('<div style="z-index: 2;"></div>')
 				.hide()
 				.insertAfter($input),
 			"typeaheadHasChanged": false,
@@ -128,13 +128,10 @@
 	// Binding for snippets widget admin
 	SnippetBindWidgets = function () {
 		$('.widget-snippet-typeahead').each( function() {
-
 			if ( ! ($.data(this, 'TypeAheadInit'))) {
-
 				var typeAhead = new TypeAhead(this),
 				snippet = this,
 				clear = $(this).nextAll('button.cfsp-clear-snippet');
-
 				clear.on('click', function(e) {
 					console.log(snippet);
 					$(snippet).val('');
