@@ -45,9 +45,7 @@ class cfsnip_Widget extends WP_Widget {
 		}
 		$keys = $cf_snippet->get_key_count();
 		
-		$select = $cf_snippet->select_display($instance['list_key']);
-
-		if (!empty($select)) {
+		if (!$keys < 1) {
 			include(CFSP_DIR . 'views/widget-edit.php');
 		}
 		else {
