@@ -107,39 +107,6 @@ class CF_Snippet_Manager extends CF_Snippet_Base {
 		return $meta;
 	}
 	
-//	/**
-//	 * This function checks to see if the snippet is attached to a parent or not
-//	 *
-//	 * @param string $key Key to check
-//	 * @return bool Result of the check
-//	 */
-//	public function has_parent($key) {
-//		$key = sanitize_title($key);
-//		$snippet = $this->get_snippet($key);
-//		
-//		if ($snippet && !empty($snippet['parent']) && $snippet['parent']) {
-//			return true;
-//		}
-//		return false;
-//	}
-	
-//	/**
-//	 * This function gets all of the keys available and passes them back as an array
-//	 *
-//	 * @return array - Array of keys
-//	 */
-//	public function get_keys() {
-//		$snippets = $this->get_all();
-//		if (is_array($snippets) && !empty($snippets)) {
-//			$keys = array();
-//			foreach ($snippets as $snippet) {
-//				$keys[] = $snippet['key'];
-//			}
-//			return $keys;
-//		}
-//		return false;
-//	}
-	
 	/**
 	 * This function gets all of the keys that have been created on a particular post
 	 *
@@ -174,56 +141,12 @@ class CF_Snippet_Manager extends CF_Snippet_Base {
 		}
 		return $data;
 	}
-//	
-//	/**
-//	 * This function returns a list of all of the keys for snippets that have a parent
-//	 *
-//	 * @param int $count Amount of keys to show (0 to show all)
-//	 * @param int $offset Offset
-//	 * @return array
-//	 */
-//	public function get_all_post_keys($count = 0, $offset = 0) {
-//		$query = array(
-//			'post_type' => $this->post_type,
-//			'posts_per_page' => -1
-//		);
-//		if ($count && $offset) {
-//			$query['offset'] = $offset;
-//			$query['posts_per_page'] = $count;
-//		}
-//		else if ($count && !$offset) {
-//			$query['posts_per_page'] = $count;
-//		}
-//		else if (!$count && $offset) {
-//			$query['offset'] = $offset;
-//			unset($query['posts_per_page']);
-//		}
-//		
-//		add_filter('posts_where', array($this, 'get_all_post_keys_where'));
-//		$snippets = new WP_Query($query);
-//		remove_filter('posts_where', array($this, 'get_all_post_keys_where'));
-//		
-//		$data = array();
-//		
-//		if ($snippets->have_posts()) {
-//			global $post;
-//			$old_post = $post;
-//			while ($snippets->have_posts()) {
-//				$snippets->the_post();
-//				global $post;
-//				$data[] = $post->post_name;
-//			}
-//			setup_postdata($old_post);
-//			// As of 3.4 setup_postdata does not set the global $post object.
-//			$post = $old_post;
-//		}
-//		
-//		if (!is_array($data) || empty($data)) {
-//			return false;
-//		}
-//		return $data;
-//	}
-//	
+
+	/**
+	 * Get number of snippets (keys) defined
+	 * 
+ 	 * @return int|bool Count of snippets, or false if there are none
+	 */
 	public function get_key_count() {
 		add_filter('posts_fields', array($this, 'get_all_keys_fields'));
 		$snippets = new WP_Query(array(
@@ -283,38 +206,6 @@ class CF_Snippet_Manager extends CF_Snippet_Base {
 		return $fields;
 	}
 	
-//	/**
-//	 * This function gets all of the data for all of the snippets and returns it as an array
-//	 *
-//	 * @return array - Array of content
-//	 */
-//	public function get_all() {
-//		$snippets = new WP_Query(array(
-//			'post_type' => $this->post_type,
-//			'orderby' => 'ID',
-//			'order' => 'ASC',
-//			'posts_per_page' => 500
-//		));
-//		
-//		$data = array();
-//		
-//		if ($snippets->have_posts()) {
-//			foreach ($snippets->posts as $snippet_post) {
-//				$id = $snippet_post->ID;
-//				$key = $snippet_post->post_name;
-//				$description = $title = get_the_title($snippet_post->ID);
-//				$content = $snippet_post->post_content;
-//				$parent = $snippet_post->post_parent;
-//				$data[] = compact('id', 'key', 'description', 'title', 'content', 'parent');
-//			}
-//		}
-//		
-//		if (!is_array($data) || empty($data)) {
-//			return false;
-//		}
-//		return $data;
-//	}
-	
 	/**
 	 * 	This function gets a snippet (post) based on its key (name)
 	 * 
@@ -362,6 +253,9 @@ class CF_Snippet_Manager extends CF_Snippet_Base {
 		return $data;
 	}
 	
+	/**
+	 * Get a snippet post by its key (name)
+	 */
 	public function get_snippet_post_by_key($key) {
 		$post = get_posts(array(
 			'post_type' => $this->post_type,
@@ -399,72 +293,6 @@ class CF_Snippet_Manager extends CF_Snippet_Base {
 		return false;
 	}
 
-	## Admin Display Functions
-
-//	/**
-//	 * This function will return a list of select options with each of the items keys as the option and description as the display.  A 
-//	 * selected key can be passed in to select the proper key.
-//	 *
-//	 * @param string $selected - Item key to be selected
-//	 * @return string - Options with the key as the value and description as the display
-//	 */
-//	public function select_display($selected = '') {
-//		$snippets = $this->get_all();
-//		$select = '';
-//		if (is_array($snippets) && !empty($snippets)) {
-//			foreach ($snippets as $snippet) {
-//				$key = $snippet['key'];
-//				$description = $snippet['title'];
-//				$select .= '<option value="'.$key.'"'.selected($selected, $key, false).'>'.esc_html($description).'</option>';
-//			}
-//		}
-//		return $select;
-//	}
-	
-	/**
-	 * This function will return an unordered list of descriptions.  An option is available to make a link with the key as the rel of that link
-	 *
-	 * @param bool $links - Wether to make the list items links
-	 * @return string - Unordered list of links
-	 */
-//	public function list_display($links = true) {
-//		$snippets = $this->get_all();
-//		$list = '';
-//		if (is_array($snippets) && !empty($snippets)) {
-//			foreach ($snippets as $snippet) {
-//				$key = $snippet['key'];
-//				$description = $snippet['title'];
-//
-//				if (!empty($description)) {
-//					if ($links) {
-//						$description = '<a href="#" class="cfsp-list-link" rel="'.esc_attr($key).'">'.esc_html($description).'</a>';
-//					}
-//					else {
-//						$description = esc_html($description);
-//					}
-//				}
-//				else if (!empty($key)) {
-//					if ($links) {
-//						$description = '<a href="#" class="cfsp-list-link" rel="'.esc_attr($key).'">'.esc_html($key).'</a>';
-//					}
-//					else {
-//						$description = esc_html($key);
-//					}
-//				}
-//				
-//				if (!empty($description)) {
-//					$list .= '<li>'.$description.'</li>';
-//				}
-//			}
-//		}
-//		
-//		if (!empty($list)) {
-//			$list = '<ul class="cfsp-list">'.$list.'</ul>';
-//		}
-//		
-//		return $list;
-//	}
-	
 	## Database Interaction Functions
 	
 	/**
