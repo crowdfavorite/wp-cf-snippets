@@ -5,7 +5,7 @@
  */
 
 class CF_Snippet_Admin extends CF_Snippet_Base {
-	function __construct() {
+	public function __construct() {
 
 		if (!is_admin()) {
 			return;
@@ -17,7 +17,7 @@ class CF_Snippet_Admin extends CF_Snippet_Base {
 	/**
 	 * Register all admin-specific actions
 	 */
-	function add_actions() {
+	public function add_actions() {
 
 		// Add admin screen columsn and sorting
 		add_filter('manage__cf_snippet_posts_columns', array($this, 'add_key_column'));
@@ -88,14 +88,14 @@ class CF_Snippet_Admin extends CF_Snippet_Base {
 	/**
 	 * Support CF Readme integration - enqueue to cfreadme
 	 */
-	function enqueue_cf_readme() {
+	public function enqueue_cf_readme() {
 		cfreadme_enqueue('cf-snippets', array($this, 'cf_readme'));
 	}
 
 	/**
 	 * Support CF Readme integration - output readme file
 	 */
-	function cf_readme() {
+	public function cf_readme() {
 		$file = CFSP_DIR.'README.txt';
 		if (is_file($file) && is_readable($file)) {
 			$markdown = file_get_contents($file);
@@ -106,7 +106,7 @@ class CF_Snippet_Admin extends CF_Snippet_Base {
 	}
 
 
-	function post_edit_callback() {
+	public function post_edit_callback() {
 		global $post;
 		$cf_snippet = new CF_Snippet_Manager();
 //		$keys = $cf_snippet->get_keys();
@@ -114,11 +114,11 @@ class CF_Snippet_Admin extends CF_Snippet_Base {
 		include(CFSP_DIR . 'views/post-edit.php');
 	}
 	
-	function metabox_key_callback() {
+	public function metabox_key_callback() {
 		include(CFSP_DIR . 'views/metabox-key-edit.php');
 	}
 
-	function post_admin_head() {
+	public function post_admin_head() {
 		// Get the post types so we can add snippets to all needed
 		$post_types = get_post_types();
 		$post_type_excludes = apply_filters('cfsp_post_type_excludes', array('revision', 'attachment', 'safecss', 'nav_menu_item', '_cf_snippet'));

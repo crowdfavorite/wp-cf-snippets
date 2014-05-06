@@ -3,14 +3,14 @@
 class CF_Snippet_Upgrader {
 	static $i = null;
 
-	function i() {
+	public static function i() {
 		if (is_null(self::$i)) {
 			self::$i = new CF_Snippet_Upgrader;
 		}
 		return self::$i;
 	}
 
-	function add_actions() {
+	public function add_actions() {
 		add_action('admin_init', array($this, 'admin_request_handler'));
 		add_action('admin_notices', array($this, 'prompt_for_upgrade_if_necessary'));
 	}

@@ -5,14 +5,14 @@
  */
 
 class CF_Snippet_Admin_Help extends CF_Snippet_Base {
-	function __construct() {
+	public function __construct() {
 		if (!is_admin()) {
 			return;
 		}
 		$this->add_actions();
 	}
 
-	function add_actions() {
+	public function add_actions() {
 		add_action('admin_head', array($this, 'cfsp_admin_help'));
 		add_filter('cfsp-help-tab', array($this, 'cfsp_admin_help_description'));
 		add_filter('cfsp-help-tab', array($this, 'cfsp_admin_help_theme'), 11);
@@ -21,7 +21,7 @@ class CF_Snippet_Admin_Help extends CF_Snippet_Base {
 		add_filter('cfsp-help-tab', array($this, 'cfsp_admin_help_moreinfo'), 999999);
 	}
 
-	function cfsp_admin_help() {
+	public function cfsp_admin_help() {
 
 		$current_screen = get_current_screen();
 
@@ -47,7 +47,7 @@ class CF_Snippet_Admin_Help extends CF_Snippet_Base {
 		}
 	}
 
-	function cfsp_admin_help_description($help = array()) {
+	public function cfsp_admin_help_description($help = array()) {
 		// If the "Description" tab hasn't been filled, add it
 		if (empty($help['description'])) {
 			$description = '
@@ -64,7 +64,7 @@ class CF_Snippet_Admin_Help extends CF_Snippet_Base {
 		return $help;
 	}
 
-	function cfsp_admin_help_theme($help = array()) {
+	public function cfsp_admin_help_theme($help = array()) {
 		// If the "Theme Inclusion" tab hasn't been filled, add it
 		if (empty($help['theme'])) {
 			$description = "
@@ -81,7 +81,7 @@ class CF_Snippet_Admin_Help extends CF_Snippet_Base {
 		return $help;
 	}
 
-	function cfsp_admin_help_shortcodes($help = array()) {
+	public function cfsp_admin_help_shortcodes($help = array()) {
 		// If the "Shortcodes" tab hasn't been filled, add it
 		if (empty($help['shortcodes'])) {
 			$description = "
@@ -98,7 +98,7 @@ class CF_Snippet_Admin_Help extends CF_Snippet_Base {
 		return $help;
 	}
 
-	function cfsp_admin_help_shortcode_support($help = array()) {
+	public function cfsp_admin_help_shortcode_support($help = array()) {
 		// If the "Shortcode Support" tab hasn't been filled, add it
 		if (empty($help['shortcode-support'])) {
 			$description = "
@@ -114,7 +114,7 @@ class CF_Snippet_Admin_Help extends CF_Snippet_Base {
 		return $help;
 	}
 
-	function cfsp_admin_help_moreinfo($help = array()) {
+	public function cfsp_admin_help_moreinfo($help = array()) {
 		// If the "More Info" tab hasn't been filled, add it
 		if (empty($help['moreinfo'])) {
 			$description = '

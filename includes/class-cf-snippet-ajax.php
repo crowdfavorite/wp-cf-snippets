@@ -5,18 +5,18 @@
  */
 
 class CF_Snippet_Ajax extends CF_Snippet_Base {
-	function __construct() {
+	public function __construct() {
 		$this->add_actions();
 	}
 
-	function add_actions() {
+	public function add_actions() {
 		add_action('wp_ajax_cfsp_preview', array($this, 'ajax_preview'));
 		add_action('wp_ajax_cfsp_get_snippet', array($this, 'ajax_get_snippet'));
 		add_action('wp_ajax_cfsp_save_snippet', array($this, 'ajax_save_snippet'));
 		add_action('wp_ajax_cfsp_typeahead_key', array($this, 'ajax_typeahead_key'));
 	}
 
-	function ajax_get_snippet() {
+	public function ajax_get_snippet() {
 		check_ajax_referer('cf-snippets-key', 'security');
 
 		if ($this->user_can_admin_snippets() == false) {
@@ -48,7 +48,7 @@ class CF_Snippet_Ajax extends CF_Snippet_Base {
 		exit();
 	}
 
-	function ajax_save_snippet() {
+	public function ajax_save_snippet() {
 		check_ajax_referer('cf-snippets-key', 'security');
 
 		if ($this->user_can_admin_snippets() == false) {
@@ -83,7 +83,7 @@ class CF_Snippet_Ajax extends CF_Snippet_Base {
 		exit();
 	}
 
-	function ajax_preview() {
+	public function ajax_preview() {
 		global $cf_snippet;
 		check_ajax_referer('cf-snippets-key', 'security');
 
@@ -109,7 +109,7 @@ class CF_Snippet_Ajax extends CF_Snippet_Base {
 		exit();
 	}
 	
-	function ajax_typeahead_key() {
+	public function ajax_typeahead_key() {
 
 		global $cf_snippet;
 		check_ajax_referer('cf-snippets-key', 'security');
@@ -152,7 +152,7 @@ class CF_Snippet_Ajax extends CF_Snippet_Base {
 		}
 	}
 
-	function ajax_typeahed_query($pieces, $query) {
+	public function ajax_typeahed_query($pieces, $query) {
 		$pieces['fields'] = 'post_name';
 		$pieces['where'] = $pieces['where'] . " AND post_name LIKE '" . esc_sql( $query->get('snippet_search')) . "'";
 		$pieces['orderby'] = 'LENGTH(post_name) ASC, post_name ASC';

@@ -21,7 +21,7 @@ class CF_Snippet_Core extends CF_Snippet_Base {
 	/**
 	 * All actions needed for non-admin-specific operation
 	 */
-	function add_actions() {
+	public function add_actions() {
 		add_action('init', array($this, 'set_defines'), 1);
 		add_action('init', array($this, 'register_post_types'), 1);
 
@@ -92,7 +92,7 @@ class CF_Snippet_Core extends CF_Snippet_Base {
 	 *
 	 * Currently only {cfsp_template_url}
 	 */
-	function filter_snippet_output($content, $key) {
+	public function filter_snippet_output($content, $key) {
 		return str_replace('{cfsp_template_url}', get_stylesheet_directory_uri(), $content);
 	}
 
