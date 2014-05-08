@@ -20,8 +20,6 @@ Author URI: http://crowdfavorite.com
  * **********************************************************************
 */
 
-// ini_set('display_errors', '1'); ini_set('error_reporting', E_ALL);
-
 ## Constants
 
 define('CFSP_VERSION', '4.0.0-dev');
