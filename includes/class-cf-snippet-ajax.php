@@ -76,8 +76,7 @@ class CF_Snippet_Ajax extends CF_Snippet_Base {
 		}
 		else {
 			$snippet_post = get_post($result);
-			$keys = $cf_snippet->get_keys();
-			$data = array("snippet" => $snippet_post, "keys" => $keys);
+			$data = array("snippet" => $snippet_post);
 			echo json_encode(array("result" => "success", "data" => $data));
 		}
 		exit();
