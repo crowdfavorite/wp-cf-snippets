@@ -26,7 +26,6 @@ class CF_Snippet_Upgrader {
 			$has_posts = (bool) ($wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_type = '_cf_snippet'")) > 0;
 			if (!$has_posts) {
 				// Set to latest verison.
-				error_log('Fresh install detected. Setting CF Snippet version to ' . CFSP_VERSION);
 				$this->set_version(CFSP_VERSION);
 				return false;
 			}
@@ -96,7 +95,6 @@ class CF_Snippet_Upgrader {
 			 * by having to click a seemingly same link multiple times if there's more
 			 * than one upgrade necessary */
 			while (($upgrade_ver = $this->needs_which_upgrade())) {
-				error_log('Upgrading to Snippet Version: '.$upgrade_ver);
 				$function_name = 'upgrade_to_'.preg_replace('|\D|', '', $upgrade_ver);
 				if (!method_exists($this, $function_name)) {
 					wp_die('Error cfsp_101'); // Invalid Version Number
