@@ -143,30 +143,45 @@ class CF_Snippet_Upgrader {
 	}
 
 	protected function upgrade_to_32() {
-		global $cf_snippet;
-		$complete = true;
 		// Convert all snippets to use post_content instead of meta value.
-		$snippets = $cf_snippet->get_all();
-		foreach ($snippets as $snippet_info) {
-			$snippet_content = get_post_meta($snippet_info['id'], '_cfsp_content', true);
-			$post = get_post($snippet_info['id']);
-			if (!empty($snippet_content) && empty($post->post_content)) {
-				$post_update = array(
-					'ID' => $snippet_info['id'],
-					'post_content' => $snippet_content,
-				);
-				$result = wp_update_post($post_update);
-				if (!is_wp_error($result)) {
-					delete_post_meta($snippet_info['id'], '_cfsp_content');
-				}
-				else {
-					$complete = false;
+		// We're using a paginated loop to meet requirements from WordPress.com VIP
+		
+		$loop_complete = false;
+		$paged = 1;
+		
+		while (!$loop_complete) {
+			$query = new WP_Query(array(
+				'post_type' => '_cf_snippet',
+				'post_status' => 'any',
+				'posts_per_page' => 100,
+				'paged' => $paged,
+			));
+			
+			if ($query->have_posts()) {
+				foreach ($query->posts as $post_obj) {
+					$old_content = get_post_meta($post_obj->ID, '_cfsp_content', true);
+					if (!empty($old_content) && empty($post_obj->post_content)) {
+						$post_update = array(
+							'ID' => $post_obj->ID,
+							'post_content' => $old_content,
+						);
+						
+						$result = wp_update_post($post_update);
+						
+						if (!is_wp_error($result)) {
+							delete_post_meta($post_obj->ID, '_cfsp_content');
+						}
+					}
 				}
 			}
+			else {
+				$loop_complete = true;
+			}
+			
+			++$paged;
 		}
-		if ($complete) {
-			$this->set_version('3.2');
-		}
+		
+		$this->set_version('3.2');
 	}
 
 	protected function set_version($ver_string) {
