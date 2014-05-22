@@ -1,6 +1,7 @@
 # CF Snippets Changelog
 
 ## 4.0.0-dev
+- Wrapped actions around getting snippet content allowing snippet-specific shortcodes to be registered, or other actions related to snippets to be set up.
 - Updated to allow some functionality to work when called via WP CLI
 - Updated JS to no longer use jQuery.live calls. These were generating errors in The Healthier Life admin.
 - Remove call to get_the_content($snippet_post->ID) and replace with $snippet_post->post_content to prevent notices in admin screen.

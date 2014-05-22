@@ -26,8 +26,11 @@ class CF_Snippet_Manager extends CF_Snippet_Base {
 		// Try to get the snippet
 		$snippet = $this->get_snippet($key);
 		// If we have a snippet, return it back
+		// Allow some filtering to add and remove actions, shortcodes, etc.
+		$return = false;
+		do_action('pre-cfsp-get-content');
 		if ($snippet) {
-			return do_shortcode(apply_filters('cfsp-get-content', $snippet['content'], $key));
+			$return = do_shortcode(apply_filters('cfsp-get-content', $snippet['content'], $key));
 		}
 		// If we didn't have a snippet, but the create option is set, allow the snippet to be created
 		else if ($create && !empty($default)) {
@@ -41,11 +44,10 @@ class CF_Snippet_Manager extends CF_Snippet_Base {
 			}
 			
 			$this->add($key, $default, $description);
-			return do_shortcode(apply_filters('cfsp-get-content', $default, $key));
+			$return = do_shortcode(apply_filters('cfsp-get-content', $default, $key));
 		}
-		else {
-			return false;
-		}
+		do_action('post-cfsp-get-content');
+		return $return;
 	}
 	
 	/**
