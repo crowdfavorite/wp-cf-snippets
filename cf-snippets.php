@@ -3,7 +3,7 @@
 Plugin Name: CF Snippets
 Plugin URI: http://crowdfavorite.com
 Description: Provides admin level users the ability to define html snippets for use in templates, content, or widgets.
-Version: 3.2.3
+Version: 3.2.6
 Author: Crowd Favorite
 Author URI: http://crowdfavorite.com
 */
@@ -12,14 +12,14 @@ Author URI: http://crowdfavorite.com
 
 ## Constants
 
-define('CFSP_VERSION', '3.2.3');
+define('CFSP_VERSION', '3.2.6');
 define('CFSP_DIR', plugin_dir_path(__FILE__));
 //plugin_dir_url seems to be broken for including in theme files
 if (file_exists(trailingslashit(get_template_directory()).'plugins/'.basename(dirname(__FILE__)))) {
 	define('CFSP_DIR_URL', trailingslashit(trailingslashit(get_bloginfo('template_url')).'plugins/'.basename(dirname(__FILE__))));
 }
 else {
-	define('CFSP_DIR_URL', trailingslashit(plugins_url(basename(dirname(__FILE__)))));
+	define( 'CFSP_DIR_URL', trailingslashit( plugins_url( basename( dirname( __FILE__ ) ), dirname( __FILE__ ) ) ) );
 }
 define('CFSP_SHOW_POST_COUNT', 10);
 
