@@ -3,7 +3,7 @@
 class Snippet_Upgrader {
 	static $i = null;
 
-	function i() {
+	static function i() {
 		if (is_null(self::$i)) {
 			self::$i = new Snippet_Upgrader;
 		}
